@@ -65,20 +65,26 @@ sgdisk -c 2:"ROOT" ${DISK}
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
-
+if [[ "${DISK}" == "nvme"* ]]; then
+mkfs.vfat -F32 -n "UEFISYS" "${DISK}p1"
+mkfs.btrfs -L "ROOT" "${DISK}p2"
+mount -t btrfs "${DISK}p2" /mnt
+else
 mkfs.vfat -F32 -n "UEFISYS" "${DISK}1"
 mkfs.btrfs -L "ROOT" "${DISK}2"
 mount -t btrfs "${DISK}2" /mnt
+fi
+
 btrfs subvolume create /mnt/@
 umount /mnt
 ;;
 esac
 
 # mount target
-mount -t btrfs -o subvol=@ "${DISK}2" /mnt
+mount -t btrfs -o subvol=@ -L ROOT /mnt
 mkdir /mnt/boot
 mkdir /mnt/boot/efi
-mount -t vfat "${DISK}1" /mnt/boot/
+mount -t vfat -L UEFISYS /mnt/boot/
 
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
@@ -95,7 +101,7 @@ cat <<EOF > /mnt/boot/loader/entries/arch.conf
 title Arch Linux  
 linux /vmlinuz-linux  
 initrd  /initramfs-linux.img  
-options root=${DISK}2 rw rootflags=subvol=@
+options root=LABEL=ROOT rw rootflags=subvol=@
 EOF
 cp -R ~/ArchTitus /mnt/root/
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
