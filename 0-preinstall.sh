@@ -49,6 +49,7 @@ echo "--------------------------------------"
 
 # disk prep
 sgdisk -Z ${DISK} # zap all on disk
+#dd if=/dev/zero of=${DISK} bs=1M count=200 conv=fdatasync status=progress
 sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 
 # create partitions
@@ -74,7 +75,7 @@ mkfs.vfat -F32 -n "UEFISYS" "${DISK}1"
 mkfs.btrfs -L "ROOT" "${DISK}2"
 mount -t btrfs "${DISK}2" /mnt
 fi
-
+ls /mnt | xargs btrfs subvolume delete
 btrfs subvolume create /mnt/@
 umount /mnt
 ;;
