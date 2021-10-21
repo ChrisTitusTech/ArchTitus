@@ -68,11 +68,11 @@ sgdisk -c 2:"ROOT" ${DISK}
 echo -e "\nCreating Filesystems...\n$HR"
 if [[ ${DISK} =~ "nvme" ]]; then
 mkfs.vfat -F32 -n "UEFISYS" "${DISK}p1"
-mkfs.btrfs -L "ROOT" "${DISK}p2"
+mkfs.btrfs -L "ROOT" "${DISK}p2" -f
 mount -t btrfs "${DISK}p2" /mnt
 else
 mkfs.vfat -F32 -n "UEFISYS" "${DISK}1"
-mkfs.btrfs -L "ROOT" "${DISK}2"
+mkfs.btrfs -L "ROOT" "${DISK}2" -f
 mount -t btrfs "${DISK}2" /mnt
 fi
 ls /mnt | xargs btrfs subvolume delete
