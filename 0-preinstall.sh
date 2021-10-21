@@ -66,7 +66,7 @@ sgdisk -c 2:"ROOT" ${DISK}
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
-if [[ "${DISK}" == "nvme"* ]]; then
+if [[ ${DISK} =~ "nvme" ]]; then
 mkfs.vfat -F32 -n "UEFISYS" "${DISK}p1"
 mkfs.btrfs -L "ROOT" "${DISK}p2"
 mount -t btrfs "${DISK}p2" /mnt
