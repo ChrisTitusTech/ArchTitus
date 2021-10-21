@@ -65,10 +65,7 @@ sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /et
 sed -i 's/^#Para/Para/' /etc/pacman.conf
 
 #Enable multilib
-cat <<EOF >> /etc/pacman.conf
-[multilib]
-Include = /etc/pacman.d/mirrorlist
-EOF
+sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 pacman -Sy --noconfirm
 
 echo -e "\nInstalling Base System\n"
