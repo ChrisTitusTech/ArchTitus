@@ -46,23 +46,11 @@ PKGS=(
 'ttf-meslo' # Nerdfont package
 'ttf-roboto'
 'zoom' # video conferences
-
 )
 
 for PKG in "${PKGS[@]}"; do
     yay -S --noconfirm $PKG
 done
-
-cat <<EOF >> /home/$(whoami)/.config/mpv/mpv.conf
-vo=vdpau
-profile=opengl-hq
-hwdec=vdpau
-hwdec-codecs=all
-scale=ewa_lanczossharp
-cscale=ewa_lanczossharp
-interpolation
-tscale=oversample
-EOF
 
 export PATH=$PATH:~/.local/bin
 cp -r $HOME/ArchTitus/dotfiles/* $HOME/.config/

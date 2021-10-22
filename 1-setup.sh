@@ -212,7 +212,6 @@ PKGS=(
 'pulseaudio-bluetooth'
 'python-pip'
 'qemu'
-'qt5-xcb-private-headers'
 'rsync'
 'sddm-kcm'
 'spectacle'

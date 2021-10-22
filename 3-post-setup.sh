@@ -54,15 +54,6 @@ sudo sed -i 's|initramfs-linux.img|initramfs-linux-lts.img|g' /boot/loader/entri
 
 # ------------------------------------------------------------------------
 
-echo -e "\nConfiguring vconsole.conf to set a larger font for login shell"
-
-sudo cat <<EOF > /etc/vconsole.conf
-KEYMAP=us
-FONT=ter-v16b
-EOF
-
-# ------------------------------------------------------------------------
-
 echo -e "\nIncreasing file watcher count"
 
 # This prevents a "too many files" error in Visual Studio Code
@@ -80,27 +71,13 @@ sudo sed -i 's|load-module module-esound-protocol-unix|#load-module module-esoun
 
 echo -e "\nEnabling Login Display Manager"
 
-sudo systemctl enable --now sddm.service
-
+sudo systemctl enable sddm.service
 
 echo -e "\nSetup SDDM Theme"
 
-sudo cat <<EOF > /etc/sddm.conf.d/kde_settings.conf
-[Autologin]
-Relogin=false
-Session=
-User=
-
-[General]
-HaltCommand=/usr/bin/systemctl poweroff
-RebootCommand=/usr/bin/systemctl reboot
-
+sudo cat <<EOF > /etc/sddm.conf
 [Theme]
 Current=Nordic
-
-[Users]
-MaximumUid=60513
-MinimumUid=1000
 EOF
 
 # ------------------------------------------------------------------------
