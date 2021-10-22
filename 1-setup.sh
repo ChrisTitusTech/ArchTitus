@@ -230,6 +230,7 @@ PKGS=(
 'winetricks'
 'xdg-desktop-portal-kde'
 'xdg-user-dirs'
+'xorg'
 'xorg-server'
 'xorg-xinit'
 'zeroconf-ioslave'
