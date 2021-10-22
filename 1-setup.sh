@@ -271,20 +271,7 @@ esac
 
 # Graphics Drivers find and install
 if lspci | grep -E "NVIDIA|GeForce"; then
-    sudo cat <<EOF > /etc/pacman.d/hooks/nvidia.hook
-    [Trigger]
-    Operation=Install
-    Operation=Upgrade
-    Operation=Remove
-    Type=Package
-    Target=nvidia
-
-    [Action]
-    Depends=mkinitcpio
-    When=PostTransaction
-    Exec=/usr/bin/mkinitcpio -P
-EOF
-    pacman -S nvidia-dkms dkms --noconfirm --needed
+    pacman -S nvidia --noconfirm --needed
 elif lspci | grep -E "Radeon"; then
     pacman -S xf86-video-amdgpu --noconfirm --needed
 elif lspci | grep -E "Integrated Graphics Controller"; then
