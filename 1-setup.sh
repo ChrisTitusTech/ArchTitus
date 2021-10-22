@@ -12,21 +12,13 @@ echo "--          Network Setup           --"
 echo "--------------------------------------"
 pacman -S networkmanager dhclient --noconfirm --needed
 systemctl enable --now NetworkManager
-
-echo "--------------------------------------"
-echo "--      Set Password for Root       --"
-echo "--------------------------------------"
-echo "Enter password for root user: "
-passwd root
-
 if ! source install.conf; then
-	read -p "Please enter hostname:" hostname
-
 	read -p "Please enter username:" username
+    read -p "Please enter password:" password
 echo "username=$username" >> ${HOME}/ArchTitus/install.conf
 echo "password=$password" >> ${HOME}/ArchTitus/install.conf
 fi
-
+passwd --password $password root
 echo "-------------------------------------------------"
 echo "Setting up mirrors for optimal download          "
 echo "-------------------------------------------------"
@@ -54,9 +46,6 @@ localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_COLLATE="" LC_TIME=
 
 # Set keymaps
 localectl --no-ask-password set-keymap us
-
-# Hostname
-hostnamectl --no-ask-password set-hostname $hostname
 
 # Add sudo no password rights
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
@@ -215,7 +204,6 @@ PKGS=(
 'sddm'
 'sddm-kcm'
 'snapper'
-'snap-pac'
 'spectacle'
 'steam'
 'sudo'
@@ -280,23 +268,13 @@ elif lspci | grep -E "Integrated Graphics Controller"; then
     pacman -S libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils --needed --noconfirm
 fi
 
-sudo hostnamectl set-hostname $hostname
 echo -e "\nDone!\n"
 
 if [ $(whoami) = "root"  ];
 then
-    [ ! -d "/home/$username" ] && useradd -m -G wheel,libvirt -s /bin/bash $username 
+    [ ! -d "/home/$username" ] && useradd -m -p $password -G wheel,libvirt -s /bin/bash $username 
     cp -R /root/ArchTitus /home/$username/
     chown -R $username: /home/$username/ArchTitus
-    echo "--------------------------------------"
-    echo "--      Set Password for $username  --"
-    echo "--------------------------------------"
-    echo "Enter password for $username user: "
-    passwd $username
-#    cp /etc/skel/.bash_profile /home/$username/
-#    cp /etc/skel/.bash_logout /home/$username/
-#    cp /etc/skel/.bashrc /home/$username/.bashrc
-    
 else
 	echo "You are already a user proceed with aur installs"
 fi
