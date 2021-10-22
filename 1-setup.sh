@@ -167,7 +167,6 @@ PKGS=(
 'libnewt'
 'libtool'
 'linux'
-'linux-lts'
 'linux-firmware'
 'linux-headers'
 'lsof'
@@ -213,7 +212,10 @@ PKGS=(
 'python-pip'
 'qemu'
 'rsync'
+'sddm'
 'sddm-kcm'
+'snapper'
+'snap-pac'
 'spectacle'
 'steam'
 'sudo'
@@ -283,18 +285,18 @@ echo -e "\nDone!\n"
 
 if [ $(whoami) = "root"  ];
 then
-    [ ! -d "/home/$username" ] && useradd -m -g users -G wheel -s /bin/bash $username 
+    [ ! -d "/home/$username" ] && useradd -m -G wheel,libvirt -s /bin/bash $username 
     cp -R /root/ArchTitus /home/$username/
+    chown -R $username: /home/$username/ArchTitus
     echo "--------------------------------------"
     echo "--      Set Password for $username  --"
     echo "--------------------------------------"
     echo "Enter password for $username user: "
     passwd $username
-    cp /etc/skel/.bash_profile /home/$username/
-    cp /etc/skel/.bash_logout /home/$username/
-    cp /etc/skel/.bashrc /home/$username/.bashrc
-    chown -R $username: /home/$username
-    sed -n '#/home/'"$username"'/#,s#bash#zsh#' /etc/passwd
+#    cp /etc/skel/.bash_profile /home/$username/
+#    cp /etc/skel/.bash_logout /home/$username/
+#    cp /etc/skel/.bashrc /home/$username/.bashrc
+    
 else
 	echo "You are already a user proceed with aur installs"
 fi

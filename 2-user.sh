@@ -38,9 +38,9 @@ PKGS=(
 'nordic-theme'
 'noto-fonts-emoji'
 'papirus-icon-theme'
-'sddm-nordic-theme-git'
 'ocs-url' # install packages from websites
-'timeshift-bin'
+'sddm-nordic-theme-git'
+'snapper-gui-git'
 'ttf-droid'
 'ttf-hack'
 'ttf-meslo' # Nerdfont package
