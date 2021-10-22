@@ -278,6 +278,7 @@ elif lspci | grep -E "Integrated Graphics Controller"; then
     pacman -S libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils --needed --noconfirm
 fi
 
+sudo hostnamectl set-hostname $hostname
 echo -e "\nDone!\n"
 
 if [ $(whoami) = "root"  ];
