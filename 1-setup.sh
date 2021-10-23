@@ -55,6 +55,7 @@ echo -e "\nInstalling Base System\n"
 PKGS=(
 'alsa-plugins' # audio plugins
 'alsa-utils' # audio utils
+'apparmor' # Security module
 'ark' # compression
 'audiocd-kio' 
 'autoconf' # build

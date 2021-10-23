@@ -61,7 +61,7 @@ konsave -i $HOME/ArchTitus/kde.knsv
 sleep 1
 konsave -a kde
 
-echo -e "\nInstalling PortsMaster\n"
+echo -e "\nInstalling Portsmaster\n"
 sudo pacman -S libnetfilter_queue libappindicator-gtk3
 
 git clone https://github.com/safing/portmaster-packaging
