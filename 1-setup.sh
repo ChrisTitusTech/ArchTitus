@@ -61,6 +61,7 @@ PKGS=(
 'automake' # build
 'base'
 'bash-completion'
+'bettercap' # Netorking swiss army knife
 'bind'
 'binutils'
 'bison'
@@ -88,7 +89,7 @@ PKGS=(
 'efibootmgr' # EFI boot
 'egl-wayland'
 'exfat-utils'
-'fail2ban' # Intrusiopn prevention
+'fail2ban' # Intrusion prevention
 'flex'
 'fuse2'
 'fuse3'

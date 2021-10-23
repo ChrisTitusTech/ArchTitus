@@ -29,7 +29,7 @@ echo -e "\nEnabling other important services!"
 
 sudo systemctl enable ufw
 sudo systemctl enable fail2ban
-
+sudo systemctl enable --now portmaster
 
 # ------------------------------------------------------------------------
 

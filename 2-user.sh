@@ -27,6 +27,7 @@ PKGS=(
 'awesome-terminal-fonts'
 'brave-bin' # Brave Browser
 'dxvk-bin' # DXVK DirectX to Vulcan
+'firefox'
 'github-desktop-bin' # Github Desktop sync
 'lightly-git'
 'mangohud' # Gaming FPS Counter
@@ -66,7 +67,6 @@ sudo pacman -S libnetfilter_queue libappindicator-gtk3
 git clone https://github.com/safing/portmaster-packaging
 cd portmaster-packaging/linux
 makepkg -is
-sudo systemctl enable --now portmaster
 
 #mkdir -p /var/lib/portmaster
 #wget -O /tmp/portmaster-start https://updates.safing.io/latest/linux_amd64/start/portmaster-start
