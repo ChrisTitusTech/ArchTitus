@@ -25,6 +25,15 @@ EOF
 
 # ------------------------------------------------------------------------
 
+echo -e "\nEnabling other important services!"
+
+sudo systemctl enable ufw
+sudo systemctl enable fail2ban
+
+
+# ------------------------------------------------------------------------
+
+
 echo -e "\nEnabling the cups service daemon so we can print"
 
 systemctl enable cups.service

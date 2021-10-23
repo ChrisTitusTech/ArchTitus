@@ -60,5 +60,28 @@ konsave -i $HOME/ArchTitus/kde.knsv
 sleep 1
 konsave -a kde
 
+echo -e "\nInstalling PortsMaster\n"
+sudo pacman -S libnetfilter_queue libappindicator-gtk3
+
+git clone https://github.com/safing/portmaster-packaging
+cd portmaster-packaging/linux
+makepkg -is
+sudo systemctl enable --now portmaster
+
+#mkdir -p /var/lib/portmaster
+#wget -O /tmp/portmaster-start https://updates.safing.io/latest/linux_amd64/start/portmaster-start
+#sudo mv /tmp/portmaster-start /var/lib/portmaster/portmaster-start
+#sudo chmod a+x /var/lib/portmaster/portmaster-start
+#sudo /var/lib/portmaster/portmaster-start --data /var/lib/portmaster update
+#sudo /var/lib/portmaster/portmaster-start core
+#git clone https://github.com/safing/portmaster-packaging/ /tmp/portmaster-packaging
+#sudo cp /tmp/portmaster-packaging/blob/master/linux/debian/portmaster.service /etc/systemd/system/
+#sudo systemctl enable --now portmaster
+
+echo -e "\nInstalling ProtonVPN\n"
+sudo pacman -Syu libappindicator-gtk3 gnome-shell-extension-appindicator
+sudo pamac update --force-refresh
+pamac build protonvpn
+
 echo -e "\nDone!\n"
 exit

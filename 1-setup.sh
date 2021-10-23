@@ -88,11 +88,12 @@ PKGS=(
 'efibootmgr' # EFI boot
 'egl-wayland'
 'exfat-utils'
+'fail2ban' # Intrusiopn prevention
 'flex'
 'fuse2'
 'fuse3'
 'fish' # Terminal
-'firejail' #Application Sandboxing
+'firejail' #Application sandboxing
 'fuseiso'
 'gamemode'
 'gcc'
@@ -163,6 +164,7 @@ PKGS=(
 'nano'
 'neofetch'
 'networkmanager'
+'nmap' #Network scanning
 'ntfs-3g'
 'okular'
 'openbsd-netcat'
