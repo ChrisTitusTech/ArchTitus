@@ -45,8 +45,10 @@ PKGS=(
 'ttf-hack'
 'ttf-meslo' # Nerdfont package
 'ttf-roboto'
-'zoom' # video conferences
 'snap-pac'
+'steam' # the most popular game client that sells stuff like DOOM, Older COD Games, GTA, etc
+'neofetch' # the perfect tool to say "i use arch btw"
+'btop' # neat terminal system monitor tool
 )
 
 for PKG in "${PKGS[@]}"; do
