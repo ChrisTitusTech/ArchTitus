@@ -271,7 +271,7 @@ echo "username=$username" >> ${HOME}/ArchTitus/install.conf
 fi
 if [ $(whoami) = "root"  ];
 then
-    [ ! -d "/home/$username" ] && useradd -m -G wheel,libvirt -s /bin/bash $username 
+    useradd -m -G wheel,libvirt -s /bin/bash $username 
 	passwd $username
 	cp -R /root/ArchTitus /home/$username/
     chown -R $username: /home/$username/ArchTitus
