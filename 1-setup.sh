@@ -12,13 +12,6 @@ echo "--          Network Setup           --"
 echo "--------------------------------------"
 pacman -S networkmanager dhclient --noconfirm --needed
 systemctl enable --now NetworkManager
-if ! source install.conf; then
-	read -p "Please enter username:" username
-    read -p "Please enter password:" password
-echo "username=$username" >> ${HOME}/ArchTitus/install.conf
-echo "password=$password" >> ${HOME}/ArchTitus/install.conf
-fi
-passwd --password $password root
 echo "-------------------------------------------------"
 echo "Setting up mirrors for optimal download          "
 echo "-------------------------------------------------"
@@ -190,7 +183,6 @@ PKGS=(
 'plasma-systemmonitor'
 'plasma-thunderbolt'
 'plasma-vault'
-'plasma-wayland-session'
 'plasma-workspace'
 'plasma-workspace-wallpapers'
 'polkit-kde-agent'
@@ -273,11 +265,15 @@ elif lspci | grep -E "Integrated Graphics Controller"; then
 fi
 
 echo -e "\nDone!\n"
-
+if ! source install.conf; then
+	read -p "Please enter username:" username
+echo "username=$username" >> ${HOME}/ArchTitus/install.conf
+fi
 if [ $(whoami) = "root"  ];
 then
     [ ! -d "/home/$username" ] && useradd -m -p $password -G wheel,libvirt -s /bin/bash $username 
-    cp -R /root/ArchTitus /home/$username/
+	passwd $username
+	cp -R /root/ArchTitus /home/$username/
     chown -R $username: /home/$username/ArchTitus
 else
 	echo "You are already a user proceed with aur installs"
