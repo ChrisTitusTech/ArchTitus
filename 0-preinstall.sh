@@ -91,7 +91,7 @@ mount -t vfat -L UEFISYS /mnt/boot/
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
-pacstrap /mnt base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
+pacstrap /mnt base base-devel linux-hardened linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
 genfstab -U /mnt >> /mnt/etc/fstab
 echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
 echo "--------------------------------------"
@@ -101,8 +101,8 @@ bootctl install --esp-path=/mnt/boot
 [ ! -d "/mnt/boot/loader/entries" ] && mkdir -p /mnt/boot/loader/entries
 cat <<EOF > /mnt/boot/loader/entries/arch.conf
 title Arch Linux  
-linux /vmlinuz-linux  
-initrd  /initramfs-linux.img  
+linux /vmlinuz-linux-hardened
+initrd  /initramfs-linux-hardened.img
 options root=LABEL=ROOT rw rootflags=subvol=@
 EOF
 cp -R ~/ArchTitus /mnt/root/

@@ -91,6 +91,8 @@ PKGS=(
 'flex'
 'fuse2'
 'fuse3'
+'fish' # Terminal
+'firejail' #Application Sandboxing
 'fuseiso'
 'gamemode'
 'gcc'
@@ -149,9 +151,9 @@ PKGS=(
 'libksysguard'
 'libnewt'
 'libtool'
-'linux'
 'linux-firmware'
-'linux-headers'
+'linux-hardened'
+'linux-hardened-headers'
 'lsof'
 'lutris'
 'lzop'
