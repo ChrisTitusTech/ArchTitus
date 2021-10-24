@@ -72,14 +72,14 @@ sgdisk -c 3:"ROOT" ${DISK}
 echo -e "\nCreating Filesystems...\n$HR"
 if [[ ${DISK} =~ "nvme" ]]; then
 mkfs.vfat -F32 -n "UEFISYS" "${DISK}p1"
-mkswap "SWAP" "${DISK}p2"
-swapon "SWAP" "${DISK}p2"
+mkswap -L "SWAP" "${DISK}p2"
+swapon -L "SWAP" "${DISK}p2"
 mkfs.btrfs -L "ROOT" "${DISK}p3" -f
 mount -t btrfs "${DISK}p3" /mnt
 else
 mkfs.vfat -F32 -n "UEFISYS" "${DISK}1"
-mkswap "SWAP" "${DISK}2"
-swapon "SWAP" "${DISK}2"
+mkswap -L "SWAP" "${DISK}2"
+swapon -L "SWAP" "${DISK}2"
 mkfs.btrfs -L "ROOT" "${DISK}3" -f
 mount -t btrfs "${DISK}3" /mnt
 fi
