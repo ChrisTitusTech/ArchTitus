@@ -1,4 +1,4 @@
-# ArchTitus Installer Script
+# BetterArch Installer Script
 
 <img src="https://i.imgur.com/YiNMnan.png" />
 
@@ -17,9 +17,9 @@ From initial Prompt type the following commands:
 
 ```
 pacman -Sy git
-git clone https://github.com/71Zombie/ArchTitus
-cd ArchTitus
-./archtitus.sh
+git clone https://github.com/71Zombie/BetterArch
+cd BetterArch
+./BetterArch.sh
 ```
 
 ### System Description
