@@ -275,6 +275,8 @@ then
 	passwd $username
 	cp -R /root/ArchTitus /home/$username/
     chown -R $username: /home/$username/ArchTitus
+	read -p "Please name your machine:" nameofmachine
+	echo $nameofmachine > /etc/hostname
 else
 	echo "You are already a user proceed with aur installs"
 fi
