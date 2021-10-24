@@ -1,4 +1,4 @@
-# ArchTitus Installer Script
+# autoarch Installer Script
 
 <img src="https://i.imgur.com/YiNMnan.png" />
 
@@ -17,9 +17,9 @@ From initial Prompt type the following commands:
 
 ```
 pacman -Sy git
-git clone https://github.com/ChrisTitusTech/ArchTitus
-cd ArchTitus
-./archtitus.sh
+git clone https://github.com/sajayprakash/AutoArch
+cd autoarch
+./autoarch.sh
 ```
 
 ### System Description
