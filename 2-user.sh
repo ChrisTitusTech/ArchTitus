@@ -46,15 +46,14 @@ PKGS=(
 'ttf-meslo' # Nerdfont package
 'ttf-roboto'
 'firefox'
-'librewolf' # Firefox fork  
 'mpv'
 'vlc'
 'signal-desktop' 
 'discord'  
 'librewolf' 
-'vscodium' 
-'qbittorrent' 
-'libreoffice-fresh' 
+'vscodium' # VsCode Fork
+'qbittorrent' # Torrent Client
+'libreoffice-fresh' # Office Suite
 'tor-browser'
 'snap-pac'
 )
