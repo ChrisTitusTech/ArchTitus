@@ -55,26 +55,33 @@ sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 
 # create partitions
 sgdisk -n 1:0:+1000M ${DISK} # partition 1 (UEFI SYS), default start block, 512MB
-sgdisk -n 2:0:0     ${DISK} # partition 2 (Root), default start, remaining
+sgdisk -n 2:0:4G     ${DISK} # partition 2 (SWAP), default start, 4GB
+sgdisk -n 3:0:0      ${DISK} # partition 2 (Root), default start, remaining
 
 # set partition types
 sgdisk -t 1:ef00 ${DISK}
-sgdisk -t 2:8300 ${DISK}
+sgdisk -t 2:8200 ${DISK}
+sgdisk -t 3:8300 ${DISK}
 
 # label partitions
 sgdisk -c 1:"UEFISYS" ${DISK}
-sgdisk -c 2:"ROOT" ${DISK}
+sgdisk -c 2:"SWAP" ${DISK}
+sgdisk -c 3:"ROOT" ${DISK}
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
 if [[ ${DISK} =~ "nvme" ]]; then
 mkfs.vfat -F32 -n "UEFISYS" "${DISK}p1"
-mkfs.btrfs -L "ROOT" "${DISK}p2" -f
-mount -t btrfs "${DISK}p2" /mnt
+mkswap "SWAP" "${DISK}p2"
+swapon "SWAP" "${DISK}p2"
+mkfs.btrfs -L "ROOT" "${DISK}p3" -f
+mount -t btrfs "${DISK}p3" /mnt
 else
 mkfs.vfat -F32 -n "UEFISYS" "${DISK}1"
-mkfs.btrfs -L "ROOT" "${DISK}2" -f
-mount -t btrfs "${DISK}2" /mnt
+mkswap "SWAP" "${DISK}2"
+swapon "SWAP" "${DISK}2"
+mkfs.btrfs -L "ROOT" "${DISK}3" -f
+mount -t btrfs "${DISK}3" /mnt
 fi
 ls /mnt | xargs btrfs subvolume delete
 btrfs subvolume create /mnt/@
