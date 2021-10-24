@@ -265,14 +265,14 @@ fi
 echo -e "\nDone!\n"
 if ! source install.conf; then
 	read -p "Please enter username:" username
-echo "username=$username" >> ${HOME}/autoarch/install.conf
+echo "username=$username" >> ${HOME}/AutoArch/install.conf
 fi
 if [ $(whoami) = "root"  ];
 then
     useradd -m -G wheel,libvirt -s /bin/bash $username 
 	passwd $username
-	cp -R /root/autoarch /home/$username/
-    chown -R $username: /home/$username/autoarch
+	cp -R /root/AutoArch /home/$username/
+    chown -R $username: /home/$username/AutoArch
 else
 	echo "You are already a user proceed with aur installs"
 fi

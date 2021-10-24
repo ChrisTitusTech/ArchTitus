@@ -16,7 +16,7 @@ From initial Prompt type the following commands:
 ```
 pacman -Sy git
 git clone https://github.com/sajayprakash/AutoArch
-cd autoarch
+cd AutoArch
 ./autoarch.sh
 ```
 
