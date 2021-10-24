@@ -34,10 +34,10 @@ sudo systemctl enable --now portmaster
 # ------------------------------------------------------------------------
 
 
-echo -e "\nEnabling the cups service daemon so we can print"
+# echo -e "\nEnabling the cups service daemon so we can print"
 
 systemctl enable cups.service
-sudo ntpd -qg
+#sudo ntpd -qg
 sudo systemctl enable ntpd.service
 sudo systemctl disable dhcpcd.service
 sudo systemctl stop dhcpcd.service
