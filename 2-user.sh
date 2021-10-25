@@ -57,6 +57,14 @@ for PKG in "${PKGS[@]}"; do
     yay -S --noconfirm $PKG
 done
 
+
+#echo eval "$(starship init bash)" >> ~/.bashrc
+
+  # Fish
+  mkdir $HOME/.config/fish
+  mv /root/BetterArch/configs/.config/fish/config.fish $HOME/.config/fish/
+
+
 export PATH=$PATH:~/.local/bin
 cp -r $HOME/BetterArch/dotfiles/* $HOME/.config/
 pip install konsave
@@ -66,7 +74,7 @@ konsave -a kde
 
 echo -e "\nInstalling Portsmaster\n"
 sudo pacman -S libnetfilter_queue libappindicator-gtk3
-
+cd ~
 git clone https://github.com/safing/portmaster-packaging
 cd portmaster-packaging/linux
 makepkg -is

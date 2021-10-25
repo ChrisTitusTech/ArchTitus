@@ -135,6 +135,7 @@ PKGS=(
 'lzop'
 'm4'
 'make'
+'metasploit' #Exploit
 'milou'
 'nano'
 'neofetch'
@@ -177,6 +178,7 @@ PKGS=(
 'vim'
 'virt-manager'
 'virt-viewer'
+'vlc'
 'wget'
 'which'
 'wine-gecko'
