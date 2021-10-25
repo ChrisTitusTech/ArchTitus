@@ -5,3 +5,4 @@
     source /mnt/root/BetterArch/install.conf
     arch-chroot /mnt /usr/bin/runuser -u $username -- /home/$username/BetterArch/2-user.sh
     arch-chroot /mnt /root/BetterArch/3-post-setup.sh
+    arch-chroot /mnt /root/BetterArch/4-pen-tools.sh

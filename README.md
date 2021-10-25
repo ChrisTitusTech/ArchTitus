@@ -12,6 +12,7 @@ This README contains the steps I do to install and configure a fully-functional 
 - Fail2ban
 - UFW
 - Portsmaster
+- Firejail sandboxing
 
 
 _Comes preinstalled with pentesting tools_

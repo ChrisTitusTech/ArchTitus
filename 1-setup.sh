@@ -74,7 +74,6 @@ PKGS=(
 'automake' # build
 'base'
 'bash-completion'
-'bettercap' # Netorking swiss army knife
 'bind'
 'binutils'
 'bison'
@@ -136,12 +135,10 @@ PKGS=(
 'lzop'
 'm4'
 'make'
-'metasploit' #Exploit
 'milou'
 'nano'
 'neofetch'
 'networkmanager'
-'nmap' #Network scanning
 'ntfs-3g'
 'okular'
 'openbsd-netcat'

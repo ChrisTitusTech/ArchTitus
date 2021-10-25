@@ -11,47 +11,49 @@
 #
 #------------------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------
+echo -e "\nFINAL SETUP AND CONFIGURATION"
 
-echo -e "\nEnabling Login Display Manager"
+echo -e "\nInstalling penetration testing tools"
 
-sudo systemctl enable sddm.service
+PKGS=(
+'airgeddon-git' # Audit wireless networks
+'ba-pentest-commons-meta'
+'bettercap' # Netorking swiss army knife
+'metasploit' # Exploit
+'nmap' # Network scanning
+'sherlock-git'
+)
 
-echo -e "\nSetup SDDM Theme"
+for PKG in "${PKGS[@]}"; do
+    echo "INSTALLING: ${PKG}"
+    sudo pacman -S "$PKG" --noconfirm --needed
+done
 
-sudo cat <<EOF > /etc/sddm.conf
-[Theme]
-Current=Nordic
-EOF
+cd ~/git
+echo -e "\nInstalling git repositories\n"
+git clone https://github.com/six2dez/reconftw.git
+cd reconftw/
+./install.sh
 
-# ------------------------------------------------------------------------
+cd ~/git
+git clone https://github.com/codingo/Reconnoitre.git
+python3 setup.py install
 
-echo -e "\nEnabling other important services!"
+cd ~/git
+git clone https://github.com/AlisamTechnology/ATSCAN
+chmod +x ./install.sh
+./install.sh
 
-sudo systemctl enable ufw
-sudo systemctl enable fail2ban
-sudo systemctl enable --now portmaster
+cd ~/git
+git clone https://github.com/evyatarmeged/Raccoon.git
+cd Raccoon
+python setup.py install # Subsequent changes to the source code will not be reflected in calls to raccoon when this is used
 
-# ------------------------------------------------------------------------
 
-echo -e "\nEnabling essential services"
 
-systemctl enable cups.service
-sudo ntpd -qg
-sudo systemctl enable ntpd.service
-sudo systemctl disable dhcpcd.service
-sudo systemctl stop dhcpcd.service
-sudo systemctl enable NetworkManager.service
-sudo systemctl enable bluetooth
+
 echo "
 ###############################################################################
-# Cleaning
+# Done - Please Eject Install Media and Reboot
 ###############################################################################
 "
-# Remove no password sudo rights
-sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
-# Add sudo rights
-sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
-
-# Replace in the same state
-cd $pwd
