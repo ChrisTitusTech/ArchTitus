@@ -271,7 +271,7 @@ fi
 
 SWAPSIZEgb=2
 
-SWAPSIZEmb=1024*$SWAPSIZEgb
+SWAPSIZEmb=$((1024*$SWAPSIZEgb))
 
 touch /swapfile
 dd if=/dev/zero of=/swapfile bs=1M count=$SWAPSIZEmb status=progress
