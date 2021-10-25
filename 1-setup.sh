@@ -61,6 +61,7 @@ PKGS=(
 'xorg-xkill'
 'xorg-xinit'
 'xterm'
+'plasma-desktop' # KDE Load second
 'alsa-plugins' # audio plugins
 'alsa-utils' # audio utils
 'ark' # compression
@@ -141,8 +142,6 @@ PKGS=(
 'patch'
 'picom'
 'pkgconf'
-'plasma-browser-integration'
-'plasma-desktop'
 'powerline-fonts'
 'print-manager'
 'pulseaudio'
@@ -161,13 +160,11 @@ PKGS=(
 'synergy'
 'systemsettings'
 'terminus-font'
-'texinfo'
 'traceroute'
 'ufw'
 'unrar'
 'unzip'
 'usbutils'
-'vde2'
 'vim'
 'virt-manager'
 'virt-viewer'
