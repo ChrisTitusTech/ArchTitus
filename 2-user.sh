@@ -89,10 +89,6 @@ makepkg -is
 #sudo cp /tmp/portmaster-packaging/blob/master/linux/debian/portmaster.service /etc/systemd/system/
 #sudo systemctl enable --now portmaster
 
-echo -e "\nInstalling ProtonVPN\n"
-sudo pacman -Syu libappindicator-gtk3 gnome-shell-extension-appindicator
-sudo pamac update --force-refresh
-pamac build protonvpn
 
 echo -e "\nDone!\n"
 exit

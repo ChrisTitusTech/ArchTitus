@@ -96,6 +96,7 @@ PKGS=(
 'dosfstools'
 'efibootmgr' # EFI boot
 'egl-wayland'
+'element-desktop-git' # Matrix client
 'exfat-utils'
 'fail2ban' # Intrusion prevention
 'flex'
@@ -158,6 +159,7 @@ PKGS=(
 'pulseaudio-alsa'
 'pulseaudio-bluetooth'
 'python-pip'
+'protonvpn'
 'qemu'
 'rsync'
 'sddm'
