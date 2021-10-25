@@ -108,25 +108,6 @@ EOF
 cp -R ~/ArchTitus /mnt/root/
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 
-#
-# create a swapfile 
-# $ required for completion of scripts on lower end systems (under 8GB ram will need swap)
-#
-
-SWAPSIZEgb=2
-
-SWAPSIZEmb=1024*$SWAPSIZEgb
-
-touch /swapfile
-dd if=/dev/zero of=/swapfile bs=1M count=$SWAPSIZEmb status=progress
-# status=progress is for debugging
-chmod 600 /swapfile
-mkswap /swapfile
-swapon /swapfile
-"\n# /swapfile \n/swapfile				none		 swap				defaults        0 0" >> /etc/fstab
-
-echo "Swap /swapfile created and configured wtih $SWAPSIZEgb GB\n"
-
 echo "--------------------------------------"
 echo "--   SYSTEM READY FOR 0-setup       --"
 echo "--------------------------------------"
