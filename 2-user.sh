@@ -59,11 +59,9 @@ for PKG in "${PKGS[@]}"; do
 done
 
 
-#echo eval "$(starship init bash)" >> ~/.bashrc
-
-  # Fish
-  mkdir $HOME/.config/fish
-  mv /root/BetterArch/configs/.config/fish/config.fish $HOME/.config/fish/
+# Fish
+mkdir $HOME/.config/fish
+cp /root/BetterArch/dotfiles/fish/config.fish $HOME/.config/fish/
 
 
 export PATH=$PATH:~/.local/bin
@@ -74,21 +72,21 @@ sleep 1
 konsave -a kde
 
 echo -e "\nInstalling Portsmaster\n"
-sudo pacman -S libnetfilter_queue libappindicator-gtk3
-cd ~
-git clone https://github.com/safing/portmaster-packaging
-cd portmaster-packaging/linux
-makepkg -is
+#sudo pacman -S libnetfilter_queue libappindicator-gtk3
+#cd ~
+#git clone https://github.com/safing/portmaster-packaging
+#cd portmaster-packaging/linux
+#makepkg -is
 
-#mkdir -p /var/lib/portmaster
-#wget -O /tmp/portmaster-start https://updates.safing.io/latest/linux_amd64/start/portmaster-start
-#sudo mv /tmp/portmaster-start /var/lib/portmaster/portmaster-start
-#sudo chmod a+x /var/lib/portmaster/portmaster-start
-#sudo /var/lib/portmaster/portmaster-start --data /var/lib/portmaster update
-#sudo /var/lib/portmaster/portmaster-start core
-#git clone https://github.com/safing/portmaster-packaging/ /tmp/portmaster-packaging
-#sudo cp /tmp/portmaster-packaging/blob/master/linux/debian/portmaster.service /etc/systemd/system/
-#sudo systemctl enable --now portmaster
+mkdir -p /var/lib/portmaster
+wget -O /tmp/portmaster-start https://updates.safing.io/latest/linux_amd64/start/portmaster-start
+sudo mv /tmp/portmaster-start /var/lib/portmaster/portmaster-start
+sudo chmod a+x /var/lib/portmaster/portmaster-start
+sudo /var/lib/portmaster/portmaster-start --data /var/lib/portmaster update
+sudo /var/lib/portmaster/portmaster-start core
+git clone https://github.com/safing/portmaster-packaging/ /tmp/portmaster-packaging
+sudo cp /tmp/portmaster-packaging/blob/master/linux/debian/portmaster.service /etc/systemd/system/
+sudo systemctl enable --now portmaster
 
 
 echo -e "\nDone!\n"

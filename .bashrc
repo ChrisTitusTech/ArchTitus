@@ -412,6 +412,7 @@ PROMPT_COMMAND=bash_prompt_command
 ##	which gets updated by $PROMT_COMMAND on behalf of the terminal
 bash_prompt
 unset bash_prompt
+eval "$(starship init bash)" >> ~/.bashrc
 
 
 
