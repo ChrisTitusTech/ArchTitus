@@ -29,28 +29,41 @@ for PKG in "${PKGS[@]}"; do
     sudo pacman -S "$PKG" --noconfirm --needed
 done
 
-cd ~/git
+
 echo -e "\nInstalling git repositories\n"
+mkdir $HOME/git
+cd $HOME/git
 git clone https://github.com/six2dez/reconftw.git
 cd reconftw/
 ./install.sh
 
-cd ~/git
+cd $HOME/git
 git clone https://github.com/codingo/Reconnoitre.git
 python3 setup.py install
 
-cd ~/git
+cd $HOME/git
 git clone https://github.com/AlisamTechnology/ATSCAN
 chmod +x ./install.sh
 ./install.sh
 
-cd ~/git
+cd $HOME/git
 git clone https://github.com/evyatarmeged/Raccoon.git
 cd Raccoon
 python setup.py install # Subsequent changes to the source code will not be reflected in calls to raccoon when this is used
 
 
+echo "
+###############################################################################
+# Cleaning
+###############################################################################
+"
+# Remove no password sudo rights
+sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
+# Add sudo rights
+sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
+# Replace in the same state
+cd $pwd
 
 echo "
 ###############################################################################
