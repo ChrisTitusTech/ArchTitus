@@ -67,7 +67,6 @@ PKGS=(
 'plasma-desktop' # KDE Load second
 'alsa-plugins' # audio plugins
 'alsa-utils' # audio utils
-'apparmor' # Security module
 'ark' # compression
 'audiocd-kio' 
 'autoconf' # build
@@ -177,7 +176,6 @@ PKGS=(
 'vim'
 'virt-manager'
 'virt-viewer'
-'vlc'
 'wget'
 'which'
 'wine-gecko'

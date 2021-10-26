@@ -26,6 +26,7 @@ EOF
 
 # ------------------------------------------------------------------------
 
+echo -e "\nEnabling essential services"
 echo -e "\nEnabling other important services!"
 
 sudo systemctl enable ufw
