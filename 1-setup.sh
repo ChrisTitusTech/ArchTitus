@@ -132,6 +132,7 @@ PKGS=(
 'neofetch'
 'networkmanager'
 'ntfs-3g'
+'ntp'
 'okular'
 'openbsd-netcat'
 'openssh'
