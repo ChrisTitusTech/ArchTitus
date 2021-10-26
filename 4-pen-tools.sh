@@ -18,7 +18,7 @@ echo -e "\nInstalling penetration testing tools"
 PKGS=(
 'airgeddon-git' # Audit wireless networks
 'ba-pentest-commons-meta'
-'bettercap' # Netorking swiss army knife
+'bettercap' # Networking swiss army knife
 'metasploit' # Exploit
 'nmap' # Network scanning
 'sherlock-git'
@@ -64,6 +64,8 @@ sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
 # Replace in the same state
 cd $pwd
+
+top -b -n 1 | head | grep -A 1 PID | grep "^[0-9]" | cut -f1 -d" " | xargs kill
 
 echo "
 ###############################################################################

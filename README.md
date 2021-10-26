@@ -34,9 +34,6 @@ cd BetterArch
 ./BetterArch.sh
 ```
 
-### System Description
-This is completely automated arch install of the KDE desktop environment on arch using all the packages I use on a daily basis. 
-
 ## Troubleshooting
 
 __[Arch Linux Installation Guide](https://github.com/rickellis/Arch-Linux-Install-Guide)__
