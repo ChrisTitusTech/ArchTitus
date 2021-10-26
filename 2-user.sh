@@ -32,6 +32,7 @@ PKGS=(
 'dxvk-bin' # DXVK DirectX to Vulcan
 'firefox'
 'github-desktop-bin' # Github Desktop sync
+'intellij-idea-community-edition'
 'lightly-git'
 'mangohud' # Gaming FPS Counter
 'mangohud-common'
@@ -42,8 +43,11 @@ PKGS=(
 'nordic-theme'
 'noto-fonts-emoji'
 'papirus-icon-theme'
+'playonlinux' # Wine frontend
+'pidgin'
 'plasma-pa'
 'ocs-url' # install packages from websites
+'ungoogled-chromium'
 'sddm-nordic-theme-git'
 'snapper-gui-git'
 'ttf-droid'
@@ -52,6 +56,7 @@ PKGS=(
 'ttf-roboto'
 'zoom' # video conferences
 'snap-pac'
+'youtube-dl-gui-git'
 )
 
 for PKG in "${PKGS[@]}"; do

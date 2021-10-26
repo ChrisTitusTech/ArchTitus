@@ -11,22 +11,56 @@
 #
 #------------------------------------------------------------------------------------
 
-echo -e "\nFINAL SETUP AND CONFIGURATION"
+echo -e "\nFINAL SETUP AND CONFIGURATION\n"
 
-echo -e "\nInstalling penetration testing tools"
+ehco -e"\nInstalling black arch repository\n"
+
+#mkdir $HOME/blackarch
+#cp /root/BetterArch/dotfiles/blackarch/strap.sh $HOME/blackarch
+#cd $HOME/blackarch
+#chmod +x strap.sh
+#sudo pacman -Syu
+
+mkdir blackman
+cd blackman
+wget https://raw.github.com/BlackArch/blackarch/master/packages/blackman/PKGBUILD
+makepkg -s
+
 
 PKGS=(
+'3proxy'
+'a2sv'
 'airgeddon-git' # Audit wireless networks
+'autosploit'
+'backdoor-factory'
 'ba-pentest-commons-meta'
 'bettercap' # Networking swiss army knife
+'blue-hydra'
+'firefox-security-toolkit'
+#----------------#
+'gitgraber'
+'githack'
+'github-dorks'
+'githubcloner'
+'gitleaks'
+'gitmails'
+'gitminer'
+'gitrecon'
+'gitrob'
+'gittools'
+#----------------#
+
 'metasploit' # Exploit
 'nmap' # Network scanning
 'sherlock-git'
+'sploitctl'
+'torctl'
+'wireshark-qt'
 )
 
 for PKG in "${PKGS[@]}"; do
     echo "INSTALLING: ${PKG}"
-    sudo pacman -S "$PKG" --noconfirm --needed
+    sudo blackman -i "$PKG"
 done
 
 
@@ -50,6 +84,15 @@ cd $HOME/git
 git clone https://github.com/evyatarmeged/Raccoon.git
 cd Raccoon
 python setup.py install # Subsequent changes to the source code will not be reflected in calls to raccoon when this is used
+
+cd $HOME/git
+git clone https://github.com/haad/proxychains
+cd proxychains
+./configure
+make
+sudo make install
+
+cd ~
 
 
 echo "

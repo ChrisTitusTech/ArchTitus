@@ -65,9 +65,11 @@ PKGS=(
 'xorg-xinit'
 'xterm'
 'plasma-desktop' # KDE Load second
+#-------------------------------------#
 'alsa-plugins' # audio plugins
 'alsa-utils' # audio utils
 'apparmor' # Security module
+'appimagelauncher'
 'ark' # compression
 'audiocd-kio' 
 'autoconf' # build
@@ -98,6 +100,7 @@ PKGS=(
 'element-desktop-git' # Matrix client
 'exfat-utils'
 'fail2ban' # Intrusion prevention
+'flameshot
 'flex'
 'fuse2'
 'fuse3'
@@ -108,6 +111,7 @@ PKGS=(
 'gcc'
 'gimp' # Photo editing
 'git'
+'gitkraken'
 'gparted' # partition management
 'gptfdisk'
 'grub'
@@ -139,6 +143,7 @@ PKGS=(
 'nano'
 'neofetch'
 'networkmanager'
+'nodejs'
 'ntfs-3g'
 'okular'
 'openbsd-netcat'
@@ -186,6 +191,7 @@ PKGS=(
 'xdg-desktop-portal-kde'
 'xdg-user-dirs'
 'zeroconf-ioslave'
+'zulucrypt'
 'zip'
 'zsh'
 'zsh-syntax-highlighting'
