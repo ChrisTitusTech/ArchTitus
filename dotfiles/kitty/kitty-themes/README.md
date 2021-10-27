@@ -58,7 +58,7 @@ the previews for each theme in the [section](#previews) below or in this other
 
 ### Conda
 
-If you using the ``conda`` package manager, you may also install these themes
+If you're using the ``conda`` package manager, you may also want to install these themes
 with the following command:
 
 ```bash
