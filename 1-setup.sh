@@ -132,6 +132,7 @@ PKGS=(
 'nano'
 'neofetch'
 'networkmanager'
+'npm'
 'ntfs-3g'
 'ntp'
 'okular'
