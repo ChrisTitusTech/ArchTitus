@@ -108,8 +108,6 @@ sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 # Replace in the same state
 cd $pwd
 
-top -b -n 1 | head | grep -A 1 PID | grep "^[0-9]" | cut -f1 -d" " | xargs kill
-
 echo "
 ###############################################################################
 # Done - Please Eject Install Media and Reboot
