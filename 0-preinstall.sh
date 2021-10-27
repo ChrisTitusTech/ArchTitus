@@ -116,13 +116,17 @@ echo "--------------------------------------"
 echo "-- Bootloader Systemd Installation  --"
 echo "--------------------------------------"
 bootctl install --esp-path=/mnt/boot
-[ ! -d "/mnt/boot/loader/entries" ] && mkdir -p /mnt/boot/loader/entries
-cat <<EOF > /mnt/boot/loader/entries/arch.conf
-title Arch Linux  
-linux /vmlinuz-linux-hardened
-initrd  /initramfs-linux-hardened.img
-options root=LABEL=ROOT rw rootflags=subvol=@
-EOF
+sudo cp /boot/loader/entries/arch.conf /boot/loader/entries/arch-hardened.conf
+sudo sed -i 's|Arch Linux|Arch Linux Hardened Kernel|g' /boot/loader/entries/arch-hardened.conf
+sudo sed -i 's|vmlinuz-linux-hardened|vmlinuz-linux-lts|g' /boot/loader/entries/arch-hardened.conf
+sudo sed -i 's|initramfs-linux.img|initramfs-linux-hardened.img|g' /boot/loader/entries/arch-hardened.conf
+#[ ! -d "/mnt/boot/loader/entries" ] && mkdir -p /mnt/boot/loader/entries
+#cat <<EOF > /mnt/boot/loader/entries/arch.conf
+#title Arch Linux
+#linux /vmlinuz-linux-hardened
+#initrd  /initramfs-linux-hardened.img
+#options root=LABEL=ROOT rw rootflags=subvol=@
+#EOF
 cp -R ${SCRIPT_DIR} /mnt/root/BetterArch
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 echo "--------------------------------------"
