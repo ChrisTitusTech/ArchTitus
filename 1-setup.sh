@@ -100,7 +100,7 @@ PKGS=(
 'element-desktop-git' # Matrix client
 'exfat-utils'
 'fail2ban' # Intrusion prevention
-'flameshot
+'flameshot'
 'flex'
 'fuse2'
 'fuse3'
