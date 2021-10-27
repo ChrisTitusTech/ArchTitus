@@ -38,8 +38,3 @@ cd BetterArch
 
 __[Arch Linux Installation Guide](https://github.com/rickellis/Arch-Linux-Install-Guide)__
 
-### No Wifi
-
-```bash
-sudo wifi-menu
-```
