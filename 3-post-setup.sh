@@ -10,6 +10,7 @@
 #▄████████  ▀█████▀ ▀████ ▀████ ▀█████▀████▄  ▄███▄   ▄████▄████▄   █████▀████  ████▄
 #
 #------------------------------------------------------------------------------------
+echo -e "\nFINAL SETUP AND CONFIGURATION"
 
 # ------------------------------------------------------------------------
 
@@ -55,7 +56,7 @@ sudo cp fail2ban.local /etc/fail2ban/
 echo -e "\nEnabling essential services"
 
 systemctl enable cups.service
-sudo ntpd -qg
+#sudo ntpd -qg
 sudo systemctl enable ntpd.service
 sudo systemctl disable dhcpcd.service
 sudo systemctl stop dhcpcd.service

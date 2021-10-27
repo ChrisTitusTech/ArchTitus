@@ -20,7 +20,7 @@ pacman -S --noconfirm pacman-contrib terminus-font
 setfont ter-v22b
 sed -i 's/^#Para/Para/' /etc/pacman.conf
 pacman -S --noconfirm reflector rsync
-mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -e "  - -----------------------------------------------------------------------------------"
 echo -e " ▀███▀▀▀██▄         ██    ██                        ██                    ███          "
 echo -e "   ██    ██         ██    ██                       ▄██▄                    ██          "
@@ -53,28 +53,6 @@ echo -e "\nFormatting disk...\n$HR"
 echo "--------------------------------------"
 
 # disk prep
-
-#mkfs.ext3/dev/hda
-#mkfs.ext3/dev/sda1
-#mkfs.ext3/dev/sda2
-#mkfs.ext3/dev/sda3
-#mkfs.ext3/dev/${DISK}
-
-#cryptluks > /dev/sda
-#cryptluks > /dev/sda1
-#cryptluks > /dev/sda2
-#cryptluks > /dev/nvme0
-#cryptluks > /dev/mvme1
-
-#dd if=/dev/zero of=/dev/${DISK} bs=512 count=1
-#dd if=/dev/zero of=/dev/sda1 bs=512 count=1
-#dd if=/dev/zero of=/dev/sda2 bs=512 count=1
-#dd if=/dev/zero of=/dev/sda3 bs=512 count=1
-
-#dd if=/dev/zero of=/dev/nvme0 bs=512 count=1
-#dd if=/dev/zero of=/dev/nvme1 bs=512 count=1
-#dd if=/dev/zero of=/dev/nvme2 bs=512 count=1
-
 sgdisk -Z ${DISK} # zap all on disk
 #dd if=/dev/zero of=${DISK} bs=1M count=200 conv=fdatasync status=progress
 sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
@@ -164,5 +142,5 @@ if [[  $TOTALMEM -lt 8000000 ]]; then
     echo "/opt/swap/swapfile	none	swap	sw	0	0" >> /mnt/etc/fstab #Add swap to fstab, so it KEEPS working after installation.
 fi
 echo "--------------------------------------"
-echo "--   SYSTEM READY FOR 0-setup       --"
+echo "--   SYSTEM READY FOR 1-setup       --"
 echo "--------------------------------------"
