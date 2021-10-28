@@ -28,8 +28,6 @@ EOF
 # ------------------------------------------------------------------------
 
 sudo ufw limit 22/tcp
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 
@@ -56,7 +54,7 @@ sudo cp fail2ban.local /etc/fail2ban/
 echo -e "\nEnabling essential services"
 
 systemctl enable cups.service
-#sudo ntpd -qg
+sudo ntpd -qg
 sudo systemctl enable ntpd.service
 sudo systemctl disable dhcpcd.service
 sudo systemctl stop dhcpcd.service

@@ -15,17 +15,11 @@ echo -e "\nFINAL SETUP AND CONFIGURATION\n"
 
 ehco -e"\nInstalling black arch repository\n"
 
-#mkdir $HOME/blackarch
-#cp /root/BetterArch/dotfiles/blackarch/strap.sh $HOME/blackarch
-#cd $HOME/blackarch
-#chmod +x strap.sh
-#sudo pacman -Syu
-
-mkdir blackman
-cd blackman
-wget https://raw.github.com/BlackArch/blackarch/master/packages/blackman/PKGBUILD
-makepkg -s
-
+mkdir $HOME/blackarch
+cp /root/BetterArch/dotfiles/blackarch/strap.sh $HOME/blackarch
+cd $HOME/blackarch
+chmod +x strap.sh
+sudo pacman -Syu
 
 PKGS=(
 '3proxy'
@@ -64,33 +58,33 @@ for PKG in "${PKGS[@]}"; do
 done
 
 
-echo -e "\nInstalling git repositories\n"
-mkdir $HOME/git
-cd $HOME/git
-git clone https://github.com/six2dez/reconftw.git
-cd reconftw/
-./install.sh
+#echo -e "\nInstalling git repositories\n"
+#mkdir $HOME/git
+#cd $HOME/git
+#git clone https://github.com/six2dez/reconftw.git
+#cd reconftw/
+#./install.sh
 
-cd $HOME/git
-git clone https://github.com/codingo/Reconnoitre.git
-python3 setup.py install
+#cd $HOME/git
+#git clone https://github.com/codingo/Reconnoitre.git
+#python3 setup.py install
 
-cd $HOME/git
-git clone https://github.com/AlisamTechnology/ATSCAN
-chmod +x ./install.sh
-./install.sh
+#cd $HOME/git
+#git clone https://github.com/AlisamTechnology/ATSCAN
+#chmod +x ./install.sh
+#./install.sh
 
-cd $HOME/git
-git clone https://github.com/evyatarmeged/Raccoon.git
-cd Raccoon
-python setup.py install # Subsequent changes to the source code will not be reflected in calls to raccoon when this is used
+#cd $HOME/git
+#git clone https://github.com/evyatarmeged/Raccoon.git
+#cd Raccoon
+#python setup.py install # Subsequent changes to the source code will not be reflected in calls to raccoon when this is used
 
-cd $HOME/git
-git clone https://github.com/haad/proxychains
-cd proxychains
-./configure
-make
-sudo make install
+#cd $HOME/git
+#git clone https://github.com/haad/proxychains
+#cd proxychains
+#./configure
+#make
+#sudo make install
 
 cd ~
 
