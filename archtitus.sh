@@ -3,7 +3,10 @@
 # Find the name of the folder the scripts are in
 
 # X! Still erroring out, doesnt get the directory no matter what.
+# Found potential Solution
+# I hate it
 
+cd /
 if [ -L $0 ] ; then
     ME=$(readlink $0)
 else
@@ -13,6 +16,7 @@ dir=$(dirname $ME)
 
 export SCRIPTHOME="$(basename -- $dir)"
 echo "Scripts are in dir named $SCRIPTHOME"
+cd $PWD
 
     bash 0-preinstall.sh
     arch-chroot /mnt /root/$SCRIPTHOME/1-setup.sh
