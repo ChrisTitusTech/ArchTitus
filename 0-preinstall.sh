@@ -105,7 +105,7 @@ linux /vmlinuz-linux
 initrd  /initramfs-linux.img  
 options root=LABEL=ROOT rw rootflags=subvol=@
 EOF
-cp -R ~/$PROJECTNAME /mnt/root/
+cp -R ~/$SCRIPTHOME /mnt/root/
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 
 echo "--------------------------------------"

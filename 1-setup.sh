@@ -264,11 +264,6 @@ elif lspci | grep -E "Integrated Graphics Controller"; then
     pacman -S libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils --needed --noconfirm
 fi
 
-#
-# create a swapfile 
-# $ required for completion of scripts on lower end systems (under 8GB ram will need swap)
-#
-
 SWAPSIZEgb=2
 
 SWAPSIZEmb=$((1024*$SWAPSIZEgb))
@@ -286,14 +281,14 @@ echo -e "Swap /swapfile created and configured wtih $SWAPSIZEgb GB\n"
 echo -e "\nDone!\n"
 if ! source install.conf; then
 	read -p "Please enter username:" username
-echo "username=$username" >> ${HOME}/$PROJECTNAME/install.conf
+echo "username=$username" >> ${HOME}/$SCRIPTHOME/install.conf
 fi
 if [ $(whoami) = "root"  ];
 then
     useradd -m -G wheel,libvirt -s /bin/bash $username 
 	passwd $username
-	cp -R /root/$PROJECTNAME /home/$username/
-    chown -R $username: /home/$username/$PROJECTNAME
+	cp -R /root/$SCRIPTHOME /home/$username/
+    chown -R $username: /home/$username/$SCRIPTHOME
 else
 	echo "You are already a user proceed with aur installs"
 fi
