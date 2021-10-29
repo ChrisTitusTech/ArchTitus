@@ -46,8 +46,3 @@ sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
 # Replace in the same state
 cd $pwd
-echo "
-###############################################################################
-# Done - Please Eject Install Media and Reboot
-###############################################################################
-"
