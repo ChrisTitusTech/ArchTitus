@@ -3,18 +3,9 @@
 # Find the name of the folder the scripts are in
 
 # X! Still erroring out, doesnt get the directory no matter what.
-# Found potential Solution
 # I hate it
 
-cd /
-if [ -L $0 ] ; then
-    ME=$(readlink $0)
-else
-    ME=$0
-fi
-dir=$(dirname $ME)
-
-export SCRIPTHOME="$(basename -- $dir)"
+export SCRIPTHOME="$(basename -- $PWD)"
 echo "Scripts are in dir named $SCRIPTHOME"
 cd $PWD
 
