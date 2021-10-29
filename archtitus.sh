@@ -1,10 +1,6 @@
 #!/bin/bash
 
 # Find the name of the folder the scripts are in
-
-# X! Still erroring out, doesnt get the directory no matter what.
-# I hate it
-
 export SCRIPTHOME="$(basename -- $PWD)"
 echo "Scripts are in dir named $SCRIPTHOME"
 cd $PWD
