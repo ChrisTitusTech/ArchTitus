@@ -141,5 +141,5 @@ if [[  $TOTALMEM -lt 8000000 ]]; then
     echo "/opt/swap/swapfile	none	swap	sw	0	0" >> /mnt/etc/fstab #Add swap to fstab, so it KEEPS working after installation.
 fi
 echo "--------------------------------------"
-echo "--   SYSTEM READY FOR 0-setup       --"
+echo "--   SYSTEM READY FOR 1-setup       --"
 echo "--------------------------------------"
