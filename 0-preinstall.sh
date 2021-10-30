@@ -66,13 +66,13 @@ fi
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
 if [[ ${DISK} =~ "nvme" ]]; then
-mkfs.vfat -F32 -n "EFIBOOT" "${DISK}p1"
-mkfs.btrfs -L "ROOT" "${DISK}p2" -f
-mount -t btrfs "${DISK}p2" /mnt
+mkfs.vfat -F32 -n "EFIBOOT" "${DISK}p2"
+mkfs.btrfs -L "ROOT" "${DISK}p3" -f
+mount -t btrfs "${DISK}p3" /mnt
 else
-mkfs.vfat -F32 -n "EFIBOOT" "${DISK}1"
-mkfs.btrfs -L "ROOT" "${DISK}2" -f
-mount -t btrfs "${DISK}2" /mnt
+mkfs.vfat -F32 -n "EFIBOOT" "${DISK}2"
+mkfs.btrfs -L "ROOT" "${DISK}3" -f
+mount -t btrfs "${DISK}3" /mnt
 fi
 ls /mnt | xargs btrfs subvolume delete
 btrfs subvolume create /mnt/@
