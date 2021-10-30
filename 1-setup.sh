@@ -128,6 +128,7 @@ PKGS=(
 'kde-gtk-config'
 'kitty'
 'konsole'
+'kscreen'
 'layer-shell-qt'
 'libdvdcss'
 'libnewt'
