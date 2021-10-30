@@ -144,6 +144,7 @@ PKGS=(
 'patch'
 'picom'
 'pkgconf'
+'plasma-nm'
 'powerline-fonts'
 'print-manager'
 'pulseaudio'
