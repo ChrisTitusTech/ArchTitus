@@ -16,7 +16,7 @@ timedatectl set-ntp true
 pacman -S --noconfirm pacman-contrib terminus-font
 setfont ter-v22b
 sed -i 's/^#Para/Para/' /etc/pacman.conf
-pacman -S --noconfirm reflector rsync
+pacman -S --noconfirm reflector rsync grub
 mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -e "-------------------------------------------------------------------------"
 echo -e "   █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗"
@@ -53,31 +53,24 @@ echo "--------------------------------------"
 
 # disk prep
 sgdisk -Z ${DISK} # zap all on disk
-#dd if=/dev/zero of=${DISK} bs=1M count=200 conv=fdatasync status=progress
 sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 
 # create partitions
-sgdisk -n 1:0:+100M ${DISK} # partition 1 (UEFI SYS), default start block, 512MB
-sgdisk -n 2:0:0     ${DISK} # partition 2 (Root), default start, remaining
-
-# set partition types
-sgdisk -t 1:ef00 ${DISK}
-sgdisk -t 2:8300 ${DISK}
+sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:'BIOSBOOT' ${DISK} # partition 1 (BIOS Boot Partition)
+sgdisk -n 2::+100M --typecode=2:ef00 --change-name=2:'EFIBOOT' ${DISK} # partition 2 (UEFI Boot Partition)
+sgdisk -n 3::-0 --typecode=3:8300 --change-name=3:'ROOT' ${DISK} # partition 3 (Root), default start, remaining
 if [[ ! -d "/sys/firmware/efi" ]]; then
     sgdisk -A 1:set:2 ${DISK}
 fi
-# label partitions
-sgdisk -c 1:"BOOT" ${DISK}
-sgdisk -c 2:"ROOT" ${DISK}
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
 if [[ ${DISK} =~ "nvme" ]]; then
-mkfs.vfat -F32 -n "BOOT" "${DISK}p1"
+mkfs.vfat -F32 -n "EFIBOOT" "${DISK}p1"
 mkfs.btrfs -L "ROOT" "${DISK}p2" -f
 mount -t btrfs "${DISK}p2" /mnt
 else
-mkfs.vfat -F32 -n "BOOT" "${DISK}1"
+mkfs.vfat -F32 -n "EFIBOOT" "${DISK}1"
 mkfs.btrfs -L "ROOT" "${DISK}2" -f
 mount -t btrfs "${DISK}2" /mnt
 fi
@@ -97,7 +90,7 @@ esac
 mount -t btrfs -o subvol=@ -L ROOT /mnt
 mkdir /mnt/boot
 mkdir /mnt/boot/efi
-mount -t vfat -L BOOT /mnt/boot/
+mount -t vfat -L EFIBOOT /mnt/boot/
 
 if ! grep -qs '/mnt' /proc/mounts; then
     echo "Drive is not mounted can not continue"
@@ -107,10 +100,10 @@ if ! grep -qs '/mnt' /proc/mounts; then
     reboot now
 fi
 
-if [[ ! -d "/sys/firmware/efi" ]]; then
-    dd bs=440 count=1 conv=notrunc if=/usr/lib/syslinux/bios/gptmbr.bin of=${DISK}
-    extlinux --install /mnt/boot
-fi
+#if [[ ! -d "/sys/firmware/efi" ]]; then
+#    dd bs=440 count=1 conv=notrunc if=/usr/lib/syslinux/bios/gptmbr.bin of=${DISK}
+#    extlinux --install /mnt/boot
+#fi
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
