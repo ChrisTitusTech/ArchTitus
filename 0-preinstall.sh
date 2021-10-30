@@ -63,19 +63,21 @@ sgdisk -n 2:0:0     ${DISK} # partition 2 (Root), default start, remaining
 # set partition types
 sgdisk -t 1:ef00 ${DISK}
 sgdisk -t 2:8300 ${DISK}
-
+if [[ ! -d "/sys/firmware/efi" ]]; then
+    sgdisk -A 1:set:2 ${DISK}
+fi
 # label partitions
-sgdisk -c 1:"UEFISYS" ${DISK}
+sgdisk -c 1:"BOOT" ${DISK}
 sgdisk -c 2:"ROOT" ${DISK}
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
 if [[ ${DISK} =~ "nvme" ]]; then
-mkfs.vfat -F32 -n "UEFISYS" "${DISK}p1"
+mkfs.vfat -F32 -n "BOOT" "${DISK}p1"
 mkfs.btrfs -L "ROOT" "${DISK}p2" -f
 mount -t btrfs "${DISK}p2" /mnt
 else
-mkfs.vfat -F32 -n "UEFISYS" "${DISK}1"
+mkfs.vfat -F32 -n "BOOT" "${DISK}1"
 mkfs.btrfs -L "ROOT" "${DISK}2" -f
 mount -t btrfs "${DISK}2" /mnt
 fi
@@ -95,7 +97,7 @@ esac
 mount -t btrfs -o subvol=@ -L ROOT /mnt
 mkdir /mnt/boot
 mkdir /mnt/boot/efi
-mount -t vfat -L UEFISYS /mnt/boot/
+mount -t vfat -L BOOT /mnt/boot/
 
 if ! grep -qs '/mnt' /proc/mounts; then
     echo "Drive is not mounted can not continue"
@@ -105,6 +107,10 @@ if ! grep -qs '/mnt' /proc/mounts; then
     reboot now
 fi
 
+if [[ ! -d "/sys/firmware/efi" ]]; then
+    dd bs=440 count=1 conv=notrunc if=/usr/lib/syslinux/bios/gptmbr.bin of=${DISK}
+    extlinux --install /mnt/boot
+fi
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
@@ -114,7 +120,6 @@ echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
 echo "--------------------------------------"
 echo "-- GRUB Bootloader Installation     --"
 echo "--------------------------------------"
-bootctl install --esp-path=/mnt/boot
 if [[ ! -d "/sys/firmware/efi" ]]; then
     grub-install --boot-directory=/mnt/boot ${DISK}
 else
