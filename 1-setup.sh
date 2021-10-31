@@ -96,7 +96,7 @@ PKGS=(
 'egl-wayland'
 'exfat-utils'
 'extra-cmake-modules'
-'filelite'
+'filelight'
 'flex'
 'fuse2'
 'fuse3'
