@@ -100,10 +100,6 @@ if ! grep -qs '/mnt' /proc/mounts; then
     reboot now
 fi
 
-#if [[ ! -d "/sys/firmware/efi" ]]; then
-#    dd bs=440 count=1 conv=notrunc if=/usr/lib/syslinux/bios/gptmbr.bin of=${DISK}
-#    extlinux --install /mnt/boot
-#fi
 echo "--------------------------------------"
 echo "-- Arch Install on Main Drive       --"
 echo "--------------------------------------"
