@@ -9,7 +9,14 @@
 #-------------------------------------------------------------------------
 
 echo -e "\nFINAL SETUP AND CONFIGURATION"
-
+echo "--------------------------------------"
+echo "-- GRUB Bootloader Installation     --"
+echo "--------------------------------------"
+if [[ ! -d "/sys/firmware/efi" ]]; then
+    grub-install --boot-directory=/boot ${DISK}
+else
+    grub-install --efi-directory=/boot ${DISK}
+fi
 grub-mkconfig -o /boot/grub/grub.cfg
 
 # ------------------------------------------------------------------------
