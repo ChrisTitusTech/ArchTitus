@@ -19,7 +19,7 @@ timedatectl set-ntp true
 pacman -S --noconfirm pacman-contrib terminus-font
 setfont ter-v22b
 sed -i 's/^#Para/Para/' /etc/pacman.conf
-pacman -S --noconfirm reflector rsync
+pacman -S --noconfirm reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -e "  - -----------------------------------------------------------------------------------"
 echo -e " ▀███▀▀▀██▄         ██    ██                        ██                    ███          "
@@ -54,31 +54,26 @@ echo "--------------------------------------"
 
 # disk prep
 sgdisk -Z ${DISK} # zap all on disk
-#dd if=/dev/zero of=${DISK} bs=1M count=200 conv=fdatasync status=progress
 sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 
 # create partitions
-sgdisk -n 1:0:+1000M ${DISK} # partition 1 (UEFI SYS), default start block, 512MB
-sgdisk -n 2:0:0     ${DISK} # partition 2 (Root), default start, remaining
-
-# set partition types
-sgdisk -t 1:ef00 ${DISK}
-sgdisk -t 2:8300 ${DISK}
-
-# label partitions
-sgdisk -c 1:"UEFISYS" ${DISK}
-sgdisk -c 2:"ROOT" ${DISK}
+sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:'BIOSBOOT' ${DISK} # partition 1 (BIOS Boot Partition)
+sgdisk -n 2::+100M --typecode=2:ef00 --change-name=2:'EFIBOOT' ${DISK} # partition 2 (UEFI Boot Partition)
+sgdisk -n 3::-0 --typecode=3:8300 --change-name=3:'ROOT' ${DISK} # partition 3 (Root), default start, remaining
+if [[ ! -d "/sys/firmware/efi" ]]; then
+    sgdisk -A 1:set:2 ${DISK}
+fi
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
 if [[ ${DISK} =~ "nvme" ]]; then
-mkfs.vfat -F32 -n "UEFISYS" "${DISK}p1"
-mkfs.btrfs -L "ROOT" "${DISK}p2" -f
-mount -t btrfs "${DISK}p2" /mnt
+mkfs.vfat -F32 -n "EFIBOOT" "${DISK}p2"
+mkfs.btrfs -L "ROOT" "${DISK}p3" -f
+mount -t btrfs "${DISK}p3" /mnt
 else
-mkfs.vfat -F32 -n "UEFISYS" "${DISK}1"
-mkfs.btrfs -L "ROOT" "${DISK}2" -f
-mount -t btrfs "${DISK}2" /mnt
+mkfs.vfat -F32 -n "EFIBOOT" "${DISK}2"
+mkfs.btrfs -L "ROOT" "${DISK}3" -f
+mount -t btrfs "${DISK}3" /mnt
 fi
 ls /mnt | xargs btrfs subvolume delete
 btrfs subvolume create /mnt/@
@@ -96,7 +91,7 @@ esac
 mount -t btrfs -o subvol=@ -L ROOT /mnt
 mkdir /mnt/boot
 mkdir /mnt/boot/efi
-mount -t vfat -L UEFISYS /mnt/boot/
+mount -t vfat -L EFIBOOT /mnt/boot/
 
 if ! grep -qs '/mnt' /proc/mounts; then
     echo "Drive is not mounted can not continue"
@@ -113,20 +108,13 @@ pacstrap /mnt base base-devel linux-hardened linux-firmware vim nano sudo archli
 genfstab -U /mnt >> /mnt/etc/fstab
 echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
 echo "--------------------------------------"
-echo "-- Bootloader Systemd Installation  --"
+echo "-- GRUB Bootloader Installation     --"
 echo "--------------------------------------"
-bootctl install --esp-path=/mnt/boot
-sudo cp /boot/loader/entries/arch.conf /boot/loader/entries/arch-hardened.conf
-sudo sed -i 's|Arch Linux|Arch Linux Hardened Kernel|g' /boot/loader/entries/arch-hardened.conf
-sudo sed -i 's|vmlinuz-linux-hardened|vmlinuz-linux-lts|g' /boot/loader/entries/arch-hardened.conf
-sudo sed -i 's|initramfs-linux.img|initramfs-linux-hardened.img|g' /boot/loader/entries/arch-hardened.conf
-#[ ! -d "/mnt/boot/loader/entries" ] && mkdir -p /mnt/boot/loader/entries
-#cat <<EOF > /mnt/boot/loader/entries/arch.conf
-#title Arch Linux
-#linux /vmlinuz-linux-hardened
-#initrd  /initramfs-linux-hardened.img
-#options root=LABEL=ROOT rw rootflags=subvol=@
-#EOF
+if [[ ! -d "/sys/firmware/efi" ]]; then
+    grub-install --boot-directory=/mnt/boot ${DISK}
+else
+    grub-install --efi-directory=/mnt/boot ${DISK}
+fi
 cp -R ${SCRIPT_DIR} /mnt/root/BetterArch
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 echo "--------------------------------------"

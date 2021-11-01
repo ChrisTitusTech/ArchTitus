@@ -32,7 +32,6 @@ sudo sed -i 's/#MAKEFLAGS="-j2"/MAKEFLAGS="-j$nc"/g' /etc/makepkg.conf
 echo "Changing the compression settings for "$nc" cores."
 sudo sed -i 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g' /etc/makepkg.conf
 fi
-
 echo "-------------------------------------------------"
 echo "       Setup Language to US and set locale       "
 echo "-------------------------------------------------"
@@ -84,6 +83,7 @@ PKGS=(
 'bluedevil'
 'bluez'
 'bluez-libs'
+'bluez-utils'
 'breeze'
 'breeze-gtk'
 'bridge-utils'
@@ -97,12 +97,14 @@ PKGS=(
 'discover'
 'dolphin'
 'dosfstools'
+'dtc'
 'efibootmgr' # EFI boot
 'egl-wayland'
-'element-desktop-git' # Matrix client
 'exfat-utils'
 'fail2ban' # Intrusion prevention
 'flameshot'
+'extra-cmake-modules'
+'filelight'
 'flex'
 'fuse2'
 'fuse3'
@@ -121,16 +123,24 @@ PKGS=(
 'gst-libav'
 'gst-plugins-good'
 'gst-plugins-ugly'
+'gwenview'
 'haveged'
 'htop'
 'iptables-nft'
 'jdk-openjdk' # Java 17
 'kate'
+'kcodecs'
+'kcoreaddons'
+'kde-plasma-addons'
+'kinfocenter'
+'kscreen'
 'kvantum-qt5'
 'kde-gtk-config'
 'kitty'
 'konsole'
+'kscreen'
 'layer-shell-qt'
+'libdvdcss'
 'libnewt'
 'libtool'
 'linux-firmware'
@@ -158,11 +168,16 @@ PKGS=(
 'patch'
 'picom'
 'pkgconf'
+'plasma-nm'
+'powerdevil'
 'powerline-fonts'
 'print-manager'
 'pulseaudio'
 'pulseaudio-alsa'
 'pulseaudio-bluetooth'
+'python-notify2'
+'python-psutil'
+'python-pyqt5'
 'python-pip'
 'protonvpn'
 'qemu'
@@ -236,14 +251,14 @@ fi
 echo -e "\nDone!\n"
 if ! source install.conf; then
 	read -p "Please enter username:" username
-echo "username=$username" >> ${HOME}/BetterArch/install.conf
+echo "username=$username" >> ${HOME}/ArchTitus/install.conf
 fi
 if [ $(whoami) = "root"  ];
 then
     useradd -m -G wheel,libvirt -s /bin/bash $username 
 	passwd $username
-	cp -R /root/BetterArch /home/$username/
-    chown -R $username: /home/$username/BetterArch
+	cp -R /root/ArchTitus /home/$username/
+    chown -R $username: /home/$username/ArchTitus
 	read -p "Please name your machine:" nameofmachine
 	echo $nameofmachine > /etc/hostname
 else

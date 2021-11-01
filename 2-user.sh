@@ -34,6 +34,7 @@ PKGS=(
 'github-desktop-bin' # Github Desktop sync
 'intellij-idea-community-edition'
 'lightly-git'
+'lightlyshaders-git'
 'mangohud' # Gaming FPS Counter
 'mangohud-common'
 'nerd-fonts-fira-code'
