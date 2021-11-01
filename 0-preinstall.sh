@@ -115,6 +115,12 @@ if [[ ! -d "/sys/firmware/efi" ]]; then
 else
     grub-install --efi-directory=/mnt/boot ${DISK}
 fi
+
+#sudo cp /boot/loader/entries/arch.conf /boot/loader/entries/arch-hardened.conf
+#sudo sed -i 's|Arch Linux|Arch Linux Hardened Kernel|g' /boot/loader/entries/arch-hardened.conf
+#sudo sed -i 's|vmlinuz-linux-hardened|vmlinuz-linux-lts|g' /boot/loader/entries/arch-hardened.conf
+#sudo sed -i 's|initramfs-linux.img|initramfs-linux-hardened.img|g' /boot/loader/entries/arch-hardened.conf
+
 cp -R ${SCRIPT_DIR} /mnt/root/BetterArch
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 echo "--------------------------------------"
