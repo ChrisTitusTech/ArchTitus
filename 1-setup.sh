@@ -53,7 +53,7 @@ pacman -Sy --noconfirm
 
 echo -e "\nInstalling Base System\n"
 
-sudo pacman -S --needed - < /pkg-files/pacman-pkgs.txt
+sudo pacman -S --noconfirm --needed - < /pkg-files/pacman-pkgs.txt
 
 #
 # determine processor type and install microcode
