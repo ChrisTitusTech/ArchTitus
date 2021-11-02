@@ -25,9 +25,11 @@ ln -s "$HOME/zsh/.zshrc" $HOME/.zshrc
 PKGS=(
 'autojump'
 'awesome-terminal-fonts'
-'brave-bin' # Brave Browser
 'dxvk-bin' # DXVK DirectX to Vulcan
+'epson-inkjet-printer-201212w'
 'github-desktop-bin' # Github Desktop sync
+'google-chrome'
+'google-earth-pro'
 'lightly-git'
 'lightlyshaders-git'
 'mangohud' # Gaming FPS Counter
@@ -47,6 +49,8 @@ PKGS=(
 'ttf-hack'
 'ttf-meslo' # Nerdfont package
 'ttf-roboto'
+'synology-drive'
+'synology-note-station'
 'zoom' # video conferences
 'snap-pac'
 )
