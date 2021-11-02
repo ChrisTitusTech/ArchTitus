@@ -109,14 +109,15 @@ echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
 cp -R ${SCRIPT_DIR} /mnt/root/ArchTitus
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 echo "--------------------------------------"
-echo "-- Check for low memory systems <8G --"
+echo "-- Check for low memory systems <16G --"
 echo "--------------------------------------"
 TOTALMEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
-if [[  $TOTALMEM -lt 8000000 ]]; then
+if [[  $TOTALMEM -lt 16323861 ]]; then
     #Put swap into the actual system, not into RAM disk, otherwise there is no point in it, it'll cache RAM into RAM. So, /mnt/ everything.
+    echo "Creating 8GB Swapfile"
     mkdir /mnt/opt/swap #make a dir that we can apply NOCOW to to make it btrfs-friendly.
     chattr +C /mnt/opt/swap #apply NOCOW, btrfs needs that.
-    dd if=/dev/zero of=/mnt/opt/swap/swapfile bs=1M count=2048 status=progress
+    dd if=/dev/zero of=/mnt/opt/swap/swapfile bs=1M count=8196 status=progress
     chmod 600 /mnt/opt/swap/swapfile #set permissions.
     chown root /mnt/opt/swap/swapfile
     mkswap /mnt/opt/swap/swapfile
