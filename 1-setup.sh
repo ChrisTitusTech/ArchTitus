@@ -138,6 +138,7 @@ PKGS=(
 'libdvdcss'
 'libnewt'
 'libtool'
+'libvirt'
 'linux'
 'linux-firmware'
 'linux-headers'
