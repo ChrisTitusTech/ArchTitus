@@ -49,6 +49,7 @@ PKGS=(
 'ttf-roboto'
 'zoom' # video conferences
 'snap-pac'
+'vscodium-bin'
 )
 
 for PKG in "${PKGS[@]}"; do
