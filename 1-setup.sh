@@ -202,10 +202,8 @@ PKGS=(
 'zsh-autosuggestions'
 )
 
-for PKG in "${PKGS[@]}"; do
-    echo "INSTALLING: ${PKG}"
-    sudo pacman -S "$PKG" --noconfirm --needed
-done
+installpkg="sudo pacman -S $(printf "%s " "${PKGS[@]}") --noconfirm --needed"
+$installpkg
 
 #
 # determine processor type and install microcode

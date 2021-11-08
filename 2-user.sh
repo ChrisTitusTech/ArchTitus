@@ -51,9 +51,8 @@ PKGS=(
 'snap-pac'
 )
 
-for PKG in "${PKGS[@]}"; do
-    yay -S --noconfirm $PKG
-done
+installpkg="yay -S $(printf "%s " "${PKGS[@]}") --noconfirm --needed"
+$installpkg
 
 export PATH=$PATH:~/.local/bin
 cp -r $HOME/$SCRIPTHOME/dotfiles/* $HOME/.config/
