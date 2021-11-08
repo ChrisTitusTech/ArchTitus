@@ -17,7 +17,7 @@ pacman -S --noconfirm pacman-contrib terminus-font
 setfont ter-v22b
 sed -i 's/^#Para/Para/' /etc/pacman.conf
 pacman -S --noconfirm reflector rsync grub
-mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -e "-------------------------------------------------------------------------"
 echo -e "   █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗"
 echo -e "  ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝"
