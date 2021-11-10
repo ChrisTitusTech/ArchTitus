@@ -44,7 +44,6 @@ PKGS=(
 'gitrob'
 'gittools'
 #----------------#
-
 'metasploit' # Exploit
 'nmap' # Network scanning
 'sherlock-git'
