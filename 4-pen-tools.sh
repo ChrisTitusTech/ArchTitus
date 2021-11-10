@@ -13,7 +13,7 @@
 
 echo -e "\nFINAL SETUP AND CONFIGURATION\n"
 
-ehco -e"\nInstalling black arch repository\n"
+echo -e"\nInstalling black arch repository\n"
 
 mkdir $HOME/blackarch
 cp /root/BetterArch/dotfiles/blackarch/strap.sh $HOME/blackarch
@@ -55,7 +55,7 @@ PKGS=(
 
 for PKG in "${PKGS[@]}"; do
     echo "INSTALLING: ${PKG}"
-    sudo pacman -Sy "$PKG"
+    sudo pacman -S "$PKG" --noconfirm --needed
 done
 
 
