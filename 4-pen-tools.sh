@@ -19,6 +19,7 @@ mkdir $HOME/blackarch
 cp /root/BetterArch/dotfiles/blackarch/strap.sh $HOME/blackarch
 cd $HOME/blackarch
 chmod +x strap.sh
+sudo bash strap.sh
 sudo pacman -Syu
 
 PKGS=(
@@ -54,7 +55,7 @@ PKGS=(
 
 for PKG in "${PKGS[@]}"; do
     echo "INSTALLING: ${PKG}"
-    sudo blackman -i "$PKG"
+    sudo pacman -Sy "$PKG"
 done
 
 
