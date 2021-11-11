@@ -24,7 +24,7 @@ touch "$HOME/.cache/zshhistory"
 git clone "https://github.com/ChrisTitusTech/zsh"
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/powerlevel10k
 ln -s "$HOME/zsh/.zshrc" $HOME/.zshrc
-
+echo "If chromium takes too long to install, you may CTRL-C to cancel it."
 PKGS=(
 'autojump'
 'awesome-terminal-fonts'
@@ -48,14 +48,13 @@ PKGS=(
 'pidgin'
 'plasma-pa'
 'ocs-url' # install packages from websites
-'ungoogled-chromium'
+#'ungoogled-chromium'
 'sddm-nordic-theme-git'
 'snapper-gui-git'
 'ttf-droid'
 'ttf-hack'
 'ttf-meslo' # Nerdfont package
 'ttf-roboto'
-'zoom' # video conferences
 'snap-pac'
 'youtube-dl-gui-git'
 )

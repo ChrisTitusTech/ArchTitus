@@ -107,22 +107,21 @@ echo "--------------------------------------"
 pacstrap /mnt base base-devel linux-hardened linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
 genfstab -U /mnt >> /mnt/etc/fstab
 echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
+cp -R ${SCRIPT_DIR} /mnt/root/BetterArch
+cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
+echo "--------------------------------------"
+echo "--GRUB BIOS Bootloader Install&Check--"
+echo "--------------------------------------"
+if [[ ! -d "/sys/firmware/efi" ]]; then
+    grub-install --boot-directory=/mnt/boot ${DISK}
+fi
+
 echo "--------------------------------------"
 echo "-- GRUB Bootloader Installation     --"
 echo "--------------------------------------"
 if [[ ! -d "/sys/firmware/efi" ]]; then
     grub-install --boot-directory=/mnt/boot ${DISK}
-else
-    grub-install --efi-directory=/mnt/boot ${DISK}
 fi
-
-#sudo cp /boot/loader/entries/arch.conf /boot/loader/entries/arch-hardened.conf
-#sudo sed -i 's|Arch Linux|Arch Linux Hardened Kernel|g' /boot/loader/entries/arch-hardened.conf
-#sudo sed -i 's|vmlinuz-linux-hardened|vmlinuz-linux-lts|g' /boot/loader/entries/arch-hardened.conf
-#sudo sed -i 's|initramfs-linux.img|initramfs-linux-hardened.img|g' /boot/loader/entries/arch-hardened.conf
-
-cp -R ${SCRIPT_DIR} /mnt/root/BetterArch
-cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
 echo "--------------------------------------"
 echo "-- Check for low memory systems <8G --"
 echo "--------------------------------------"
