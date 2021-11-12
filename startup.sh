@@ -99,7 +99,7 @@ read option
 echo "DISK=$option" >> setup.conf
 }
 # More features in future
-language (){}
+# language (){}
 logo
 rm -rf setup.conf &>/dev/null
 diskpart
