@@ -8,6 +8,7 @@
 #  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 #-------------------------------------------------------------------------
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source setup.conf
 echo "-------------------------------------------------"
 echo "Setting up mirrors for optimal download          "
 echo "-------------------------------------------------"
@@ -31,7 +32,6 @@ echo -e "-----------------------------------------------------------------------
 
 reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 mkdir /mnt
-
 
 echo -e "\nInstalling prereqs...\n$HR"
 pacman -S --noconfirm gptfdisk btrfs-progs
@@ -65,16 +65,24 @@ fi
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
-if [[ ${DISK} =~ "nvme" ]]; then
+if [[ ${DISK} =~ "nvme" && ${FS} == "btrfs" ]]; then
 mkfs.vfat -F32 -n "EFIBOOT" "${DISK}p2"
-mkfs.$FS -L "ROOT" "${DISK}p3" -f
-mount -t $FS "${DISK}p3" /mnt
+mkfs.btrfs -L "ROOT" "${DISK}p3" -f
+mount -t btrfs "${DISK}p3" /mnt
+elif [[ ${DISK} =~ "sd" && ${FS} == "btrfs"]]; then
+mkfs.vfat -F32 -n "EFIBOOT" "${DISK}2"
+mkfs.btrfs -L "ROOT" "${DISK}3" -f
+mount -t btrfs "${DISK}3" /mnt
+elif [[ ${DISK} =~ "nvme" && ${FS} == "ext4" ]]; then
+mkfs.vfat -F32 -n "EFIBOOT" "${DISK}p2"
+mkfs.ext4 -L "ROOT" "${DISK}p3"
+mount -t ext4 "${DISK}p3" /mnt
 else
 mkfs.vfat -F32 -n "EFIBOOT" "${DISK}2"
-mkfs.$FS -L "ROOT" "${DISK}3" -f
-mount -t $FS "${DISK}3" /mnt
+mkfs.ext4 -L "ROOT" "${DISK}3"
+mount -t ext4 "${DISK}3" /mnt
 fi
-if [[ $FS =~ btrfs]]; then
+if [[ ${FS} =~ "btrfs" ]]; then
 ls /mnt | xargs btrfs subvolume delete
 btrfs subvolume create /mnt/@
 umount /mnt
