@@ -65,7 +65,8 @@ fi
 
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
-if [[ ${DISK} =~ "nvme"]]; then
+if [[ ${DISK} =~ "nvme" ]]; then
+
     if [[ ${FS} == "btrfs" ]]; then
         mkfs.vfat -F32 -n "EFIBOOT" "${DISK}p2"
         mkfs.btrfs -L "ROOT" "${DISK}p3" -f
@@ -74,15 +75,17 @@ if [[ ${DISK} =~ "nvme"]]; then
         mkfs.vfat -F32 -n "EFIBOOT" "${DISK}p2"
         mkfs.ext4 -L "ROOT" "${DISK}p3"
         mount -t ext4 "${DISK}p3" /mnt
-else [[ ${DISK} =~ "sd"]]; then
+    fi
+elif [[ ${DISK =~ "sd" }]]; then
     if [[ ${FS} == "btrfs" ]]; then
         mkfs.vfat -F32 -n "EFIBOOT" "${DISK}2"
         mkfs.btrfs -L "ROOT" "${DISK}3" -f
         mount -t btrfs "${DISK}3" /mnt
     else
-        mkfs.vfat -F32 -n "EFIBOOT" "${DISK}p2"
-        mkfs.ext4 -L "ROOT" "${DISK}p3"
-        mount -t ext4 "${DISK}p3" /mnt
+        mkfs.vfat -F32 -n "EFIBOOT" "${DISK}2"
+        mkfs.ext4 -L "ROOT" "${DISK}3"
+        mount -t ext4 "${DISK}3" /mnt
+    fi
 fi
 if [[ ${FS} =~ "btrfs" ]]; then
 ls /mnt | xargs btrfs subvolume delete
@@ -90,14 +93,14 @@ btrfs subvolume create /mnt/@
 umount /mnt
 mount -t btrfs -o subvol=@ -L ROOT /mnt
 fi
-;;
-*)
-echo "Rebooting in 3 Seconds ..." && sleep 1
-echo "Rebooting in 2 Seconds ..." && sleep 1
-echo "Rebooting in 1 Second ..." && sleep 1
-reboot now
-;;
-esac
+# ;;
+# *)
+# echo "Rebooting in 3 Seconds ..." && sleep 1
+# echo "Rebooting in 2 Seconds ..." && sleep 1
+# echo "Rebooting in 1 Second ..." && sleep 1
+# reboot now
+# ;;
+# esac
 
 # mount target
 mkdir /mnt/boot
