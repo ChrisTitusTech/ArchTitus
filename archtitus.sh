@@ -4,6 +4,8 @@
 export SCRIPTHOME="$(basename -- $PWD)"
 echo "Scripts are in dir named $SCRIPTHOME"
 
+    bash startup.sh
+    source setup.conf
     bash 0-preinstall.sh
     arch-chroot /mnt /root/$SCRIPTHOME/1-setup.sh
     source /mnt/root/$SCRIPTHOME/install.conf
