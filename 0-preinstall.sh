@@ -76,7 +76,7 @@ if [[ ${DISK} =~ "nvme" ]]; then
         mkfs.ext4 -L "ROOT" "${DISK}p3"
         mount -t ext4 "${DISK}p3" /mnt
     fi
-elif [[ ${DISK =~ "sd" }]]; then
+else # only two file systems are supported yet
     if [[ ${FS} == "btrfs" ]]; then
         mkfs.vfat -F32 -n "EFIBOOT" "${DISK}2"
         mkfs.btrfs -L "ROOT" "${DISK}3" -f
