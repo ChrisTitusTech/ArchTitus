@@ -25,9 +25,9 @@ ln -s "$HOME/zsh/.zshrc" $HOME/.zshrc
 yay -S --noconfirm --needed - < /pkg-files/aur-pkgs.txt
 
 export PATH=$PATH:~/.local/bin
-cp -r $HOME/ArchTitus/dotfiles/* $HOME/.config/
+cp -r $HOME/$SCRIPTHOME/dotfiles/* $HOME/.config/
 pip install konsave
-konsave -i $HOME/ArchTitus/kde.knsv
+konsave -i $HOME/$SCRIPTHOME/kde.knsv
 sleep 1
 konsave -a kde
 

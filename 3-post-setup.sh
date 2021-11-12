@@ -10,11 +10,9 @@
 
 echo -e "\nFINAL SETUP AND CONFIGURATION"
 echo "--------------------------------------"
-echo "-- GRUB Bootloader Installation     --"
+echo "-- GRUB EFI Bootloader Install&Check--"
 echo "--------------------------------------"
-if [[ ! -d "/sys/firmware/efi" ]]; then
-    grub-install --boot-directory=/boot ${DISK}
-else
+if [[ -d "/sys/firmware/efi" ]]; then
     grub-install --efi-directory=/boot ${DISK}
 fi
 grub-mkconfig -o /boot/grub/grub.cfg
@@ -52,8 +50,3 @@ sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
 # Replace in the same state
 cd $pwd
-echo "
-###############################################################################
-# Done - Please Eject Install Media and Reboot
-###############################################################################
-"
