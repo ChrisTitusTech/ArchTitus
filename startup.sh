@@ -22,13 +22,18 @@ echo -ne "
     Please Select your file system for both boot and root
     1)      btrfs
     2)      ext4
+    3)      luks with btrfs
     0)      exit
 "
 read FS
 case $FS in
 1) echo "FS=btrfs" >> setup.conf;;
 2) echo "FS=ext4" >> setup.conf;;
-#   3) echo "FS=LUKS" >> setup.conf;;
+3) 
+echo -ne "Please enter your luks password: "
+read luks_password
+echo "luks_password=$luks_password" >> setup.conf
+echo "FS=luks" >> setup.conf;;
 0) exit ;;
 *) echo "Wrong option please select again"; filesystem;;
 esac
@@ -43,7 +48,8 @@ case $answer in
     y|Y|yes|Yes|YES)
     echo "timezone=$time_zone" >> setup.conf;;
     n|N|no|NO|No)
-    read -p "Please enter your desired timezone e.g. Europe/London :" new_timezone
+    echo "Please enter your desired timezone e.g. Europe/London :" 
+    read new_timezone
     echo "timezone=$new_timezone" >> setup.conf;;
     *) echo "Wrong option. Try again";timezone;;
 esac
@@ -84,7 +90,7 @@ Please select key board layout from this list
 read -p "Your key boards layout:" keymap
 echo "keymap=$keymap" >> setup.conf
 }
-diskpart (){
+diskpart () {
 lsblk
 echo -ne "
 ------------------------------------------------------------------------
@@ -98,10 +104,23 @@ Please enter disk to work on: (example /dev/sda):
 read option
 echo "DISK=$option" >> setup.conf
 }
+userinfo () {
+echo -ne "Please enter username: "
+read username
+echo "username=$username" >> setup.conf
+echo -ne "Please enter your password: "
+read password
+echo "password=$password" >> setup.conf
+echo -ne "Please enter your hostname: "
+read hostname
+echo "hostname=$hostname" >> setup.conf
+}
 # More features in future
 # language (){}
 logo
 rm -rf setup.conf &>/dev/null
+userinfo
+clear
 diskpart
 clear
 logo

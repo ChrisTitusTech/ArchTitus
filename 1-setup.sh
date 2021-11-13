@@ -108,18 +108,14 @@ echo -ne "
                     Adding User
 -------------------------------------------------------------------------
 "
-if ! source install.conf; then
-	read -p "Please enter username:" username
-echo "username=$username" >> ${HOME}/$SCRIPTHOME/install.conf
-fi
-if [ $(whoami) = "root"  ];
-then
+if [ $(whoami) = "root"  ]; then
     useradd -m -G wheel,libvirt -s /bin/bash $username 
-	passwd $username
+# use chpasswd to enter $username:$password
+    echo "$username:$password" | chpasswd
 	cp -R /root/$SCRIPTHOME /home/$username/
     chown -R $username: /home/$username/$SCRIPTHOME
-	read -p "Please name your machine:" nameofmachine
-	echo $nameofmachine > /etc/hostname
+# enter $hostname to /etc/hostname
+	echo $hostname > /etc/hostname
 else
 	echo "You are already a user proceed with aur installs"
 fi

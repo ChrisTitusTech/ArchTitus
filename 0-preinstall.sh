@@ -65,28 +65,69 @@ echo -ne "
                     Creating Filesystems
 -------------------------------------------------------------------------
 "
-if [[ ${DISK} =~ "nvme" ]]; then
-
-    if [[ ${FS} == "btrfs" ]]; then
-        mkfs.vfat -F32 -n "EFIBOOT" "${DISK}p2"
-        mkfs.btrfs -L "ROOT" "${DISK}p3" -f
-        mount -t btrfs "${DISK}p3" /mnt
-    else
-        mkfs.vfat -F32 -n "EFIBOOT" "${DISK}p2"
-        mkfs.ext4 -L "ROOT" "${DISK}p3"
-        mount -t ext4 "${DISK}p3" /mnt
+if [[ "${DISK}" == "nvme" ]]; then
+    if [[ "${FS}" == "btrfs" ]]; then
+        mkfs.vfat -F32 -n "EFIBOOT" ${DISK}p2
+        mkfs.btrfs -L ROOT ${DISK}p3 -f
+        mount -t btrfs ${DISK}p3 /mnt
+    elif [[ "${FS}" == "ext4" ]]; then
+        mkfs.vfat -F32 -n "EFIBOOT" ${DISK}p2
+        mkfs.ext4 -L ROOT ${DISK}p3
+        mount -t ext4 ${DISK}p3 /mnt
+    elif [[ "${FS}" == "luks" ]]; then
+        mkfs.vfat -F32 -n "EFIBOOT" ${DISK}p2
+# enter luks password to cryptsetup and format root partition
+        echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${DISK}p3 -
+# open luks container and ROOT will be place holder 
+        cryptsetup open ${DISK}p3 ROOT
+# now format that container
+        mkfs.btrfs -L ROOT /dev/mapper/ROOT
+# create subvolumes for btrfs
+        mount -t btrfs /dev/mapper/ROOT /mnt
+        btrfs subvolume create /mnt/@
+        btrfs subvolume create /mnt/@home
+        btrfs subvolume create /mnt/@.snapshots
+        btrfs subvolume create /mnt/@var
+        btrfs subvolume create /mnt/@tmp
+        umount /mnt
+# mount @ subvolume
+        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@ /dev/mapper/ROOT /mnt
+# make directories home, .snapshots, var, tmp
+        mkdir -p /mnt/{home,var,tmp,.snapshots}
+# mount subvolumes
+        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@home /dev/mapper/ROOT /mnt/home
+        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
+        mount -t btrfs /dev/mapper/ROOT /mnt/var
     fi
-else # only two file systems are supported yet
-    if [[ ${FS} == "btrfs" ]]; then
-        mkfs.vfat -F32 -n "EFIBOOT" "${DISK}2"
-        mkfs.btrfs -L "ROOT" "${DISK}3" -f
-        mount -t btrfs "${DISK}3" /mnt
-    else
-        mkfs.vfat -F32 -n "EFIBOOT" "${DISK}2"
-        mkfs.ext4 -L "ROOT" "${DISK}3"
-        mount -t ext4 "${DISK}3" /mnt
+else
+    if [[ "${FS}" == "btrfs" ]]; then
+        mkfs.vfat -F32 -n "EFIBOOT" ${DISK}2
+        mkfs.btrfs -f -L ROOT ${DISK}3
+    elif [[ "${FS}" == "ext4" ]]; then
+        mkfs.vfat -F32 -n "EFIBOOT" ${DISK}2
+        mkfs.ext4 -L ROOT ${DISK}3
+    elif [[ "${FS}" == "luks" ]]; then
+        mkfs.vfat -F32 -n "EFIBOOT" ${DISK}2
+        echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${DISK}3 -
+        cryptsetup luksOpen ${DISK}3 ROOT
+        mkfs.ext4 -L ROOT /dev/mapper/ROOT
+        mount -t btrfs /dev/mapper/ROOT /mnt
+        btrfs subvolume create /mnt/@
+        btrfs subvolume create /mnt/@home
+        btrfs subvolume create /mnt/@.snapshots
+        btrfs subvolume create /mnt/@var
+        btrfs subvolume create /mnt/@tmp
+        umount /mnt
+# mount all the subvolumes
+        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@ /dev/mapper/ROOT /mnt
+# make directories home, .snapshots, var, tmp
+        mkdir -p /mnt/{home,var,tmp,.snapshots}
+        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@home /dev/mapper/ROOT /mnt/home
+        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
+        mount -t btrfs /dev/mapper/ROOT /mnt/var
     fi
 fi
+# checking if user selected btrfs
 if [[ ${FS} =~ "btrfs" ]]; then
 ls /mnt | xargs btrfs subvolume delete
 btrfs subvolume create /mnt/@
