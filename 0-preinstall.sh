@@ -97,7 +97,8 @@ if [[ "${DISK}" == "nvme" ]]; then
 # mount subvolumes
         mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@home /dev/mapper/ROOT /mnt/home
         mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
-        mount -t btrfs /dev/mapper/ROOT /mnt/var
+        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@tmp /dev/mapper/ROOT /mnt/tmp
+        mount -o subvol=@var /dev/mapper/ROOT /mnt/var
     fi
 else
     if [[ "${FS}" == "btrfs" ]]; then
@@ -124,7 +125,8 @@ else
         mkdir -p /mnt/{home,var,tmp,.snapshots}
         mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@home /dev/mapper/ROOT /mnt/home
         mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
-        mount -t btrfs /dev/mapper/ROOT /mnt/var
+        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@tmp /dev/mapper/ROOT /mnt/tmp
+        mount -o subvol=@var /dev/mapper/ROOT /mnt/var
     fi
 fi
 # checking if user selected btrfs
