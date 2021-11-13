@@ -119,6 +119,13 @@ if [ $(whoami) = "root"  ]; then
 else
 	echo "You are already a user proceed with aur installs"
 fi
+if [[ ${FS} == "luks" ]]; then
+# Making sure to edit mkinitcpio conf if luks is selected
+# add encrypt in mkinitcpio.conf before filesystems in hooks
+    sed -i 's/filesystems/encrypt filesystems/g' /etc/mkinitcpio.conf
+# making mkinitcpio with linux kernel
+    mkinitcpio -p linux
+fi
 echo -ne "
 -------------------------------------------------------------------------
                     SYSTEM READY FOR 2-user.sh

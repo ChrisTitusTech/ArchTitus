@@ -79,7 +79,7 @@ if [[ "${DISK}" == "nvme" ]]; then
 # enter luks password to cryptsetup and format root partition
         echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${DISK}p3 -
 # open luks container and ROOT will be place holder 
-        cryptsetup open ${DISK}p3 ROOT
+        echo -n "${luks_password}" | cryptsetup open ${DISK}p3 ROOT -
 # now format that container
         mkfs.btrfs -L ROOT /dev/mapper/ROOT
 # create subvolumes for btrfs
@@ -109,8 +109,8 @@ else
     elif [[ "${FS}" == "luks" ]]; then
         mkfs.vfat -F32 -n "EFIBOOT" ${DISK}2
         echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${DISK}3 -
-        cryptsetup luksOpen ${DISK}3 ROOT
-        mkfs.ext4 -L ROOT /dev/mapper/ROOT
+        echo -n "${luks_password}" | cryptsetup open ${DISK}3 ROOT -
+        mkfs.btrfs -L ROOT /dev/mapper/ROOT
         mount -t btrfs /dev/mapper/ROOT /mnt
         btrfs subvolume create /mnt/@
         btrfs subvolume create /mnt/@home
