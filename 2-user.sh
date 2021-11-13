@@ -25,9 +25,11 @@ ln -s "$HOME/zsh/.zshrc" $HOME/.zshrc
 PKGS=(
 'autojump'
 'awesome-terminal-fonts'
-'brave-bin' # Brave Browser
+'discord' # Discord
 'dxvk-bin' # DXVK DirectX to Vulcan
 'github-desktop-bin' # Github Desktop sync
+'google-chrome' # Google Chrome browser
+'intellij-idea-ultimate-edition' # IntelliJ IDE for Java
 'lightly-git'
 'lightlyshaders-git'
 'mangohud' # Gaming FPS Counter
@@ -42,6 +44,7 @@ PKGS=(
 'plasma-pa'
 'ocs-url' # install packages from websites
 'sddm-nordic-theme-git'
+'spotify'
 'snapper-gui-git'
 'ttf-droid'
 'ttf-hack'
