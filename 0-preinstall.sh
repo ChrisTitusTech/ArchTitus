@@ -65,6 +65,20 @@ echo -ne "
                     Creating Filesystems
 -------------------------------------------------------------------------
 "
+createsubvolumes () {
+    btrfs subvolume create /mnt/@
+    btrfs subvolume create /mnt/@home
+    btrfs subvolume create /mnt/@var
+    btrfs subvolume create /mnt/@tmp
+    btrfs subvolume create /mnt/@.snapshots
+}
+
+mountallsubvol () {
+    mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@home /dev/mapper/ROOT /mnt/home
+    mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@tmp /dev/mapper/ROOT /mnt/tmp
+    mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
+    mount -o subvol=@var /dev/mapper/ROOT /mnt/var
+}
 if [[ "${DISK}" == "nvme" ]]; then
     if [[ "${FS}" == "btrfs" ]]; then
         mkfs.vfat -F32 -n "EFIBOOT" ${DISK}p2
@@ -84,49 +98,38 @@ if [[ "${DISK}" == "nvme" ]]; then
         mkfs.btrfs -L ROOT /dev/mapper/ROOT
 # create subvolumes for btrfs
         mount -t btrfs /dev/mapper/ROOT /mnt
-        btrfs subvolume create /mnt/@
-        btrfs subvolume create /mnt/@home
-        btrfs subvolume create /mnt/@.snapshots
-        btrfs subvolume create /mnt/@var
-        btrfs subvolume create /mnt/@tmp
+        createsubvolumes       
         umount /mnt
 # mount @ subvolume
         mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@ /dev/mapper/ROOT /mnt
 # make directories home, .snapshots, var, tmp
         mkdir -p /mnt/{home,var,tmp,.snapshots}
 # mount subvolumes
-        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@home /dev/mapper/ROOT /mnt/home
-        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
-        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@tmp /dev/mapper/ROOT /mnt/tmp
-        mount -o subvol=@var /dev/mapper/ROOT /mnt/var
+        mountallsubvol
     fi
 else
     if [[ "${FS}" == "btrfs" ]]; then
         mkfs.vfat -F32 -n "EFIBOOT" ${DISK}2
         mkfs.btrfs -f -L ROOT ${DISK}3
+        mount -t btrfs ${DISK}3 /mnt
     elif [[ "${FS}" == "ext4" ]]; then
         mkfs.vfat -F32 -n "EFIBOOT" ${DISK}2
         mkfs.ext4 -L ROOT ${DISK}3
+        mount -t ext4 ${DISK}3 /mnt
     elif [[ "${FS}" == "luks" ]]; then
         mkfs.vfat -F32 -n "EFIBOOT" ${DISK}2
         echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${DISK}3 -
         echo -n "${luks_password}" | cryptsetup open ${DISK}3 ROOT -
         mkfs.btrfs -L ROOT /dev/mapper/ROOT
         mount -t btrfs /dev/mapper/ROOT /mnt
-        btrfs subvolume create /mnt/@
-        btrfs subvolume create /mnt/@home
-        btrfs subvolume create /mnt/@.snapshots
-        btrfs subvolume create /mnt/@var
-        btrfs subvolume create /mnt/@tmp
+        createsubvolumes
         umount /mnt
 # mount all the subvolumes
         mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@ /dev/mapper/ROOT /mnt
 # make directories home, .snapshots, var, tmp
         mkdir -p /mnt/{home,var,tmp,.snapshots}
-        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@home /dev/mapper/ROOT /mnt/home
-        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
-        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@tmp /dev/mapper/ROOT /mnt/tmp
-        mount -o subvol=@var /dev/mapper/ROOT /mnt/var
+# mount subvolumes
+        mountallsubvol
     fi
 fi
 # checking if user selected btrfs

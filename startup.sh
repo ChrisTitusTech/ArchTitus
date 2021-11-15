@@ -117,10 +117,10 @@ echo "hostname=$hostname" >> setup.conf
 }
 # More features in future
 # language (){}
-logo
 rm -rf setup.conf &>/dev/null
 userinfo
 clear
+logo
 diskpart
 clear
 logo
