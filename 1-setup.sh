@@ -242,14 +242,12 @@ if [ ${#PKGS_ARCH[@]} -eq 0 ]; then
 	for PKG in "${PKGS_ARCH_DEFAULT[@]}"; do
 	    echo "INSTALLING ARCH DEFAULT PACKAGE: ${PKG}"
 	    pacman -S "$PKG" --noconfirm --needed
-	    break
 	done
 else
 	echo "installing arch user specified packages"
 	for PKG in "${PKGS_ARCH[@]}"; do
 	    echo "INSTALLING ARCH USER SPECIFIED PACKAGE: ${PKG}"
 	    pacman -S "$PKG" --noconfirm --needed
-	    break
 	done
 fi
 

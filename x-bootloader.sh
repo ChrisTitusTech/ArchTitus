@@ -44,8 +44,7 @@ grub-mkconfig -o $grubfile
 
 if [[ -s $grubfile ]]; then
 	cat $grubfile
-   	echo "$grubfile exists and not empty"
-	read -n 1 -s -r -p "Press any key to continue...or manually break script here."
+   	echo "$grubfile exists (and not empty?)"
 else
 	echo ""
 	echo "$grubfile doesn't exist or is empty.  Is grub downloading correctly?".
