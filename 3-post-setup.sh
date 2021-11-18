@@ -8,50 +8,47 @@
 #  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 #-------------------------------------------------------------------------
 
-echo -e "\nFINAL SETUP AND CONFIGURATION"
-echo "--------------------------------------"
-echo "-- GRUB EFI Bootloader Install&Check--"
-echo "--------------------------------------"
-if [[ -d "/sys/firmware/efi" ]]; then
-    grub-install --efi-directory=/boot ${DISK}
-fi
-grub-mkconfig -o /boot/grub/grub.cfg
+echo "-------------------------------------------------------------------------"
+echo "--                          GRUB Bootloader                            --"
+echo "-------------------------------------------------------------------------"
+    ~/ArchTitus/x-bootloader.sh
 
-# ------------------------------------------------------------------------
 
-echo -e "\nEnabling Login Display Manager"
-systemctl enable sddm.service
-echo -e "\nSetup SDDM Theme"
-cat <<EOF > /etc/sddm.conf
-[Theme]
-Current=Nordic
-EOF
-
-# ------------------------------------------------------------------------
-
-echo -e "\nEnabling essential services"
-
-systemctl enable cups.service
-ntpd -qg
-systemctl enable ntpd.service
-systemctl disable dhcpcd.service
-systemctl stop dhcpcd.service
-systemctl enable NetworkManager.service
-systemctl enable bluetooth
-echo "
-###############################################################################
-# Cleaning
-###############################################################################
-"
-# Remove no password sudo rights
+echo "-------------------------------------------------------------------------"
+echo "--                         Cleaning Up / Misc                          --"
+echo "-------------------------------------------------------------------------"
+# Remove no password sudo rights granted previously
 sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 # Add sudo rights
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
-# Replace in the same state
+# Cleanup unused packages
+pacman -Rsc --noconfirm "$(pacman -Qqdt)"
+
+# Enable btrfs snapshots
+snapper -c root create-config /
+
+
+# Enable services
+systemctl disable dhcpcd.service
+systemctl stop dhcpcd.service
+
+systemctl enable sddm.service
+
+ntpd -qg #netowrk time sync
+systemctl enable ntpd.service
+
+systemctl enable cups.service
+systemctl enable bluetooth
+
+systemctl enable smb.service
+systemctl enable nmb.service
+systemctl enable NetworkManager.service
+systemctl enable NetworkManager-dispatcher.service
+
+# change directory back
 cd $pwd
-echo "
-###############################################################################
-# Done - Please Eject Install Media and Reboot
-###############################################################################
-"
+
+echo "-------------------------------------------------------------------------"
+echo "--          Done - Please Eject Install Media and Reboot               --"
+echo "-------------------------------------------------------------------------"

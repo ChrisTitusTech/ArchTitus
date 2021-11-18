@@ -8,30 +8,27 @@
 #  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 #-------------------------------------------------------------------------
 
-echo -e "\nINSTALLING AUR SOFTWARE\n"
-# You can solve users running this script as root with this and then doing the same for the next for statement. However I will leave this up to you.
+echo "-------------------------------------------------------------------------"
+echo "--            Setup yay to download packages from AUR                  --"
+echo "-------------------------------------------------------------------------"
+# Make sure these packages are installed for installing AUR manager
+sudo pacman -S git base-devel --noconfirm --needed
 
-echo "CLONING: YAY"
+# Download and Install yay
 cd ~
 git clone "https://aur.archlinux.org/yay.git"
 cd ${HOME}/yay
 makepkg -si --noconfirm
-cd ~
-touch "$HOME/.cache/zshhistory"
-git clone "https://github.com/ChrisTitusTech/zsh"
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/powerlevel10k
-ln -s "$HOME/zsh/.zshrc" $HOME/.zshrc
 
-PKGS=(
-'autojump'
+
+echo "-------------------------------------------------------------------------"
+echo "--               Installing Requested Packages from AUR                --"
+echo "-------------------------------------------------------------------------"
+PKGS_AUR_CORE=(
+'autojump' # A faster way to navigate your filesystem from the command line
 'awesome-terminal-fonts'
-'brave-bin' # Brave Browser
-'dxvk-bin' # DXVK DirectX to Vulcan
-'github-desktop-bin' # Github Desktop sync
-'lightly-git'
+'lightly-git' # theme (for qt)
 'lightlyshaders-git'
-'mangohud' # Gaming FPS Counter
-'mangohud-common'
 'nerd-fonts-fira-code'
 'nordic-darker-standard-buttons-theme'
 'nordic-darker-theme'
@@ -42,19 +39,64 @@ PKGS=(
 'plasma-pa'
 'ocs-url' # install packages from websites
 'sddm-nordic-theme-git'
-'snapper-gui-git'
 'ttf-droid'
 'ttf-hack'
 'ttf-meslo' # Nerdfont package
 'ttf-roboto'
-'zoom' # video conferences
-'snap-pac'
 )
 
-for PKG in "${PKGS[@]}"; do
+PKGS_AUR_DEFAULT=(
+'brave-bin' # Brave Browser
+'dxvk-bin' # DXVK DirectX to Vulcan
+'github-desktop-bin' # Github Desktop sync
+'mangohud' # Gaming FPS Counter
+'mangohud-common' #installs with mangohud
+'zoom' # video conferences
+'snap-pac' # btrfs tools...runs snapshot after every pacman install
+'snapper-gui-git' # a tool of managing snapshots of Btrfs subvolumes and LVM volumes
+)
+
+# install core packages
+for PKG in "${PKGS_AUR_CORE[@]}"; do
+	echo "INSTALLING AUR CORE PACKAGE: ${PKG}"
     yay -S --noconfirm $PKG
 done
 
+# Read config file, if it exists
+configFileName=${HOME}/ArchTitus/install.conf
+if [ -e "$configFileName" ]; then
+	echo "Using configuration file $configFileName."
+	. $configFileName
+fi
+
+# install default or user specified packages (if they exist)
+if [ ${#PKGS_AUR[@]} -eq 0 ]; then
+	echo "installing AUR default packages"
+	for PKG in "${PKGS_AUR_DEFAULT[@]}"; do
+	    echo "INSTALLING AUR DEFAULT PACKAGE: ${PKG}"
+		yay -S --noconfirm $PKG
+	done
+else
+	echo "installing AUR user specified packages"
+	for PKG in "${PKGS_AUR[@]}"; do
+	    echo "INSTALLING AUR USER SPECIFIED PACKAGE: ${PKG}"
+		yay -S --noconfirm $PKG
+	done
+fi
+
+
+echo "-------------------------------------------------------------------------"
+echo "--                        Setup User Theme                             --"
+echo "-------------------------------------------------------------------------"
+# Zsh syntax highlighting
+cd ~
+touch "$HOME/.cache/zshhistory"
+git clone "https://github.com/ChrisTitusTech/zsh"
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/powerlevel10k
+ln -s "$HOME/zsh/.zshrc" $HOME/.zshrc
+
+# KDE config
+sudo pacman -S python-pip --noconfirm --needed
 export PATH=$PATH:~/.local/bin
 cp -r $HOME/ArchTitus/dotfiles/* $HOME/.config/
 pip install konsave
@@ -62,5 +104,11 @@ konsave -i $HOME/ArchTitus/kde.knsv
 sleep 1
 konsave -a kde
 
-echo -e "\nDone!\n"
-exit
+sudo systemctl enable sddm.service
+sudo bash -c 'cat <<EOF > /etc/sddm.conf
+[Theme]
+Current=Nordic
+EOF
+'
+
+echo "ready for 'arch-chroot /mnt /root/ArchTitus/3-post-setup.sh'"
