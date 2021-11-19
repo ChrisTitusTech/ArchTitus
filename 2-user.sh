@@ -108,8 +108,8 @@ if [ ! -z "${openWeatherMapCityId}" ]; then
     sudo make install
 
     # Configure KDE and weather plasmoids
-    file1=/home/titus/.config/plasma-org.kde.plasma.desktop-appletsrc
-    file2=/home/titus/.config/plasma_calendar_holiday_regions
+    file1=${HOME}/.config/plasma-org.kde.plasma.desktop-appletsrc
+    file2=${HOME}/.config/plasma_calendar_holiday_regions
 
     sed -i 's/plugin=org.kde.plasma.digitalclock/plugin=org.kde.plasma.eventcalendar/g' $file1
     sed -i 's/AppletOrder=34;4;5;6;7;18;19/AppletOrder=34;4;5;6;44;7;18;19/g' $file1
