@@ -130,7 +130,11 @@ echo "" >> $configFileName
 #	    echo "INSTALLING AUR DEFAULT PACKAGE: ${PKG}"
 #		yay -S --noconfirm $PKG
 #	    echo "${PKG}"
-        echo "${PKG}" >> $configFileName
+	if [ "${PKG}" == "PKGS_AUR_DEFAULT=(" ]; then
+		echo "PKGS_AUR=("
+	else
+        	echo "${PKG}" >> $configFileName
+	fi
 	done
 #else
 #	echo "installing AUR user specified packages"
@@ -155,7 +159,11 @@ echo "" >> $configFileName
 	for PKG in "${PKGS_ARCH_DEFAULT[@]}"; do
 #	    echo "INSTALLING ARCH DEFAULT PACKAGE: ${PKG}"
 #	    pacman -S "$PKG" --noconfirm --needed
-        echo "${PKG}" >> $configFileName
+        if [ "${PKG}" == "PKGS_ARCH_DEFAULT=(" ]; then
+		echo "PKGS_ARCH=("
+	else
+        	echo "${PKG}" >> $configFileName
+	fi
 	done
 #else
 #	echo "installing arch user specified packages"
