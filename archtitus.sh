@@ -11,3 +11,7 @@ arch-chroot /mnt /root/ArchTitus/1-setup.sh
 source /mnt/root/ArchTitus/install.conf #read config file
 arch-chroot /mnt /usr/bin/runuser -u $username -- /home/$username/ArchTitus/2-user.sh
 arch-chroot /mnt /root/ArchTitus/3-post-setup.sh
+
+echo "-------------------------------------------------------------------------"
+echo "--          Done - Please Eject Install Media and Reboot               --"
+echo "-------------------------------------------------------------------------"

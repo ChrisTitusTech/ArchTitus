@@ -28,7 +28,6 @@ pacman -Rsc --noconfirm "$(pacman -Qqdt)"
 # Enable btrfs snapshots
 snapper -c root create-config /
 
-
 # Enable services
 systemctl disable dhcpcd.service
 systemctl stop dhcpcd.service
@@ -43,12 +42,11 @@ systemctl enable bluetooth
 
 systemctl enable smb.service
 systemctl enable nmb.service
+
 systemctl enable NetworkManager.service
 systemctl enable NetworkManager-dispatcher.service
 
 # change directory back
 cd $pwd
 
-echo "-------------------------------------------------------------------------"
-echo "--          Done - Please Eject Install Media and Reboot               --"
-echo "-------------------------------------------------------------------------"
+echo "Done!"

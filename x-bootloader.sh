@@ -12,7 +12,7 @@ if ! grep -qs '/boot ' /proc/mounts; then
         umount -fl /mnt
     	~/ArchTitus/x-mount.sh
 	arch-chroot /mnt /root/ArchTitus/x-bootloader.sh
-	echo "Done.  Please reboot and/or try again if needed".
+	echo "Done.  Please reboot to see if it works now.".
 	exit
 fi
 
@@ -50,9 +50,9 @@ else
 	echo "$grubfile doesn't exist or is empty.  Is grub downloading correctly?".
 	echo "Sometimes file wont exist, or a grub.new file is presnet in /boot/grub"
 	echo "Other times the file will be blank and grub-mkconfig outputs nothing..."
-	echo "Try again or break the script here and investigate"
-	echo "you'll find the following commands useful to investigate"
+	echo "Try installing Arch again or break the script here and investigate"
+	echo "You'll find the following commands useful to investigate..."
 	echo "arch-chroot /mnt"
 	echo "grub-mkconfig -o $grubfile"
-	read -n 1 -s -r -p "Press any key to continue...or manually break script here."
+	read -n 1 -s -r -p "Your system will not boot.  Press any key to continue...or manually break script here."
 fi

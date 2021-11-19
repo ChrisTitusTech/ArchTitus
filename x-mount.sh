@@ -8,7 +8,7 @@
     mount -t vfat -L BOOT /mnt/boot
 
     if ! grep -qs '/mnt' /proc/mounts; then
-        echo "Drive did not mount correctly.  Can not continue!"
+        echo "Drive did not mount correctly.  Cannot continue!"
         read -n 1 -s -r -p "Press any key to reboot..."
         reboot now
     fi

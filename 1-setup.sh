@@ -105,31 +105,30 @@ PKGS_ARCH_DEFAULT=(
 'iptables-nft' # replaces iptables
 'traceroute' # track route taken by packets over an IP network
 'openbsd-netcat' # tcp/ip network tools
-'bind' #DNS tools
+'bind' # DNS tools
+'gufw' # manage netfilter firewall
 
 #...MAIN TOOLS...
-'cmatrix' # matix screen
+'cmatrix' # matrix screen
 'cronie' # schedule tasks/jobs
 'htop' # see running processes
 'lsof' # list open files for running Unix processes
-'nano' # a famous text editor
+'nano' # a famous text editor...easy for newbies, not as powerful as vim
 'neofetch' # displays information about your computer
-'openssh' # remote login with the SSH protocol
+'openssh' # remote login another system with the SSH protocol
 'os-prober' # detect other OSes on a set of drives (for grub)
-'vim' # a famous text editor
+'vim' # a famous text editor...hard for newbies
 'wget' # get files from web
-'git' # get files from web, development sync
+'git' # get files from web, think github or gitlab
 'bash-completion' # programmable completion for the bash shell
-'zsh' # command line intrepreter
+'zsh' # command line interpreter
 	'zsh-syntax-highlighting'
 	'zsh-autosuggestions'
 	'zsh-completions'
 'pacman-contrib' # scripts and tools for pacman systems
 'rsync' # sync files
 'reflector' # sort and filter pacman mirror list
-'snapper' # managing BTRFS and LVM snapshots tool...also installed by snap-pac and snapper-gui-git!!
-	    # btrfs can't create snapshots of a volume that also contains a swapfile. I fixed this by moving my swapfile to its own subvolume.
-'gufw' # manage netfilter firewall...added by me replacing ufw
+'snapper' # managing BTRFS and LVM snapshots tool...(installed by snap-pac and snapper-gui-git as well)
 
 #...KDE...
 'konsole' # KDE terminal
@@ -145,7 +144,7 @@ PKGS_ARCH_DEFAULT=(
 	'kimageformats'	   # dds, xcf, exr, psd, and more formats
 	'kipi-plugins'     # export to various online services
 	'kamera'           # imports from gphoto2 cameras
-'filelight' # KDE tool to view disk useage
+'filelight' # KDE tool to view disk use
 'spectacle' # KDE screenshot capture utility
 	'kipi-plugins' # export to various online services
 
@@ -159,31 +158,31 @@ PKGS_ARCH_DEFAULT=(
 'gimp' # Photo editing
 'jdk-openjdk' # Java 17
 'lutris' # gaming platform
-'okular'
-'qemu'
-'steam'
+'okular' # pdf viewer
+'qemu' # a hypervisor (virtual machines)
+'steam' # games
 'gamemode' # gaming optimizations
-'synergy'
-'virt-manager'
-'virt-viewer'
-'wine-gecko' #why not just wine?
-'wine-mono' #why not just wine?
-'winetricks' #why not just wine?
+'synergy' # share kebyard and mouse amung systems
+'virt-manager' # another hypervisor (create virtual machines)
+'virt-viewer' # another hypervisor (view virtual machines)
+'wine-gecko' # Wine's built-in replacement for Microsoft's Internet Explorer...(also installs wine)
+'wine-mono' # Wine's built-in replacement for Microsoft's .NET Framework...(also installs wine)
+'winetricks' # makes wine better...(also installs wine)
 
 #...AUDIO/SOUND SUPPORT...
-'alsa-plugins' #installed by steam
+'alsa-plugins' #(installed by steam)
 'alsa-utils'
-'pulseaudio' #installed as part of plasma-pa
+'pulseaudio' #(installed as part of plasma-pa)
 'pulseaudio-alsa'
 'pulseaudio-bluetooth'
 
 #...POWER/BATTERY/SUSPEND SUPPORT...
-'powerdevil' # KDE tool to manage power consumption...installed as part of plasma-desktop
+'powerdevil' # KDE tool to manage power consumption...(installed as part of plasma-desktop)
 
 #...BLUETOOTH SUPPORT...
 'bluedevil'
-'bluez' # bluetooth support...installed as part of bluedevil and powerdevil
-'bluez-libs'  #installed as part of networkmanager
+'bluez' # bluetooth support...(installed as part of bluedevil and powerdevil)
+'bluez-libs'  #(installed as part of networkmanager)
 'bluez-utils'
 
 #...PRINTER SUPPORT...
@@ -192,28 +191,28 @@ PKGS_ARCH_DEFAULT=(
 
 #...FILESYSTEM SUPPORT...
 'ntfs-3g' # NTFS support
-'dosfstools' #installed by k things
+'dosfstools' #(installed by kde things)
 'exfat-utils' # exfat support
-'btrfs-progs' #installed installed by snap-pac and snapper-gui-git MIGHT MIGHT Be installed by K!
+'btrfs-progs' #(installed by snap-pac and snapper-gui-git MIGHT MIGHT Be installed by kde things)
 'fuseiso' # mount ISO images
 
 #...SAMBA-WINDOWS NETWORK SHARE SUPPORT...
 'samba'
 'smbnetfs'
 
-#...UNNEEDED...
-'unzip' # file compression installed by other things when needed as a depenency
+#...UNNEEDED to explicitly install...
+'unzip' # file compression installed by other things when needed as a dependency
 'zip' # file compression
 'audiocd-kio' # Audio CDs
 'swtpm' # small tpm emulator
 'dialog' # Shows a dialog by command line
 'dtc'  # Device Tree Compilier (required for qemu and spike a ISA emulator)
 'egl-wayland' # graphics/nvidia
-'extra-cmake-modules' #I saw these get installed by some aur program, but no dep listed...
-'fuse2'  #installed as part of fuseiso
-'fuse3'  #installed as part of plasma-worksapce
-'gptfdisk' #DOES CFDISK work without it? YES  Installed as part of a bunch of K things
-'kcoreaddons' #installed as part of a bunch of k things
+'extra-cmake-modules' # installs by others things when needed as a dependency
+'fuse2'  #(installed as part of fuseiso)
+'fuse3'  #(installed as part of plasma-worksapce)
+'gptfdisk' #DOES CFDISK work without it? YES  (installed as part of a bunch of kde things)
+'kcoreaddons' #(installed as part of a bunch of kde things)
 'zeroconf-ioslave' # network Monitor for DNS-SD services for KDE
 'kvantum-qt5' 
 'linux-firmware'
@@ -223,10 +222,10 @@ PKGS_ARCH_DEFAULT=(
 'python-pyqt5'
 #CODECS
 'gst-libav' #installed as part of wine dxvk-bin I DID NOT INSTALL WINE..its DXVK-BIN
-'gst-plugins-good'  #installed by virt
+'gst-plugins-good'  #(installed by virt)
 'gst-plugins-ugly'
 'libdvdcss' # Portable abstraction library for DVD decryption
-'kcodecs' #installed as part of a bunch of k things 
+'kcodecs' #(installed as part of a bunch of kde things)
 )
 
 # Read config file, if it exists
@@ -343,7 +342,7 @@ if [ -e "$configFileName" ] && [ ! -z "$password" ] && [ "$password" != "*!*CHAN
 else
 	passwd $username
 	if [ "$password" != "*!*CHANGEME*!*...and-dont-store-in-plantext..." ]; then
-		echo "password=*!*CHANGEME*!*...and-dont-store-in-plantext..." >> ${HOME}/ArchTitus/install.conf
+		echo "password=*!*CHANGEME*!*...and-dont-store-in-plantext..." >> $configFileName
 	fi
 fi
 

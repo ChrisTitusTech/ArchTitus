@@ -14,7 +14,7 @@ echo "-------------------------------------------------------------------------"
 # Make sure these packages are installed for installing AUR manager
 sudo pacman -S git base-devel --noconfirm --needed
 
-# Download and Install yay
+# Download and Install yay AUR manager
 cd ~
 git clone "https://aur.archlinux.org/yay.git"
 cd ${HOME}/yay

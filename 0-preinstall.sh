@@ -132,10 +132,10 @@ if [ -e "$configFileName" ] && [ ! -z "$disk" ]; then
     echo -e "-------------------------------------------------------------------------"
     if [ "$password" == "*!*CHANGEME*!*...and-dont-store-in-plantext..." ]; then
         while true; do
-	    read -s -p "Password for $username: " password
-	    echo
-	    read -s -p "Password for $username (again): " password2
-	    echo
+            read -s -p "Password for $username: " password
+            echo
+            read -s -p "Password for $username (again): " password2
+            echo
 	    if [ "$password" = "$password2" ] && [ "$password" != "" ]; then
 	    	break
 	    fi
