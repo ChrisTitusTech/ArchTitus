@@ -84,6 +84,16 @@ fi
 
 
 
+echo "" >> $configFileName
+echo "# Configuring this section enables showing weather on the taskbar" >> $configFileName
+echo "# and forecasts on the calendar" >> $configFileName
+echo "# Go to 'https://openweathermap.org/find' to get your City ID and Alias" >> $configFileName
+echo "# This example is for Chicago." >> $configFileName
+echo "#openWeatherMapCityId=4887398" >> $configFileName
+echo "#openWeatherMapCityAlias=\"Chicago, US\"" >> $configFileName
+
+
+
 
 # Read default packages from scrips into array...
 # This section of code is not lifted from any other scrips in this repo...custom for this need.

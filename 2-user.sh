@@ -84,6 +84,81 @@ else
 	done
 fi
 
+# install optional weather package if configured
+if [ ! -z "${openWeatherMapCityId}" ]; then
+    if [ -z "${openWeatherMapCityAlias}" ]; then
+        openWeatherMapCityAlias="Configured City"
+    fi
+    echo "configuring weather for $openWeatherMapCityAlias - $openWeatherMapCityId"
+
+    # Install plasmoids
+    yay -S --noconfirm plasma5-applets-eventcalendar
+
+    cd ~
+    git clone https://github.com/kotelnik/plasma-applet-weather-widget
+    cd ${HOME}/plasma-applet-weather-widget
+    mkdir build
+    cd build
+    cmake .. \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DLIB_INSTALL_DIR=lib \
+        -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
+    make
+    sudo make install
+
+    # Configure KDE and weather plasmoids
+    file1=/home/titus/.config/plasma-org.kde.plasma.desktop-appletsrc
+    file2=/home/titus/.config/plasma_calendar_holiday_regions
+
+    sed -i 's/plugin=org.kde.plasma.digitalclock/plugin=org.kde.plasma.eventcalendar/g' $file1
+    sed -i 's/AppletOrder=34;4;5;6;7;18;19/AppletOrder=34;4;5;6;44;7;18;19/g' $file1
+
+    echo "[Containments][2][Applets][18][Configuration][General]
+    clockShowLine2=true
+    timerSfxFilepath=file:///usr/share/sounds/freedesktop/stereo/audio-channel-front-right.oga
+    v71Migration=true
+    v72Migration=true
+
+    [Containments][2][Applets][18][Configuration][Google Calendar]
+    calendarList=W10=
+    tasklistList=W10=
+
+    [Containments][2][Applets][18][Configuration][Weather]
+    openWeatherMapCityId=$openWeatherMapCityId
+    weatherUnits=imperial
+
+    [Containments][2][Applets][44]
+    immutability=1
+    plugin=org.kde.weatherWidget
+
+    [Containments][2][Applets][44][Configuration]
+    PreloadWeight=75
+
+    [Containments][2][Applets][44][Configuration][Appearance]
+    inTrayActiveTimeoutSec=8000
+    renderMeteogram=true
+
+    [Containments][2][Applets][44][Configuration][ConfigDialog]
+    DialogHeight=540
+    DialogWidth=720
+
+    [Containments][2][Applets][44][Configuration][General]
+    lastReloadedMsJson={\"cache_5a5440a6c6026f3e61c6aee598cae8dc\":1637347842409,\"cache_3c6fc338a6d3824bb170a9f9e7628698\":1637348083971}
+    places=[{\"providerId\":\"owm\",\"placeIdentifier\":\"$openWeatherMapCityId\",\"placeAlias\":\"$openWeatherMapCityAlias\"}]
+    reloadIntervalMin=20
+
+    [Containments][2][Applets][44][Configuration][Units]
+    pressureType=inHg
+    temperatureType=fahrenheit
+    windSpeedType=mph" >> $file1
+
+    echo "[General]
+    selectedRegions=us_en-us" >> $file2
+else
+    echo "no weather configured"
+fi
+
 
 echo "-------------------------------------------------------------------------"
 echo "--                        Setup User Theme                             --"
@@ -113,14 +188,7 @@ InputMethod=qtvirtualkeyboard
 EOF
 '
 
-# In case someone uses 
-'$HOME/.config/dolphinrc'
-
-# In case someone installs syncthing
-username=$(whoami)
-systemctl enable syncthing@$username.service
-
-# In case someone doesn't delete ffmpegthumbs (video thumbnails)
+# ffmpegthumbs (video thumbnails) for Dolphin
 # This is dolphin defaults + ffmpegthumbs
 echo "[PreviewSettings]" >> $HOME/.config/dolphinrc
 echo "Plugins=appimagethumbnail,audiothumbnail,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,fontthumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,opendocumentthumbnail,svgthumbnail,textthumbnail,ffmpegthumbs" >> $HOME/.config/dolphinrc
@@ -129,5 +197,9 @@ echo "MaximumRemoteSize=10485758951424" >> $HOME/.config/kdeglobals
 
 #echo "[General]" >> $HOME/.config/dolphinrc
 #echo "RememberOpenedTabs=false" >> $HOME/.config/dolphinrc
+
+# In case someone installs syncthing
+username=$(whoami)
+systemctl enable syncthing@$username.service
 
 echo "ready for 'arch-chroot /mnt /root/ArchTitus/3-post-setup.sh'"
