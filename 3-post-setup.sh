@@ -25,9 +25,6 @@ sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 # Cleanup unused packages
 pacman -Rsc --noconfirm "$(pacman -Qqdt)"
 
-# Enable btrfs snapshots
-snapper -c root create-config /
-
 # Enable services
 systemctl disable dhcpcd.service
 systemctl stop dhcpcd.service
@@ -45,6 +42,9 @@ systemctl enable nmb.service
 
 systemctl enable NetworkManager.service
 systemctl enable NetworkManager-dispatcher.service
+
+# Enable btrfs snapshots
+snapper -c root create-config /
 
 # change directory back
 cd $pwd
