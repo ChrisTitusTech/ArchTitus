@@ -131,7 +131,7 @@ echo "" >> $configFileName
 #		yay -S --noconfirm $PKG
 #	    echo "${PKG}"
 	if [ "${PKG}" == "PKGS_AUR_DEFAULT=(" ]; then
-		echo "PKGS_AUR=("
+		echo "PKGS_AUR=(" >> $configFileName
 	else
         	echo "${PKG}" >> $configFileName
 	fi
@@ -160,7 +160,7 @@ echo "" >> $configFileName
 #	    echo "INSTALLING ARCH DEFAULT PACKAGE: ${PKG}"
 #	    pacman -S "$PKG" --noconfirm --needed
         if [ "${PKG}" == "PKGS_ARCH_DEFAULT=(" ]; then
-		echo "PKGS_ARCH=("
+		echo "PKGS_ARCH=(" >> $configFileName
 	else
         	echo "${PKG}" >> $configFileName
 	fi
