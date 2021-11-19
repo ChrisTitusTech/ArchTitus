@@ -85,6 +85,7 @@ echo "-------------------------------------------------------------------------"
 pacman -S plasma dolphin --noconfirm --needed
 pacman -S packagekit-qt5 --noconfirm --needed #needed for discover, which is in the plasma group
 pacman -S kdialog --noconfirm --needed #needed for some apps to display native kde dialogs
+pacman -S ffmpegthumbs --noconfirm --needed #needed for video thumbnails in dolphin, can turn off in dolphin options
 
 
 echo "-------------------------------------------------------------------------"
@@ -112,6 +113,7 @@ PKGS_ARCH_DEFAULT=(
 'cmatrix' # matrix screen
 'cronie' # schedule tasks/jobs
 'htop' # see running processes
+'dmidecode' # see system technical specs
 'lsof' # list open files for running Unix processes
 'nano' # a famous text editor...easy for newbies, not as powerful as vim
 'neofetch' # displays information about your computer
