@@ -136,6 +136,9 @@ PKGS_ARCH_DEFAULT=(
 #'qt5-virtualkeyboard' # Virtual keyboard for login screen (surface devices)
 'konsole' # KDE terminal
 'kate' # KDE text editor
+	'kompare' File comparison tool (also supports meld) (also supports kdiff3)
+	'meld'
+	'kdiff3'
 'ark' # KDE file archive tool
 	'p7zip'      # 7Z format support 
 	'unrar'      # RAR decompression support
