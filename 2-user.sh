@@ -84,6 +84,45 @@ else
 	done
 fi
 
+
+echo "-------------------------------------------------------------------------"
+echo "--                        Setup User Theme                             --"
+echo "-------------------------------------------------------------------------"
+# Zsh syntax highlighting
+cd ~
+touch "$HOME/.cache/zshhistory"
+git clone "https://github.com/ChrisTitusTech/zsh"
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/powerlevel10k
+ln -s "$HOME/zsh/.zshrc" $HOME/.zshrc
+
+# KDE config
+sudo pacman -S python-pip --noconfirm --needed
+export PATH=$PATH:~/.local/bin
+cp -r $HOME/ArchTitus/dotfiles/* $HOME/.config/
+pip install konsave
+konsave -i $HOME/ArchTitus/kde.knsv
+sleep 1
+konsave -a kde
+
+sudo systemctl enable sddm.service
+sudo bash -c 'cat <<EOF > /etc/sddm.conf
+[Theme]
+Current=Nordic
+[General]
+InputMethod=qtvirtualkeyboard
+EOF
+'
+
+# ffmpegthumbs (video thumbnails) for Dolphin
+# This is dolphin defaults + ffmpegthumbs
+echo "[PreviewSettings]" >> $HOME/.config/dolphinrc
+echo "Plugins=appimagethumbnail,audiothumbnail,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,fontthumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,opendocumentthumbnail,svgthumbnail,textthumbnail,ffmpegthumbs" >> $HOME/.config/dolphinrc
+echo "[PreviewSettings]" >> $HOME/.config/kdeglobals
+echo "MaximumRemoteSize=10485758951424" >> $HOME/.config/kdeglobals
+
+#echo "[General]" >> $HOME/.config/dolphinrc
+#echo "RememberOpenedTabs=false" >> $HOME/.config/dolphinrc
+
 # install optional weather package if configured
 if [ ! -z "${openWeatherMapCityId}" ]; then
     if [ -z "${openWeatherMapCityAlias}" ]; then
@@ -158,45 +197,6 @@ if [ ! -z "${openWeatherMapCityId}" ]; then
 else
     echo "no weather configured"
 fi
-
-
-echo "-------------------------------------------------------------------------"
-echo "--                        Setup User Theme                             --"
-echo "-------------------------------------------------------------------------"
-# Zsh syntax highlighting
-cd ~
-touch "$HOME/.cache/zshhistory"
-git clone "https://github.com/ChrisTitusTech/zsh"
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/powerlevel10k
-ln -s "$HOME/zsh/.zshrc" $HOME/.zshrc
-
-# KDE config
-sudo pacman -S python-pip --noconfirm --needed
-export PATH=$PATH:~/.local/bin
-cp -r $HOME/ArchTitus/dotfiles/* $HOME/.config/
-pip install konsave
-konsave -i $HOME/ArchTitus/kde.knsv
-sleep 1
-konsave -a kde
-
-sudo systemctl enable sddm.service
-sudo bash -c 'cat <<EOF > /etc/sddm.conf
-[Theme]
-Current=Nordic
-[General]
-InputMethod=qtvirtualkeyboard
-EOF
-'
-
-# ffmpegthumbs (video thumbnails) for Dolphin
-# This is dolphin defaults + ffmpegthumbs
-echo "[PreviewSettings]" >> $HOME/.config/dolphinrc
-echo "Plugins=appimagethumbnail,audiothumbnail,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,fontthumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,opendocumentthumbnail,svgthumbnail,textthumbnail,ffmpegthumbs" >> $HOME/.config/dolphinrc
-echo "[PreviewSettings]" >> $HOME/.config/kdeglobals
-echo "MaximumRemoteSize=10485758951424" >> $HOME/.config/kdeglobals
-
-#echo "[General]" >> $HOME/.config/dolphinrc
-#echo "RememberOpenedTabs=false" >> $HOME/.config/dolphinrc
 
 # In case someone installs syncthing
 username=$(whoami)
