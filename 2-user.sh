@@ -108,6 +108,8 @@ sudo systemctl enable sddm.service
 sudo bash -c 'cat <<EOF > /etc/sddm.conf
 [Theme]
 Current=Nordic
+[General]
+InputMethod=qtvirtualkeyboard
 EOF
 '
 
@@ -122,5 +124,10 @@ systemctl enable syncthing@$username.service
 # This is dolphin defaults + ffmpegthumbs
 echo "[PreviewSettings]" >> $HOME/.config/dolphinrc
 echo "Plugins=appimagethumbnail,audiothumbnail,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,fontthumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,opendocumentthumbnail,svgthumbnail,textthumbnail,ffmpegthumbs" >> $HOME/.config/dolphinrc
+echo "[PreviewSettings]" >> $HOME/.config/kdeglobals
+echo "MaximumRemoteSize=10485758951424" >> $HOME/.config/kdeglobals
+
+#echo "[General]" >> $HOME/.config/dolphinrc
+#echo "RememberOpenedTabs=false" >> $HOME/.config/dolphinrc
 
 echo "ready for 'arch-chroot /mnt /root/ArchTitus/3-post-setup.sh'"
