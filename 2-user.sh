@@ -111,4 +111,16 @@ Current=Nordic
 EOF
 '
 
+# In case someone uses 
+'$HOME/.config/dolphinrc'
+
+# In case someone installs syncthing
+username=$(whoami)
+systemctl enable syncthing@$username.service
+
+# In case someone doesn't delete ffmpegthumbs (video thumbnails)
+# This is dolphin defaults + ffmpegthumbs
+echo "[PreviewSettings]" >> $HOME/.config/dolphinrc
+echo "Plugins=appimagethumbnail,audiothumbnail,comicbookthumbnail,cursorthumbnail,djvuthumbnail,ebookthumbnail,exrthumbnail,directorythumbnail,fontthumbnail,imagethumbnail,jpegthumbnail,kraorathumbnail,windowsexethumbnail,windowsimagethumbnail,opendocumentthumbnail,svgthumbnail,textthumbnail,ffmpegthumbs" >> $HOME/.config/dolphinrc
+
 echo "ready for 'arch-chroot /mnt /root/ArchTitus/3-post-setup.sh'"
