@@ -39,6 +39,7 @@ systemctl enable bluetooth
 
 systemctl enable smb.service
 systemctl enable nmb.service
+systemctl enable avahi-daemon.service
 
 systemctl enable NetworkManager.service
 systemctl enable NetworkManager-dispatcher.service
