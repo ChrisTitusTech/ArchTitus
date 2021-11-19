@@ -131,6 +131,7 @@ PKGS_ARCH_DEFAULT=(
 'snapper' # managing BTRFS and LVM snapshots tool...(installed by snap-pac and snapper-gui-git as well)
 
 #...KDE...
+#'qt5-virtualkeyboard' # Virtual keyboard for login screen (surface devices)
 'konsole' # KDE terminal
 'kate' # KDE text editor
 'ark' # KDE file archive tool
@@ -197,8 +198,8 @@ PKGS_ARCH_DEFAULT=(
 'fuseiso' # mount ISO images
 
 #...SAMBA-WINDOWS NETWORK SHARE SUPPORT...
-'samba'
-'smbnetfs'
+#'samba'
+#'smbnetfs'
 
 #...UNNEEDED to explicitly install...
 'unzip' # file compression installed by other things when needed as a dependency
