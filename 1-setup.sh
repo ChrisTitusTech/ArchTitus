@@ -236,7 +236,19 @@ fi
 
 echo -e "\nDone!\n"
 if ! source install.conf; then
-	read -p "Please enter username:" username
+	# Loop through user input until the user gives a valid username
+	valid_username=false
+	while [[ "$valid_username" = false ]]; do 
+		read -p "Please enter username:" username
+		# username regex per response here https://unix.stackexchange.com/questions/157426/what-is-the-regex-to-validate-linux-users
+		if [[ "$username" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]]
+		then 
+			valid_username=true
+		else 
+			echo "You haven't entered a valid username."
+		fi  
+	done 
+
 echo "username=$username" >> ${HOME}/ArchTitus/install.conf
 fi
 if [ $(whoami) = "root"  ];
