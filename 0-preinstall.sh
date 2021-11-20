@@ -41,7 +41,8 @@ echo "-------select your disk to format----------------"
 echo "-------------------------------------------------"
 lsblk
 echo "Please enter disk to work on: (example /dev/sda)"
-read DISK
+# this is just so people can copy of the list -treatmeniceplz
+read /dev/DISK
 echo "THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK"
 read -p "are you sure you want to continue (Y/N):" formatdisk
 case $formatdisk in
