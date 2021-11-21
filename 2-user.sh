@@ -18,14 +18,12 @@ cd ${HOME}/yay
 makepkg -si --noconfirm
 cd ~
 touch "$HOME/.cache/zshhistory"
-git clone "https://github.com/ChrisTitusTech/zsh"
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/powerlevel10k
-ln -s "$HOME/zsh/.zshrc" $HOME/.zshrc
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/marvinroman/oh-my-zsh/master/tools/install.sh)"
 
 PKGS=(
 'autojump'
 'awesome-terminal-fonts'
-'brave-bin' # Brave Browser
+'waterfox' # Waterfox Browser
 'dxvk-bin' # DXVK DirectX to Vulcan
 'github-desktop-bin' # Github Desktop sync
 'lightly-git'
