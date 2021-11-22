@@ -111,7 +111,7 @@ then
 	do 
 		read -p "Please name your machine:" nameofmachine
 		# hostname regex (!!couldn't find spec for computer name!!)
-		if [[ "${nameofmachine,,}" =~ ^[a-z][a-z0-9-_.]{0,62}[a-z0-9]$ ]]
+		if [[ "${nameofmachine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]
 		then 
 			break 
 		fi 
