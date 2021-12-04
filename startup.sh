@@ -134,6 +134,38 @@ set_option HOSTNAME $hostname
 }
 # More features in future
 # language (){}
+network (){
+echo -ne "
+Make sure your wifi device is active from the bios settings.
+You can also use rfkill to device listing. This script
+support only wifi connections.
+"
+iwctl device list # list devices present
+read -p "Select interface for connecting: " WLAN
+iwctl station $WLAN scan
+sleep 1
+echo "Getting network."
+sleep 1
+echo "Getting network.."
+sleep 1
+echo "Getting network..."
+iwctl station $WLAN get-networks
+read -p "Enter SSID to connect: " SSID
+echo "Enter network passphrase: \n"
+read -s PASS
+iwctl --passphrase '$PASS' station '$WLAN' connect '$SSID'
+echo "Checking connection"
+
+if ping -c 1 archlinux.org &>/dev/null; then
+    echo "Hurray!! You are connected."
+else 
+    echo "There is something this script cannot deal with!"
+fi
+}
+# Starting functions
+network
+clear
+logo
 userinfo
 clear
 logo
