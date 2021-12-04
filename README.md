@@ -31,6 +31,11 @@ __[Arch Linux Installation Guide](https://github.com/rickellis/Arch-Linux-Instal
 
 ### No Wifi
 
+You can check if the WiFi is blocked by running `rfkill list`.
+If it says **Soft blocked: yes**, then run `rfkill unblock wifi`
+
+After unblocking the WiFi, you can connect to it. Go through these 5 steps:
+
 #1: Run `iwctl`
 
 #2: Run `device list`, and find your device name.
