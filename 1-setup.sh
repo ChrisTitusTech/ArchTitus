@@ -9,9 +9,9 @@ echo -ne "
   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 -------------------------------------------------------------------------
                     Automated Arch Linux Installer
+                        SCRIPTHOME: $SCRIPTHOME
 -------------------------------------------------------------------------
 "
-source /root/installscripthome.conf
 source $SCRIPTHOME/setup.conf
 echo -ne "
 -------------------------------------------------------------------------
@@ -114,7 +114,6 @@ if [ $(whoami) = "root"  ]; then
 # use chpasswd to enter $username:$password
     echo "$username:$password" | chpasswd
 	cp -R /root/$SCRIPTHOME /home/$username/
-    cp /root/installscripthome.conf /home/$username/installscripthome.conf
     chown -R $username: /home/$username/$SCRIPTHOME
 # enter $hostname to /etc/hostname
 	echo $hostname > /etc/hostname
