@@ -77,19 +77,16 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 # determine processor type and install microcode
-proc_type=$(lscpu | awk '/Vendor ID:/ {print $3}')
-case "$proc_type" in
-	GenuineIntel)
-		print "Installing Intel microcode"
-		pacman -S --noconfirm intel-ucode
-		proc_ucode=intel-ucode.img
-		;;
-	AuthenticAMD)
-		print "Installing AMD microcode"
-		pacman -S --noconfirm amd-ucode
-		proc_ucode=amd-ucode.img
-		;;
-esac
+if lscpu | grep -E "GenuineIntel"; then
+    print "Installing Intel microcode"
+    pacman -S --noconfirm intel-ucode
+    proc_ucode=intel-ucode.img
+elif lscpu | grep -E "AuthenticAMD"; then
+    print "Installing AMD microcode"
+    pacman -S --noconfirm amd-ucode
+    proc_ucode=amd-ucode.img
+fi
+
 echo -ne "
 -------------------------------------------------------------------------
                     Installing Graphics Drivers
