@@ -90,6 +90,20 @@ Please select key board layout from this list
 read -p "Your key boards layout:" keymap
 echo "keymap=$keymap" >> setup.conf
 }
+drivessd () {
+echo -ne "
+Is this an ssd? yes/no:
+"
+read ssd_drive
+
+case $ssd_drive in
+    y|Y|yes|Yes|YES)
+    echo "mountoptions=noatime,compress=zstd,ssd,commit=120" >> setup.conf;;
+    n|N|no|NO|No)
+    echo "mountoptions=noatime,compress=zstd,commit=120" >> setup.conf;;
+    *) echo "Wrong option. Try again";drivessd;;
+esac
+}
 diskpart () {
 lsblk
 echo -ne "
@@ -103,6 +117,8 @@ Please enter disk to work on: (example /dev/sda):
 "
 read option
 echo "DISK=$option" >> setup.conf
+
+drivessd
 }
 userinfo () {
 echo -ne "Please enter username: "
