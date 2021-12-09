@@ -101,7 +101,7 @@ if [[ "${DISK}" == "nvme" ]]; then
         createsubvolumes       
         umount /mnt
 # mount @ subvolume
-        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@ /dev/mapper/ROOT /mnt
+        mount -o ${mountoptions},subvol=@ /dev/mapper/ROOT /mnt
 # make directories home, .snapshots, var, tmp
         mkdir -p /mnt/{home,var,tmp,.snapshots}
 # mount subvolumes
@@ -125,7 +125,7 @@ else
         createsubvolumes
         umount /mnt
 # mount all the subvolumes
-        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@ /dev/mapper/ROOT /mnt
+        mount -o ${mountoptions},subvol=@ /dev/mapper/ROOT /mnt
 # make directories home, .snapshots, var, tmp
         mkdir -p /mnt/{home,var,tmp,.snapshots}
 # mount subvolumes
