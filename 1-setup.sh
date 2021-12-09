@@ -70,7 +70,11 @@ echo -ne "
                     Installing Base System  
 -------------------------------------------------------------------------
 "
-sudo pacman -S --noconfirm --needed - < /root/$SCRIPTHOME/pkg-files/pacman-pkgs.txt
+cat /root/$SCRIPTHOME/pkg-files/pacman-pkgs.txt | while read line 
+do
+    echo "INSTALLING: ${line}"
+   sudo pacman -S --noconfirm --needed ${line}
+done
 echo -ne "
 -------------------------------------------------------------------------
                     Installing Microcode
