@@ -18,6 +18,7 @@ echo -ne "
     bash startup.sh
     source setup.conf
     bash 0-preinstall.sh
+    echo "SCRIPTHOME=$SCRIPTHOME" >> /mnt/root/installscripthome.conf
     arch-chroot /mnt /root/$SCRIPTHOME/1-setup.sh
     arch-chroot /mnt /usr/bin/runuser -u $username -- /home/$username/$SCRIPTHOME/2-user.sh
     arch-chroot /mnt /root/$SCRIPTHOME/3-post-setup.sh

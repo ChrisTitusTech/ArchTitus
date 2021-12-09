@@ -14,6 +14,7 @@ echo -ne "
 Final Setup and Configurations
 GRUB EFI Bootloader Install & Check
 "
+source /root/installscripthome.conf
 source $SCRIPTHOME/setup.conf
 if [[ -d "/sys/firmware/efi" ]]; then
     grub-install --efi-directory=/boot ${DISK}
@@ -57,6 +58,11 @@ echo -ne "
 sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 # Add sudo rights
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
+
+rm -r /root/$SCRIPTHOME
+rm -r /root/installscripthome.conf
+rm -r /home/$username/$SCRIPTHOME
+rm -r /home/$username/installscripthome.conf
 
 # Replace in the same state
 cd $pwd
