@@ -11,7 +11,7 @@ echo -ne "
                     Automated Arch Linux Installer
 -------------------------------------------------------------------------
 "
-source setup.conf
+source $SCRIPTHOME/setup.conf
 echo -ne "
 -------------------------------------------------------------------------
                     Network Setup 
