@@ -18,11 +18,6 @@ echo -ne "
     bash startup.sh
     source setup.conf
     bash 0-preinstall.sh
-    mkdir /mnt/root/$SCRIPTHOME
-    cp setup.conf /mnt/root/$SCRIPTHOME/setup.conf
-    cp 1-setup.sh /mnt/root/$SCRIPTHOME/1-setup.sh
-    cp 2-user.sh /mnt/root/$SCRIPTHOME/2-user.sh
-    cp 3-post-setup.sh /mnt/root/$SCRIPTHOME/3-post-setup.sh
     arch-chroot /mnt /root/$SCRIPTHOME/1-setup.sh
     arch-chroot /mnt /usr/bin/runuser -u $username -- /home/$username/$SCRIPTHOME/2-user.sh
     arch-chroot /mnt /root/$SCRIPTHOME/3-post-setup.sh
