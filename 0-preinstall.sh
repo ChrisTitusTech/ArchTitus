@@ -91,7 +91,7 @@ if [[ "${DISK}" =~ "nvme" ]]; then
     elif [[ "${FS}" == "luks" ]]; then
         mkfs.vfat -F32 -n "EFIBOOT" ${DISK}p2
 # enter luks password to cryptsetup and format root partition
-        echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${DISK}p3 -
+        echo -n "${luks_password}" | cryptsetup -v luksFormat ${DISK}p3 -
 # open luks container and ROOT will be place holder 
         echo -n "${luks_password}" | cryptsetup open ${DISK}p3 ROOT -
 # now format that container
