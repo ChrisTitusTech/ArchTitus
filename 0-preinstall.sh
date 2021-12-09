@@ -118,7 +118,7 @@ else
         mount -t ext4 ${DISK}3 /mnt
     elif [[ "${FS}" == "luks" ]]; then
         mkfs.vfat -F32 -n "EFIBOOT" ${DISK}2
-        echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${DISK}3 -
+        echo -n "${luks_password}" | cryptsetup -v luksFormat ${DISK}3 -
         echo -n "${luks_password}" | cryptsetup open ${DISK}3 ROOT -
         mkfs.btrfs -L ROOT /dev/mapper/ROOT
         mount -t btrfs /dev/mapper/ROOT /mnt
