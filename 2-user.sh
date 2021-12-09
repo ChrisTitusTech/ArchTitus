@@ -27,7 +27,7 @@ git clone "https://github.com/ChrisTitusTech/zsh"
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git $HOME/powerlevel10k
 ln -s "$HOME/zsh/.zshrc" $HOME/.zshrc
 
-yay -S --noconfirm --needed - < /pkg-files/aur-pkgs.txt
+yay -S --noconfirm --needed - < ~/$SCRIPTHOME/pkg-files/aur-pkgs.txt
 
 export PATH=$PATH:~/.local/bin
 cp -r $HOME/$SCRIPTHOME/dotfiles/* $HOME/.config/
