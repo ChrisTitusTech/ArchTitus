@@ -78,11 +78,11 @@ echo -ne "
 "
 # determine processor type and install microcode
 if lscpu | grep -E "GenuineIntel"; then
-    print "Installing Intel microcode"
+    echo "Installing Intel microcode"
     pacman -S --noconfirm intel-ucode
     proc_ucode=intel-ucode.img
 elif lscpu | grep -E "AuthenticAMD"; then
-    print "Installing AMD microcode"
+    echo "Installing AMD microcode"
     pacman -S --noconfirm amd-ucode
     proc_ucode=amd-ucode.img
 fi
@@ -109,6 +109,7 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 if [ $(whoami) = "root"  ]; then
+    groupadd libvirt
     useradd -m -G wheel,libvirt -s /bin/bash $username 
 # use chpasswd to enter $username:$password
     echo "$username:$password" | chpasswd
