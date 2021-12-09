@@ -79,7 +79,7 @@ mountallsubvol () {
     mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
     mount -o subvol=@var /dev/mapper/ROOT /mnt/var
 }
-if [[ "${DISK}" == "nvme" ]]; then
+if [[ "${DISK}" =~ "nvme" ]]; then
     if [[ "${FS}" == "btrfs" ]]; then
         mkfs.vfat -F32 -n "EFIBOOT" ${DISK}p2
         mkfs.btrfs -L ROOT ${DISK}p3 -f
