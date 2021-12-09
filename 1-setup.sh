@@ -12,7 +12,7 @@ echo -ne "
                         SCRIPTHOME: $SCRIPTHOME
 -------------------------------------------------------------------------
 "
-source $SCRIPTHOME/setup.conf
+source /root/$SCRIPTHOME/setup.conf
 echo -ne "
 -------------------------------------------------------------------------
                     Network Setup 
