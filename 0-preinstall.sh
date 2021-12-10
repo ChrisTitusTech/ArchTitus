@@ -77,7 +77,7 @@ mountallsubvol () {
     mount -o ${mountoptions},subvol=@home /dev/mapper/ROOT /mnt/home
     mount -o ${mountoptions},subvol=@tmp /dev/mapper/ROOT /mnt/tmp
     mount -o ${mountoptions},subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
-    mount -o subvol=@var /dev/mapper/ROOT /mnt/var
+    mount -o ${mountoptions},subvol=@var /dev/mapper/ROOT /mnt/var
 }
 if [[ "${DISK}" == "nvme" ]]; then
     if [[ "${FS}" == "btrfs" ]]; then
