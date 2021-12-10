@@ -106,6 +106,8 @@ if [[ "${DISK}" == "nvme" ]]; then
         mkdir -p /mnt/{home,var,tmp,.snapshots}
 # mount subvolumes
         mountallsubvol
+# store uuid of encrypted partition for grub
+        echo encryped_partition_uuid=$(blkid -s UUID -o value ${DISK}p3) >> setup.conf
     fi
 else
     if [[ "${FS}" == "btrfs" ]]; then
@@ -130,6 +132,8 @@ else
         mkdir -p /mnt/{home,var,tmp,.snapshots}
 # mount subvolumes
         mountallsubvol
+# store uuid of encrypted partition for grub
+        echo encryped_partition_uuid=$(blkid -s UUID -o value ${DISK}3) >> setup.conf
     fi
 fi
 # checking if user selected btrfs
