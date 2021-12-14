@@ -79,63 +79,45 @@ mountallsubvol () {
     mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
     mount -o subvol=@var /dev/mapper/ROOT /mnt/var
 }
+
 if [[ "${DISK}" == "nvme" ]]; then
-    if [[ "${FS}" == "btrfs" ]]; then
-        mkfs.vfat -F32 -n "EFIBOOT" ${DISK}p2
-        mkfs.btrfs -L ROOT ${DISK}p3 -f
-        mount -t btrfs ${DISK}p3 /mnt
-    elif [[ "${FS}" == "ext4" ]]; then
-        mkfs.vfat -F32 -n "EFIBOOT" ${DISK}p2
-        mkfs.ext4 -L ROOT ${DISK}p3
-        mount -t ext4 ${DISK}p3 /mnt
-    elif [[ "${FS}" == "luks" ]]; then
-        mkfs.vfat -F32 -n "EFIBOOT" ${DISK}p2
-# enter luks password to cryptsetup and format root partition
-        echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${DISK}p3 -
-# open luks container and ROOT will be place holder 
-        echo -n "${luks_password}" | cryptsetup open ${DISK}p3 ROOT -
-# now format that container
-        mkfs.btrfs -L ROOT /dev/mapper/ROOT
-# create subvolumes for btrfs
-        mount -t btrfs /dev/mapper/ROOT /mnt
-        createsubvolumes       
-        umount /mnt
-# mount @ subvolume
-        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@ /dev/mapper/ROOT /mnt
-# make directories home, .snapshots, var, tmp
-        mkdir -p /mnt/{home,var,tmp,.snapshots}
-# mount subvolumes
-        mountallsubvol
-# store uuid of encrypted partition for grub
-        echo encryped_partition_uuid=$(blkid -s UUID -o value ${DISK}p3) >> setup.conf
-    fi
+    partition2=${DISK}p2
+    partition3=${DISK}p3
 else
-    if [[ "${FS}" == "btrfs" ]]; then
-        mkfs.vfat -F32 -n "EFIBOOT" ${DISK}2
-        mkfs.btrfs -f -L ROOT ${DISK}3
-        mount -t btrfs ${DISK}3 /mnt
-    elif [[ "${FS}" == "ext4" ]]; then
-        mkfs.vfat -F32 -n "EFIBOOT" ${DISK}2
-        mkfs.ext4 -L ROOT ${DISK}3
-        mount -t ext4 ${DISK}3 /mnt
-    elif [[ "${FS}" == "luks" ]]; then
-        mkfs.vfat -F32 -n "EFIBOOT" ${DISK}2
-        echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${DISK}3 -
-        echo -n "${luks_password}" | cryptsetup open ${DISK}3 ROOT -
-        mkfs.btrfs -L ROOT /dev/mapper/ROOT
-        mount -t btrfs /dev/mapper/ROOT /mnt
-        createsubvolumes
-        umount /mnt
-# mount all the subvolumes
-        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@ /dev/mapper/ROOT /mnt
-# make directories home, .snapshots, var, tmp
-        mkdir -p /mnt/{home,var,tmp,.snapshots}
-# mount subvolumes
-        mountallsubvol
-# store uuid of encrypted partition for grub
-        echo encryped_partition_uuid=$(blkid -s UUID -o value ${DISK}3) >> setup.conf
-    fi
+    partition2=${DISK}2
+    partition3=${DISK}3
 fi
+
+if [[ "${FS}" == "btrfs" ]]; then
+    mkfs.vfat -F32 -n "EFIBOOT" ${partition2}
+    mkfs.btrfs -L ROOT ${partition3} -f
+    mount -t btrfs ${partition3} /mnt
+elif [[ "${FS}" == "ext4" ]]; then
+    mkfs.vfat -F32 -n "EFIBOOT" ${partition2}
+    mkfs.ext4 -L ROOT ${partition3}
+    mount -t ext4 ${partition3} /mnt
+elif [[ "${FS}" == "luks" ]]; then
+    mkfs.vfat -F32 -n "EFIBOOT" ${partition2}
+# enter luks password to cryptsetup and format root partition
+    echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${partition3} -
+# open luks container and ROOT will be place holder 
+    echo -n "${luks_password}" | cryptsetup open ${partition3} ROOT -
+# now format that container
+    mkfs.btrfs -L ROOT /dev/mapper/ROOT
+# create subvolumes for btrfs
+    mount -t btrfs /dev/mapper/ROOT /mnt
+    createsubvolumes       
+    umount /mnt
+# mount @ subvolume
+    mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@ /dev/mapper/ROOT /mnt
+# make directories home, .snapshots, var, tmp
+    mkdir -p /mnt/{home,var,tmp,.snapshots}
+# mount subvolumes
+    mountallsubvol
+# store uuid of encrypted partition for grub
+    echo encryped_partition_uuid=$(blkid -s UUID -o value ${partition3}) >> setup.conf
+fi
+
 # checking if user selected btrfs
 if [[ ${FS} =~ "btrfs" ]]; then
 ls /mnt | xargs btrfs subvolume delete
