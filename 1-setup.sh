@@ -97,6 +97,7 @@ PKGS=(
 'exfat-utils'
 'extra-cmake-modules'
 'filelight'
+'flameshot' # Screenshot Tool
 'flex'
 'fuse2'
 'fuse3'
@@ -173,7 +174,6 @@ PKGS=(
 'sddm'
 'sddm-kcm'
 'snapper'
-'spectacle'
 'steam'
 'sudo'
 'swtpm'
