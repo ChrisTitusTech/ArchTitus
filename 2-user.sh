@@ -26,6 +26,7 @@ PKGS=(
 'autojump' # A faster way to navigate your filesystem from the command line
 'dxvk-bin' # DXVK DirectX to Vulcan
 'github-desktop-bin' # Github Desktop sync
+'icaclient' # Citrix Workspace App (a.k.a. ICAClient, Citrix Receiver) - Required for work
 'mangohud' # Gaming FPS Counter
 'mangohud-common' # Common files for mangohud and lib32-mangohud
 'nerd-fonts-fira-code' # It's literally a heap of fonts
