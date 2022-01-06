@@ -45,7 +45,7 @@ localectl --no-ask-password set-keymap us
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 
 #Add parallel downloading
-sed -i 's/^#Para/Para/' /etc/pacman.conf
+sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 
 #Enable multilib
 sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
@@ -94,7 +94,7 @@ PKGS=(
 'dtc' # Device Tree Compiler
 'efibootmgr' # EFI boot
 'egl-wayland' # EGLStream-based Wayland external platform - Video Driver Stuff
-'exfat-utils' # Utilities for exFAT file system
+'exfatprogs' # Utilities for exFAT file system
 'extra-cmake-modules' # Extra modules and scripts for CMake (A cross-platform open-source make system)
 'filelight' # View disk usage information
 'flex' # Tool for generating scanners: programs which recognize lexical patterns in text (For Compilers)
@@ -236,6 +236,10 @@ fi
 echo -e "\nDone!\n"
 if ! source install.conf; then
 	read -p "Please enter username:" username
+
+# Make username lowercase
+username=${username,,}
+
 echo "username=$username" >> ${HOME}/ArchTitus/install.conf
 fi
 if [ $(whoami) = "root"  ];
