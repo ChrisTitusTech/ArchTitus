@@ -9,9 +9,10 @@ echo -ne "
   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 -------------------------------------------------------------------------
                     Automated Arch Linux Installer
+                        SCRIPTHOME: $SCRIPTHOME
 -------------------------------------------------------------------------
 "
-source setup.conf
+source /root/$SCRIPTHOME/setup.conf
 echo -ne "
 -------------------------------------------------------------------------
                     Network Setup 
@@ -69,39 +70,44 @@ echo -ne "
                     Installing Base System  
 -------------------------------------------------------------------------
 "
-sudo pacman -S --noconfirm --needed - < /pkg-files/pacman-pkgs.txt
+cat /root/$SCRIPTHOME/pkg-files/pacman-pkgs.txt | while read line 
+do
+    echo "INSTALLING: ${line}"
+   sudo pacman -S --noconfirm --needed ${line}
+done
 echo -ne "
 -------------------------------------------------------------------------
                     Installing Microcode
 -------------------------------------------------------------------------
 "
 # determine processor type and install microcode
-proc_type=$(lscpu | awk '/Vendor ID:/ {print $3}')
-case "$proc_type" in
-	GenuineIntel)
-		print "Installing Intel microcode"
-		pacman -S --noconfirm intel-ucode
-		proc_ucode=intel-ucode.img
-		;;
-	AuthenticAMD)
-		print "Installing AMD microcode"
-		pacman -S --noconfirm amd-ucode
-		proc_ucode=amd-ucode.img
-		;;
-esac
+proc_type=$(lscpu)
+if grep -E "GenuineIntel" <<< ${proc_type}; then
+    echo "Installing Intel microcode"
+    pacman -S --noconfirm intel-ucode
+    proc_ucode=intel-ucode.img
+elif grep -E "AuthenticAMD" <<< ${proc_type}; then
+    echo "Installing AMD microcode"
+    pacman -S --noconfirm amd-ucode
+    proc_ucode=amd-ucode.img
+fi
+
 echo -ne "
 -------------------------------------------------------------------------
                     Installing Graphics Drivers
 -------------------------------------------------------------------------
 "
 # Graphics Drivers find and install
-if lspci | grep -E "NVIDIA|GeForce"; then
+gpu_type=$(lspci)
+if grep -E "NVIDIA|GeForce" <<< ${gpu_type}; then
     pacman -S nvidia --noconfirm --needed
 	nvidia-xconfig
-elif lspci | grep -E "Radeon"; then
+elif grep -E "Radeon" <<< ${gpu_type}; then
     pacman -S xf86-video-amdgpu --noconfirm --needed
-elif lspci | grep -E "Integrated Graphics Controller"; then
-    pacman -S libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils --needed --noconfirm
+elif grep -E "Integrated Graphics Controller" <<< ${gpu_type}; then
+    pacman -S libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa --needed --noconfirm
+elif grep -E "Intel Corporation UHD" <<< ${gpu_type}; then
+    pacman -S libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa --needed --noconfirm
 fi
 
 if ! source install.conf; then
@@ -151,7 +157,9 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 if [ $(whoami) = "root"  ]; then
+    groupadd libvirt
     useradd -m -G wheel,libvirt -s /bin/bash $USERNAME 
+
 # use chpasswd to enter $username:$password
     echo "$USERNAME:$PASSWORD" | chpasswd
 	cp -R /root/$SCRIPTHOME /home/$USERNAME/
