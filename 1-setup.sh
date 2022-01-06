@@ -60,11 +60,12 @@ localectl --no-ask-password set-keymap ${KEYMAP}
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 
 #Add parallel downloading
-sed -i 's/^#Para/Para/' /etc/pacman.conf
+sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 
 #Enable multilib
 sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 pacman -Sy --noconfirm
+
 echo -ne "
 -------------------------------------------------------------------------
                     Installing Base System  
