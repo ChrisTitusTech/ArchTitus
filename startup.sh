@@ -107,6 +107,21 @@ read -p "Your key boards layout:" keymap
 set_option KEYMAP $keymap
 }
 
+drivessd () {
+echo -ne "
+Is this an ssd? yes/no:
+"
+read ssd_drive
+
+case $ssd_drive in
+    y|Y|yes|Yes|YES)
+    echo "mountoptions=noatime,compress=zstd,ssd,commit=120" >> setup.conf;;
+    n|N|no|NO|No)
+    echo "mountoptions=noatime,compress=zstd,commit=120" >> setup.conf;;
+    *) echo "Wrong option. Try again";drivessd;;
+esac
+}
+
 # selection for disk type
 diskpart () {
 # show disks present on system
@@ -121,6 +136,9 @@ echo -ne "
 Please enter full path to disk: (example /dev/sda):
 "
 read option
+echo "DISK=$option" >> setup.conf
+
+drivessd
 set_option DISK $option
 }
 userinfo () {

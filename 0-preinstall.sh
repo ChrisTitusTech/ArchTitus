@@ -74,10 +74,10 @@ createsubvolumes () {
 }
 
 mountallsubvol () {
-    mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@home /dev/mapper/ROOT /mnt/home
-    mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@tmp /dev/mapper/ROOT /mnt/tmp
-    mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
-    mount -o subvol=@var /dev/mapper/ROOT /mnt/var
+    mount -o ${mountoptions},subvol=@home /dev/mapper/ROOT /mnt/home
+    mount -o ${mountoptions},subvol=@tmp /dev/mapper/ROOT /mnt/tmp
+    mount -o ${mountoptions},subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
+    mount -o ${mountoptions},subvol=@var /dev/mapper/ROOT /mnt/var
 }
 if [[ "${DISK}" =~ "nvme" ]]; then
     if [[ "${FS}" == "btrfs" ]]; then
@@ -101,7 +101,7 @@ if [[ "${DISK}" =~ "nvme" ]]; then
         createsubvolumes       
         umount /mnt
 # mount @ subvolume
-        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@ /dev/mapper/ROOT /mnt
+        mount -o ${mountoptions},subvol=@ /dev/mapper/ROOT /mnt
 # make directories home, .snapshots, var, tmp
         mkdir -p /mnt/{home,var,tmp,.snapshots}
 # mount subvolumes
@@ -125,7 +125,7 @@ else
         createsubvolumes
         umount /mnt
 # mount all the subvolumes
-        mount -o noatime,compress=zstd,space_cache,commit=120,subvol=@ /dev/mapper/ROOT /mnt
+        mount -o ${mountoptions},subvol=@ /dev/mapper/ROOT /mnt
 # make directories home, .snapshots, var, tmp
         mkdir -p /mnt/{home,var,tmp,.snapshots}
 # mount subvolumes
