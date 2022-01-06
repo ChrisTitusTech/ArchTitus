@@ -47,6 +47,8 @@ PKGS=(
 'ttf-hack'
 'ttf-meslo' # Nerdfont package
 'ttf-roboto'
+'ttf-ms-fonts' # microsoft fonts
+'ttf-vista-fonts' # vista fonts 
 'zoom' # video conferences
 'snap-pac'
 )
