@@ -3,8 +3,9 @@
 # like disk, file system, timezone, keyboard layout,
 # user name, password, etc.
 
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # set up a config file
-CONFIG_FILE=setup.conf
+CONFIG_FILE=$SCRIPT_DIR/setup.conf
 if [ ! -f $CONFIG_FILE ]; then # check if file exists
     touch -f $CONFIG_FILE # create file if not exists
 fi

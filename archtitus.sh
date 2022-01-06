@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Find the name of the folder the scripts are in
-export SCRIPTHOME="$(basename -- $PWD)"
+
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 echo -ne "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
@@ -16,7 +17,7 @@ echo -ne "
                 Scripts are in directory named ArchTitus
 "
     bash startup.sh
-    source setup.conf
+    source $SCRIPT_DIR/setup.conf
     bash 0-preinstall.sh
     arch-chroot /mnt /root/ArchTitus/1-setup.sh
     arch-chroot /mnt /usr/bin/runuser -u $username -- /home/$username/ArchTitus/2-user.sh
