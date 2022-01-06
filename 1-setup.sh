@@ -48,12 +48,12 @@ echo -ne "
 "
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
-timedatectl --no-ask-password set-timezone ${timezone}
+timedatectl --no-ask-password set-timezone ${TIMEZONE}
 timedatectl --no-ask-password set-ntp 1
 localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_TIME="en_US.UTF-8"
 
 # Set keymaps
-localectl --no-ask-password set-keymap ${keymap}
+localectl --no-ask-password set-keymap ${KEYMAP}
 
 # Add sudo no password rights
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
@@ -151,13 +151,13 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 if [ $(whoami) = "root"  ]; then
-    useradd -m -G wheel,libvirt -s /bin/bash $username 
+    useradd -m -G wheel,libvirt -s /bin/bash $USERNAME 
 # use chpasswd to enter $username:$password
-    echo "$username:$password" | chpasswd
-	cp -R /root/$SCRIPTHOME /home/$username/
-    chown -R $username: /home/$username/$SCRIPTHOME
+    echo "$USERNAME:$PASSWORD" | chpasswd
+	cp -R /root/$SCRIPTHOME /home/$USERNAME/
+    chown -R $USERNAME: /home/$USERNAME/$SCRIPTHOME
 # enter $hostname to /etc/hostname
-	echo $hostname > /etc/hostname
+	echo $HOSTNAME > /etc/hostname
 else
 	echo "You are already a user proceed with aur installs"
 fi
