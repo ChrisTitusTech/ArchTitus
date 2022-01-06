@@ -9,13 +9,13 @@ echo -ne "
   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 -------------------------------------------------------------------------
                     Automated Arch Linux Installer
-                        SCRIPTHOME: $SCRIPTHOME
+                        SCRIPTHOME: ArchTitus
 -------------------------------------------------------------------------
 
 Installing AUR Softwares
 "
 # You can solve users running this script as root with this and then doing the same for the next for statement. However I will leave this up to you.
-source ~/$SCRIPTHOME/setup.conf
+source ~/ArchTitus/setup.conf
 
 cd ~
 git clone "https://aur.archlinux.org/yay.git"
@@ -27,12 +27,12 @@ git clone "https://github.com/ChrisTitusTech/zsh"
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
 ln -s "~/zsh/.zshrc" ~/.zshrc
 
-yay -S --noconfirm --needed - < ~/$SCRIPTHOME/pkg-files/aur-pkgs.txt
+yay -S --noconfirm --needed - < ~/ArchTitus/pkg-files/aur-pkgs.txt
 
 export PATH=$PATH:~/.local/bin
-cp -r ~/$SCRIPTHOME/dotfiles/* ~/.config/
+cp -r ~/ArchTitus/dotfiles/* ~/.config/
 pip install konsave
-konsave -i ~/$SCRIPTHOME/kde.knsv
+konsave -i ~/ArchTitus/kde.knsv
 sleep 1
 konsave -a kde
 

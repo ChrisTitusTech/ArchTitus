@@ -147,8 +147,8 @@ set_option USERNAME ${username,,} # convert to lower case as in issue #109
 echo -ne "Please enter your password: \n"
 read -s password # read password without echo
 set_option PASSWORD $password
-read -rep "Please enter your hostname: " hostname
-set_option HOSTNAME $hostname
+read -rep "Please enter your hostname: " nameofmachine
+set_option nameofmachine $nameofmachine
 }
 # More features in future
 # language (){}
