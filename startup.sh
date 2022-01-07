@@ -126,7 +126,7 @@ esac
 # selection for disk type
 diskpart () {
 # show disks present on system
-lsblk -n --output TYPE,KNAME | awk '$1=="disk"{print NR,"/dev/"$2}' # show disks with /dev/ prefix
+lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print NR,"/dev/"$2" - "$3}' # show disks with /dev/ prefix and size
 echo -ne "
 ------------------------------------------------------------------------
     THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK             
