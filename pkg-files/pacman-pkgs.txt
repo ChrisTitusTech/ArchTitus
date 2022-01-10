@@ -120,6 +120,7 @@ rsync
 sddm
 sddm-kcm
 snapper
+snap-pac
 spectacle
 steam
 sudo
@@ -129,6 +130,8 @@ systemsettings
 terminus-font
 traceroute
 ttf-droid
+ttf-hack
+ttf-roboto
 ufw
 unrar
 unzip
