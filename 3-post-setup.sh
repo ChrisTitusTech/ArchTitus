@@ -80,7 +80,7 @@ sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /et
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
 rm -r /root/ArchTitus
-rm -r /home/$username/ArchTitus
+rm -r /home/$USERNAME/ArchTitus
 
 # Replace in the same state
 cd $pwd

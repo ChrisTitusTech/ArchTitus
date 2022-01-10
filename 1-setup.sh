@@ -159,7 +159,7 @@ if [ $(whoami) = "root"  ]; then
     groupadd libvirt
     useradd -m -G wheel,libvirt -s /bin/bash $USERNAME 
 
-# use chpasswd to enter $username:$password
+# use chpasswd to enter $USERNAME:$password
     echo "$USERNAME:$PASSWORD" | chpasswd
 	cp -R /root/ArchTitus /home/$USERNAME/
     chown -R $USERNAME: /home/$USERNAME/ArchTitus
