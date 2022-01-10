@@ -89,6 +89,7 @@ milou
 nano
 neofetch
 networkmanager
+noto-fonts-emoji
 ntfs-3g
 ntp
 okular
