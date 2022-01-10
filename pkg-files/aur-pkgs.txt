@@ -1,5 +1,4 @@
 autojump
-awesome-terminal-fonts
 brave-bin
 dxvk-bin
 github-desktop-bin
