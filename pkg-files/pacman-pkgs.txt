@@ -99,10 +99,12 @@ os-prober
 oxygen
 p7zip
 pacman-contrib
+papirus-icon-theme
 patch
 picom
 pkgconf
 plasma-nm
+plasma-pa
 powerdevil
 powerline-fonts
 print-manager
