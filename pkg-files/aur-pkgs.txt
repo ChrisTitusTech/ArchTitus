@@ -11,8 +11,6 @@ nordic-darker-standard-buttons-theme
 nordic-darker-theme
 nordic-kde-git
 nordic-theme
-papirus-icon-theme
-plasma-pa
 ocs-url
 sddm-nordic-theme-git
 snapper-gui-git
