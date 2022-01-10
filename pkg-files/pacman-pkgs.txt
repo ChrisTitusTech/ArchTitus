@@ -13,6 +13,7 @@ ark
 audiocd-kio
 autoconf
 automake
+awesome-terminal-fonts
 base
 bash-completion
 bind
