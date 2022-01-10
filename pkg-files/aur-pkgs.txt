@@ -14,7 +14,6 @@ nordic-theme
 ocs-url
 sddm-nordic-theme-git
 snapper-gui-git
-ttf-droid
 ttf-hack
 ttf-meslo
 ttf-roboto
