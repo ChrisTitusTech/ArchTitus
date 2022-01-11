@@ -48,8 +48,8 @@ case $FS in
 2) set_option FS ext4;;
 3) 
 echo -ne "Please enter your luks password: "
-read -s luks_password # read password without echo
-set_option luks_password $luks_password
+read -s LUKS_PASSWORD # read password without echo
+set_option LUKS_PASSWORD $LUKS_PASSWORD
 set_option FS luks;;
 0) exit ;;
 *) echo "Wrong option please select again"; filesystem;;
@@ -57,17 +57,17 @@ esac
 }
 timezone () {
 # Added this from arch wiki https://wiki.archlinux.org/title/System_time
-time_zone="$(curl --fail https://ipapi.co/timezone)"
-echo -ne "System detected your timezone to be '$time_zone' \n"
+TIME_ZONE="$(curl --fail https://ipapi.co/timezone)"
+echo -ne "System detected your timezone to be '$TIME_ZONE' \n"
 echo -ne "Is this correct? yes/no:" 
 read answer
 case $answer in
     y|Y|yes|Yes|YES)
-    set_option TIMEZONE $time_zone;;
+    set_option TIMEZONE $TIME_ZONE;;
     n|N|no|NO|No)
     echo "Please enter your desired timezone e.g. Europe/London :" 
-    read new_timezone
-    set_option TIMEZONE $new_timezone;;
+    read NEW_TIMEZONE
+    set_option TIMEZONE $NEW_TIMEZONE;;
     *) echo "Wrong option. Try again";timezone;;
 esac
 }
@@ -104,21 +104,21 @@ Please select key board layout from this list
     -us
 
 "
-read -p "Your key boards layout:" keymap
-set_option KEYMAP $keymap
+read -p "Your key boards layout:" KEYMAP
+set_option KEYMAP $KEYMAP
 }
 
 drivessd () {
 echo -ne "
 Is this an ssd? yes/no:
 "
-read ssd_drive
+read SSD_DRIVE
 
-case $ssd_drive in
+case $SSD_DRIVE in
     y|Y|yes|Yes|YES)
-    echo "mountoptions=noatime,compress=zstd,ssd,commit=120" >> setup.conf;;
+    echo "MOUNT_OPTIONS=noatime,compress=zstd,ssd,commit=120" >> setup.conf;;
     n|N|no|NO|No)
-    echo "mountoptions=noatime,compress=zstd,commit=120" >> setup.conf;;
+    echo "MOUNT_OPTIONS=noatime,compress=zstd,commit=120" >> setup.conf;;
     *) echo "Wrong option. Try again";drivessd;;
 esac
 }
@@ -136,20 +136,20 @@ echo -ne "
 
 Please enter full path to disk: (example /dev/sda):
 "
-read option
-echo "DISK=$option" >> setup.conf
+read OPTION
+echo "DISK=$OPTION" >> setup.conf
 
 drivessd
-set_option DISK $option
+set_option DISK $OPTION
 }
 userinfo () {
-read -p "Please enter your username: " username
-set_option USERNAME ${username,,} # convert to lower case as in issue #109 
+read -p "Please enter your username: " USERNAME
+set_option USERNAME ${USERNAME,,} # convert to lower case as in issue #109 
 echo -ne "Please enter your password: \n"
-read -s password # read password without echo
-set_option PASSWORD $password
-read -rep "Please enter your hostname: " nameofmachine
-set_option nameofmachine $nameofmachine
+read -s PASSWORD # read password without echo
+set_option PASSWORD $PASSWORD
+read -rep "Please enter your hostname: " NAME_OF_MACHINE
+set_option NAME_OF_MACHINE $NAME_OF_MACHINE
 }
 # More features in future
 # language (){}

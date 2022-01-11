@@ -23,7 +23,7 @@ echo -ne "
 Setting up mirrors for optimal download
 "
 source setup.conf
-iso=$(curl -4 ifconfig.co/country-iso)
+ISO=$(curl -4 ifconfig.co/country-iso)
 timedatectl set-ntp true
 pacman -S --noconfirm pacman-contrib terminus-font
 setfont ter-v22b
@@ -32,10 +32,10 @@ pacman -S --noconfirm reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo -ne "
 -------------------------------------------------------------------------
-                    Setting up $iso mirrors for faster downloads
+                    Setting up $ISO mirrors for faster downloads
 -------------------------------------------------------------------------
 "
-reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
+reflector -a 48 -c $ISO -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 mkdir /mnt &>/dev/null # Hiding error message if any
 echo -ne "
 -------------------------------------------------------------------------
@@ -74,34 +74,34 @@ createsubvolumes () {
 }
 
 mountallsubvol () {
-    mount -o ${mountoptions},subvol=@home /dev/mapper/ROOT /mnt/home
-    mount -o ${mountoptions},subvol=@tmp /dev/mapper/ROOT /mnt/tmp
-    mount -o ${mountoptions},subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
-    mount -o ${mountoptions},subvol=@var /dev/mapper/ROOT /mnt/var
+    mount -o ${MOUNT_OPTIONS},subvol=@home /dev/mapper/ROOT /mnt/home
+    mount -o ${MOUNT_OPTIONS},subvol=@tmp /dev/mapper/ROOT /mnt/tmp
+    mount -o ${MOUNT_OPTIONS},subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
+    mount -o ${MOUNT_OPTIONS},subvol=@var /dev/mapper/ROOT /mnt/var
 }
 
 if [[ "${DISK}" =~ "nvme" ]]; then
-    partition2=${DISK}p2
-    partition3=${DISK}p3
+    PARTITION_2=${DISK}p2
+    PARTITION_3=${DISK}p3
 else
-    partition2=${DISK}2
-    partition3=${DISK}3
+    PARTITION_2=${DISK}2
+    PARTITION_3=${DISK}3
 fi
 
 if [[ "${FS}" == "btrfs" ]]; then
-    mkfs.vfat -F32 -n "EFIBOOT" ${partition2}
-    mkfs.btrfs -L ROOT ${partition3} -f
-    mount -t btrfs ${partition3} /mnt
+    mkfs.vfat -F32 -n "EFIBOOT" ${PARTITION_2}
+    mkfs.btrfs -L ROOT ${PARTITION_3} -f
+    mount -t btrfs ${PARTITION_3} /mnt
 elif [[ "${FS}" == "ext4" ]]; then
-    mkfs.vfat -F32 -n "EFIBOOT" ${partition2}
-    mkfs.ext4 -L ROOT ${partition3}
-    mount -t ext4 ${partition3} /mnt
+    mkfs.vfat -F32 -n "EFIBOOT" ${PARTITION_2}
+    mkfs.ext4 -L ROOT ${PARTITION_3}
+    mount -t ext4 ${PARTITION_3} /mnt
 elif [[ "${FS}" == "luks" ]]; then
-    mkfs.vfat -F32 -n "EFIBOOT" ${partition2}
+    mkfs.vfat -F32 -n "EFIBOOT" ${PARTITION_2}
 # enter luks password to cryptsetup and format root partition
-    echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${partition3} -
+    echo -n "${LUKS_PASSWORD}" | cryptsetup -y -v luksFormat ${PARTITION_3} -
 # open luks container and ROOT will be place holder 
-    echo -n "${luks_password}" | cryptsetup open ${partition3} ROOT -
+    echo -n "${LUKS_PASSWORD}" | cryptsetup open ${PARTITION_3} ROOT -
 # now format that container
     mkfs.btrfs -L ROOT /dev/mapper/ROOT
 # create subvolumes for btrfs
@@ -109,13 +109,13 @@ elif [[ "${FS}" == "luks" ]]; then
     createsubvolumes       
     umount /mnt
 # mount @ subvolume
-    mount -o ${mountoptions},subvol=@ /dev/mapper/ROOT /mnt
+    mount -o ${MOUNT_OPTIONS},subvol=@ /dev/mapper/ROOT /mnt
 # make directories home, .snapshots, var, tmp
     mkdir -p /mnt/{home,var,tmp,.snapshots}
 # mount subvolumes
     mountallsubvol
 # store uuid of encrypted partition for grub
-    echo encryped_partition_uuid=$(blkid -s UUID -o value ${partition3}) >> setup.conf
+    echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value ${PARTITION_3}) >> setup.conf
 fi
 
 # checking if user selected btrfs
@@ -161,8 +161,8 @@ echo -ne "
                     Checking for low memory systems <8G
 -------------------------------------------------------------------------
 "
-TOTALMEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
-if [[  $TOTALMEM -lt 8000000 ]]; then
+TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
+if [[  $TOTAL_MEM -lt 8000000 ]]; then
     # Put swap into the actual system, not into RAM disk, otherwise there is no point in it, it'll cache RAM into RAM. So, /mnt/ everything.
     mkdir /mnt/opt/swap # make a dir that we can apply NOCOW to to make it btrfs-friendly.
     chattr +C /mnt/opt/swap # apply NOCOW, btrfs needs that.
