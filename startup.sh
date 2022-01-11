@@ -42,14 +42,14 @@ echo -ne "
     3)      luks with btrfs
     0)      exit
 "
-read FS
-case $FS in
+read fs
+case $fs in
 1) set_option FS btrfs;;
 2) set_option FS ext4;;
 3) 
 echo -ne "Please enter your luks password: "
 read -s luks_password # read password without echo
-set_option luks_password $luks_password
+set_option LUKS_PASSWORD $luks_password
 set_option FS luks;;
 0) exit ;;
 *) echo "Wrong option please select again"; filesystem;;
@@ -116,9 +116,9 @@ read ssd_drive
 
 case $ssd_drive in
     y|Y|yes|Yes|YES)
-    echo "mountoptions=noatime,compress=zstd,ssd,commit=120" >> setup.conf;;
+    echo "MOUNT_OPTIONS=noatime,compress=zstd,ssd,commit=120" >> setup.conf;;
     n|N|no|NO|No)
-    echo "mountoptions=noatime,compress=zstd,commit=120" >> setup.conf;;
+    echo "MOUNT_OPTIONS=noatime,compress=zstd,commit=120" >> setup.conf;;
     *) echo "Wrong option. Try again";drivessd;;
 esac
 }
@@ -149,7 +149,7 @@ echo -ne "Please enter your password: \n"
 read -s password # read password without echo
 set_option PASSWORD $password
 read -rep "Please enter your hostname: " nameofmachine
-set_option nameofmachine $nameofmachine
+set_option NAME_OF_MACHINE $nameofmachine
 }
 # More features in future
 # language (){}
