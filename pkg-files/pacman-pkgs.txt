@@ -13,6 +13,7 @@ ark
 audiocd-kio
 autoconf
 automake
+awesome-terminal-fonts
 base
 bash-completion
 bind
@@ -88,6 +89,7 @@ milou
 nano
 neofetch
 networkmanager
+noto-fonts-emoji
 ntfs-3g
 ntp
 okular
@@ -97,10 +99,12 @@ os-prober
 oxygen
 p7zip
 pacman-contrib
+papirus-icon-theme
 patch
 picom
 pkgconf
 plasma-nm
+plasma-pa
 powerdevil
 powerline-fonts
 print-manager
@@ -116,6 +120,7 @@ rsync
 sddm
 sddm-kcm
 snapper
+snap-pac
 spectacle
 steam
 sudo
@@ -124,6 +129,9 @@ synergy
 systemsettings
 terminus-font
 traceroute
+ttf-droid
+ttf-hack
+ttf-roboto
 ufw
 unrar
 unzip
