@@ -37,8 +37,8 @@ echo -ne "
 				changing the compression settings.
 -------------------------------------------------------------------------
 "
-TOTALMEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
-if [[  $TOTALMEM -gt 8000000 ]]; then
+TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
+if [[  $TOTAL_MEM -gt 8000000 ]]; then
 sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$nc\"/g" /etc/makepkg.conf
 sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g" /etc/makepkg.conf
 fi
@@ -134,9 +134,9 @@ echo "password=${password,,}" >> ${HOME}/ArchTitus/setup.conf
     # Loop through user input until the user gives a valid hostname, but allow the user to force save 
 	while true
 	do 
-		read -p "Please name your machine:" nameofmachine
+		read -p "Please name your machine:" name_of_machine
 		# hostname regex (!!couldn't find spec for computer name!!)
-		if [[ "${nameofmachine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]
+		if [[ "${name_of_machine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]
 		then 
 			break 
 		fi 
@@ -148,7 +148,7 @@ echo "password=${password,,}" >> ${HOME}/ArchTitus/setup.conf
 		fi 
 	done 
 
-    echo "nameofmachine=${nameofmachine,,}" >> ${HOME}/ArchTitus/setup.conf
+    echo "NAME_OF_MACHINE=${name_of_machine,,}" >> ${HOME}/ArchTitus/setup.conf
 fi
 echo -ne "
 -------------------------------------------------------------------------
@@ -163,8 +163,8 @@ if [ $(whoami) = "root"  ]; then
     echo "$USERNAME:$PASSWORD" | chpasswd
 	cp -R /root/ArchTitus /home/$USERNAME/
     chown -R $USERNAME: /home/$USERNAME/ArchTitus
-# enter $nameofmachine to /etc/hostname
-	echo $nameofmachine > /etc/hostname
+# enter $NAME_OF_MACHINE to /etc/hostname
+	echo $NAME_OF_MACHINE > /etc/hostname
 else
 	echo "You are already a user proceed with aur installs"
 fi
