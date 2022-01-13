@@ -26,7 +26,7 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 pacman -S --noconfirm pacman-contrib curl
-pacman -S --noconfirm reflector rsync grub
+pacman -S --noconfirm reflector rsync grub btrfs-progs
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 
 nc=$(grep -c ^processor /proc/cpuinfo)
