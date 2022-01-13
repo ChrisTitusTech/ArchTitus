@@ -16,6 +16,7 @@ Final Setup and Configurations
 GRUB EFI Bootloader Install & Check
 "
 source /root/ArchTitus/setup.conf
+genfstab -U / >> /etc/fstab
 if [[ -d "/sys/firmware/efi" ]]; then
     grub-install --efi-directory=/boot ${DISK}
 fi
@@ -41,7 +42,6 @@ echo -e "Updating grub..."
 grub-mkconfig -o /boot/grub/grub.cfg
 echo -e "All set!"
 
-genfstab -U /mnt >> /mnt/etc/fstab
 echo -ne "
 -------------------------------------------------------------------------
                     Cleaning 
