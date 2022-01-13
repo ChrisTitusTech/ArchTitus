@@ -41,6 +41,7 @@ echo -e "Updating grub..."
 grub-mkconfig -o /boot/grub/grub.cfg
 echo -e "All set!"
 
+genfstab -U /mnt >> /mnt/etc/fstab
 echo -ne "
 -------------------------------------------------------------------------
                     Cleaning 
