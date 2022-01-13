@@ -43,34 +43,6 @@ echo -e "All set!"
 
 echo -ne "
 -------------------------------------------------------------------------
-                    Enabling Login Display Manager
--------------------------------------------------------------------------
-"
-systemctl enable sddm.service
-echo -ne "
--------------------------------------------------------------------------
-                    Setting up SDDM Theme
--------------------------------------------------------------------------
-"
-cat <<EOF > /etc/sddm.conf
-[Theme]
-Current=Nordic
-EOF
-
-echo -ne "
--------------------------------------------------------------------------
-                    Enabling Essential Services
--------------------------------------------------------------------------
-"
-systemctl enable cups.service
-ntpd -qg
-systemctl enable ntpd.service
-systemctl disable dhcpcd.service
-systemctl stop dhcpcd.service
-systemctl enable NetworkManager.service
-systemctl enable bluetooth
-echo -ne "
--------------------------------------------------------------------------
                     Cleaning 
 -------------------------------------------------------------------------
 "
