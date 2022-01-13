@@ -31,11 +31,6 @@ yay -S --noconfirm --needed - < ~/ArchTitus/pkg-files/aur-pkgs.txt
 
 export PATH=$PATH:~/.local/bin
 cp -r ~/ArchTitus/dotfiles/* ~/.config/
-pip install konsave
-konsave -i ~/ArchTitus/kde.knsv
-sleep 1
-konsave -a kde
-
 echo -ne "
 -------------------------------------------------------------------------
                     SYSTEM READY FOR 3-post-setup.sh
