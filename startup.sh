@@ -145,9 +145,19 @@ set_option DISK $option
 userinfo () {
 read -p "Please enter your username: " username
 set_option USERNAME ${username,,} # convert to lower case as in issue #109 
-echo -ne "Please enter your password: \n"
-read -s password # read password without echo
-set_option PASSWORD $password
+while true; do
+  echo -ne "Please enter your password: \n"
+  read -s password # read password without echo
+  set_option PASSWORD $password
+
+  echo -ne "Please repeat your password: \n"
+  read -s password2 # read password without echo
+  set_option PASSWORD2 $password2
+
+  [ "$password" = "$password2" ] && break
+  echo "Please try again"
+done
+
 read -rep "Please enter your hostname: " nameofmachine
 set_option nameofmachine $nameofmachine
 }
