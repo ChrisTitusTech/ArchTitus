@@ -99,9 +99,9 @@ read ssd_drive
 
 case $ssd_drive in
     y|Y|yes|Yes|YES)
-    echo "MOUNT_OPTIONS=noatime,compress=zstd,ssd,commit=120" >> setup.conf;;
+    set_option MOUNT_OPTIONS "noatime,compress=zstd,ssd,commit=120";;
     n|N|no|NO|No)
-    echo "MOUNT_OPTIONS=noatime,compress=zstd,commit=120" >> setup.conf;;
+    set_option MOUNT_OPTIONS "noatime,compress=zstd,commit=120";;
     *) echo "Wrong option. Try again";drivessd;;
 esac
 }
