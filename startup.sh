@@ -125,19 +125,31 @@ esac
 
 # selection for disk type
 diskpart () {
-# show disks present on system
-lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print NR,"/dev/"$2" - "$3}' # show disks with /dev/ prefix and size
 echo -ne "
 ------------------------------------------------------------------------
-    THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK             
-    Please make sure you know what you are doing because         
-    after formating your disk there is no way to get data back      
+    THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK
+    Please make sure you know what you are doing because
+    after formating your disk there is no way to get data back
 ------------------------------------------------------------------------
 
-Please enter full path to disk: (example /dev/sda):
 "
-read option
-echo "DISK=$option" >> setup.conf
+
+PS3='
+Select the disk to install on: '
+options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
+select opt in "${options[@]}"
+do
+
+# Positive check
+if echo -e '%s\n' "${options[@]}" | grep -Fqw ${opt} 2> /dev/null; then
+    echo -e "\n${opt%|*} selected \n"
+    echo "DISK=${opt%|*}" >> setup.conf
+    break
+else
+    echo -e "\nInvalid selection, please try again. \n"
+fi
+
+done
 
 drivessd
 set_option DISK $option
