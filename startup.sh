@@ -73,39 +73,22 @@ esac
 }
 keymap () {
 # These are default key maps as presented in official arch repo archinstall
-echo -ne "
+options=(-by -ca -cf -cz -de -dk -es -et -fa -fi -fr -gr -hu -il -it -lt -lv -mk -nl -no -pl -ro -ru -sg -ua -uk -us)
+PS3="
 Please select key board layout from this list
-    -by
-    -ca
-    -cf
-    -cz
-    -de
-    -dk
-    -es
-    -et
-    -fa
-    -fi
-    -fr
-    -gr
-    -hu
-    -il
-    -it
-    -lt
-    -lv
-    -mk
-    -nl
-    -no
-    -pl
-    -ro
-    -ru
-    -sg
-    -ua
-    -uk
-    -us
 
 "
-read -p "Your key boards layout:" keymap
-set_option KEYMAP $keymap
+select keymap in "${options[@]}"
+do
+if echo -e '%s\n' "${options[@]}" | grep -Fqw -- $keymap 2> /dev/null; then
+    echo -e "\nYour key boards layout: ${keymap} \n"
+    set_option KEYMAP $keymap
+    break
+else
+    echo -e "\nInvalid selection, please try again. \n"
+fi
+
+done
 }
 
 drivessd () {
@@ -137,13 +120,12 @@ echo -ne "
 PS3='
 Select the disk to install on: '
 options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
-select opt in "${options[@]}"
+select disk in "${options[@]}"
 do
 
-# Positive check
-if echo -e '%s\n' "${options[@]}" | grep -Fqw ${opt} 2> /dev/null; then
-    echo -e "\n${opt%|*} selected \n"
-    echo "DISK=${opt%|*}" >> setup.conf
+if echo -e '%s\n' "${options[@]}" | grep -Fqw ${disk} 2> /dev/null; then
+    echo -e "\n${disk%|*} selected \n"
+    set_option DISK ${disk%|*}
     break
 else
     echo -e "\nInvalid selection, please try again. \n"
@@ -152,7 +134,6 @@ fi
 done
 
 drivessd
-set_option DISK $option
 }
 userinfo () {
 read -p "Please enter your username: " username
