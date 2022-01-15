@@ -74,7 +74,7 @@ esac
 keymap () {
 # These are default key maps as presented in official arch repo archinstall
 echo -ne "
-Please select key board layout from this list
+Please select key board layout from this list (without leading '-')
     -by
     -ca
     -cf
