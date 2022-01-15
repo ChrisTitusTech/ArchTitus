@@ -73,7 +73,7 @@ esac
 }
 keymap () {
 # These are default key maps as presented in official arch repo archinstall
-options=(-by -ca -cf -cz -de -dk -es -et -fa -fi -fr -gr -hu -il -it -lt -lv -mk -nl -no -pl -ro -ru -sg -ua -uk -us)
+options=(by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru sg ua uk us)
 PS3="
 Please select key board layout from this list
 
@@ -81,7 +81,7 @@ Please select key board layout from this list
 select keymap in "${options[@]}"
 do
 # check if selection is part of list, silence error output and use else block for output
-if echo -e '%s\n' "${options[@]}" | grep -Fqw -- $keymap 2> /dev/null; then
+if echo -e '%s\n' "${options[@]}" | grep -Fqw $keymap 2> /dev/null; then
     echo -e "\nYour key boards layout: ${keymap} \n"
     set_option KEYMAP $keymap
     break
