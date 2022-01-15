@@ -54,7 +54,19 @@ timedatectl --no-ask-password set-ntp 1
 localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_TIME="en_US.UTF-8"
 
 # Set keymaps
-localectl --no-ask-password set-keymap ${KEYMAP}
+echo "KEYMAP=${KEYMAP}" > /etc/vconsole.conf
+mkdir -p /etc/X11/xorg.conf.d/
+touch /etc/X11/xorg.conf.d/00-keyboard.conf
+cat << EOT >> /etc/X11/xorg.conf.d/00-keyboard.conf
+# Written by systemd-localed(8), read by systemd-localed and Xorg. It's
+# probably wise not to edit this file manually. Use localectl(1) to
+# instruct systemd-localed to update it.
+Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        Option "XkbLayout" "${KEYMAP}"
+EndSection
+EOT
 
 # Add sudo no password rights
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
