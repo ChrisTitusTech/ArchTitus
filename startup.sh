@@ -140,9 +140,20 @@ drivessd
 userinfo () {
 read -p "Please enter your username: " username
 set_option USERNAME ${username,,} # convert to lower case as in issue #109 
-echo -ne "Please enter your password: \n"
-read -s password # read password without echo
-set_option PASSWORD $password
+while true; do
+  echo -ne "Please enter your password: \n"
+  read -s password # read password without echo
+
+  echo -ne "Please repeat your password: \n"
+  read -s password2 # read password without echo
+
+  if [ "$password" = "$password2" ]; then
+    set_option PASSWORD $password
+    break
+  else
+    echo -e "\nPasswords do not match. Please try again. \n"
+  fi
+done
 read -rep "Please enter your hostname: " nameofmachine
 set_option NAME_OF_MACHINE $nameofmachine
 }
