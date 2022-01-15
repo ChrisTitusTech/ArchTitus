@@ -80,6 +80,7 @@ Please select key board layout from this list
 "
 select keymap in "${options[@]}"
 do
+# check if selection is part of list, silence error output and use else block for output
 if echo -e '%s\n' "${options[@]}" | grep -Fqw -- $keymap 2> /dev/null; then
     echo -e "\nYour key boards layout: ${keymap} \n"
     set_option KEYMAP $keymap
@@ -123,6 +124,7 @@ options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|
 select disk in "${options[@]}"
 do
 
+# check if selection is part of list, silence error output and use else block for output
 if echo -e '%s\n' "${options[@]}" | grep -Fqw ${disk} 2> /dev/null; then
     echo -e "\n${disk%|*} selected \n"
     set_option DISK ${disk%|*}
