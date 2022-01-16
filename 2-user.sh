@@ -18,10 +18,23 @@ Installing AUR Softwares
 source $HOME/ArchTitus/setup.conf
 
 cd ~
-git clone "https://aur.archlinux.org/yay.git"
-cd ~/yay
-makepkg -si --noconfirm
-cd ~
+case $AURHELPER in
+  "1")
+    git clone "https://aur.archlinux.org/yay.git"
+    cd ~/yay
+    makepkg -si --noconfirm
+    cd ~ ;;
+  "2")
+    git clone "https://aur.archlinux.org/paru.git"
+    cd ~/paru
+    makepkg -si --noconfirm
+    cd ~ ;;
+  "3")
+    echo ""
+    echo "no aur helper selected"
+    echo ""
+esac
+
 touch "~/.cache/zshhistory"
 git clone "https://github.com/ChrisTitusTech/zsh"
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k

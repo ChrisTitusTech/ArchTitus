@@ -108,6 +108,17 @@ read -p "Your key boards layout:" keymap
 set_option KEYMAP $keymap
 }
 
+aurHelper () {
+echo -ne "
+Pick your AUR helper:
+    1) yay
+    2) paru
+    3) none
+"
+read -p "AUR helper:" aurHelper
+set_option AURHELPER $aurHelper
+}
+
 drivessd () {
 echo -ne "
 Is this an ssd? yes/no:
@@ -158,15 +169,23 @@ set_option nameofmachine $nameofmachine
 clear
 logo
 userinfo
+
+clear
+logo
+aurHelper
+
 clear
 logo
 diskpart
+
 clear
 logo
 filesystem
+
 clear
 logo
 timezone
+
 clear
 logo
 keymap
