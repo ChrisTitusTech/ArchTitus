@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Find the name of the folder the scripts are in
 setfont ter-v22b

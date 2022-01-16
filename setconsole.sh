@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 sudo cat <<EOF > /etc/vconsole.conf
 KEYMAP=us

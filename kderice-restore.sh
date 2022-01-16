@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 export PATH=$PATH:~/.local/bin
 cp -r $HOME/$SCRIPTHOME/dotfiles/* $HOME/.config/
