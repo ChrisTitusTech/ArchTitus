@@ -47,10 +47,22 @@ case $fs in
 1) set_option FS btrfs;;
 2) set_option FS ext4;;
 3) 
-echo -ne "Please enter your luks password: "
-read -s luks_password # read password without echo
-set_option LUKS_PASSWORD $luks_password
-set_option FS luks;;
+while true; do
+  echo -ne "Please enter your luks password: \n"
+  read -s luks_password # read password without echo
+
+  echo -ne "Please repeat your luks password: \n"
+  read -s luks_password2 # read password without echo
+
+  if [ "$luks_password" = "$luks_password2" ]; then
+    set_option LUKS_PASSWORD $luks_password
+    set_option FS luks
+    break
+  else
+    echo -e "\nPasswords do not match. Please try again. \n"
+  fi
+done
+;;
 0) exit ;;
 *) echo "Wrong option please select again"; filesystem;;
 esac
