@@ -44,6 +44,13 @@ echo -e "All set!"
 
 echo -ne "
 -------------------------------------------------------------------------
+                     Install XFCE and some other things
+-------------------------------------------------------------------------
+"
+pacman -Sy xfce4 xfce4-goodies neofetch cmatrix lightdm
+echo -e "Installed xfce4, xfce4-goodies, lightdm, neofetch and cmatrix."
+echo -ne "
+-------------------------------------------------------------------------
                     Cleaning 
 -------------------------------------------------------------------------
 "
@@ -57,3 +64,4 @@ rm -r /home/$USERNAME/ArchTitus
 
 # Replace in the same state
 cd $pwd
+
