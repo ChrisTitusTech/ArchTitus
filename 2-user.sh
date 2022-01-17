@@ -34,8 +34,8 @@ git clone "https://github.com/ChrisTitusTech/zsh"
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
 ln -s "~/zsh/.zshrc" ~/.zshrc
 
-for PACKADGE in $(cat ~/ArchTitus/pkg-files/aur-pkgs.txt) do
-  addAUR $PACKADGE
+for PACKAGE in $(cat ~/ArchTitus/pkg-files/aur-pkgs.txt) do
+  addAUR $PACKAGE
 esac
 
 export PATH=$PATH:~/.local/bin
