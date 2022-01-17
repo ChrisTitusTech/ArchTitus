@@ -17,30 +17,26 @@ Installing AUR Softwares
 # You can solve users running this script as root with this and then doing the same for the next for statement. However I will leave this up to you.
 source $HOME/ArchTitus/setup.conf
 
-cd ~
-case $AURHELPER in
-  "1")
-    git clone "https://aur.archlinux.org/yay.git"
-    cd ~/yay
-    makepkg -si --noconfirm
-    cd ~ ;;
-  "2")
-    git clone "https://aur.archlinux.org/paru.git"
-    cd ~/paru
-    makepkg -si --noconfirm
-    cd ~ ;;
-  "3")
-    echo ""
-    echo "no aur helper selected"
-    echo ""
-esac
+addAUR () {
+  cd ~
+  git clone "https://aur.archlinux.org/$1.git"
+  cd ~/$1
+  makepkg -si --noconfirm
+  cd ~
+}
+
+if [$AURHELPER -ne ""] then
+  addAUR $AURHELPER
+fi
 
 touch "~/.cache/zshhistory"
 git clone "https://github.com/ChrisTitusTech/zsh"
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
 ln -s "~/zsh/.zshrc" ~/.zshrc
 
-yay -S --noconfirm --needed - < ~/ArchTitus/pkg-files/aur-pkgs.txt
+for PACKADGE in $(cat ~/ArchTitus/pkg-files/aur-pkgs.txt) do
+  addAUR $PACKADGE
+esac
 
 export PATH=$PATH:~/.local/bin
 cp -r ~/ArchTitus/dotfiles/* ~/.config/
