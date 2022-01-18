@@ -114,7 +114,7 @@ Pick your AUR helper:
     1) yay
     2) paru
     3) other
-    3) none
+    4) none
 "
 read -p "AUR helper:" aurHelperNum
 case aurHelperNum in
@@ -125,7 +125,7 @@ case aurHelperNum in
         set_option AURHELPER "paru"
     ;;
     "3")
-        read -p "AUR helper (must be packadge in AUR):" aurHelper
+        read -p "AUR helper (must be packadge in AUR): " aurHelper
         set_option AURHELPER aurHelper
     ;;
     "4")
@@ -134,7 +134,6 @@ case aurHelperNum in
     *)
         echo ""
         echo "that is a invalid option"
-        echo ""
         aurHelper
     ;;
 esac
