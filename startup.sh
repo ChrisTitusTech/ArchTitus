@@ -137,7 +137,7 @@ case aurHelperNum in
         echo ""
         aurHelper
     ;;
-}
+esac
 
 drivessd () {
 echo -ne "
