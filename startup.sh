@@ -138,6 +138,7 @@ case aurHelperNum in
         aurHelper
     ;;
 esac
+}
 
 drivessd () {
 echo -ne "
