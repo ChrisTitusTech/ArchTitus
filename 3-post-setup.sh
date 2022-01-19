@@ -47,8 +47,9 @@ echo -ne "
                      Install XFCE and some other things
 -------------------------------------------------------------------------
 "
-pacman -Sy xfce4 xfce4-goodies neofetch cmatrix lightdm
-echo -e "Installed xfce4, xfce4-goodies, lightdm, neofetch and cmatrix."
+pacman -Sy xfce4 xfce4-goodies neofetch cmatrix lightdm xorg xorg-xinit xterm alsa-utils lightdm-gtk-greeter
+systemctl enable lightdm
+echo -e "Installed xfce4, xfce4-goodies, lightdm, neofetch, xorg, xorg-xinit, xterm, alsa-utils, lightdm-gtk-greeter"
 echo -ne "
 -------------------------------------------------------------------------
                     Cleaning 
