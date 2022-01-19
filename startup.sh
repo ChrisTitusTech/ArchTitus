@@ -117,7 +117,7 @@ Pick your AUR helper:
     4) none
 "
 read -p "AUR helper:" aurHelperNum
-case aurHelperNum in
+case $aurHelperNum in
     "1")
         set_option AURHELPER "yay"
     ;;
