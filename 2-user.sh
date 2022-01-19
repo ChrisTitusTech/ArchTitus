@@ -25,8 +25,8 @@ addAUR () {
   cd ~
 }
 
-if [$AURHELPER -ne ""] then
-  addAUR $AURHELPER
+if [${AURHELPER} -ne ""] then
+  addAUR ${AURHELPER}
 fi
 
 touch "~/.cache/zshhistory"
