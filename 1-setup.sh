@@ -101,8 +101,9 @@ echo -ne "
 # Graphics Drivers find and install
 gpu_type=$(lspci)
 if grep -E "NVIDIA|GeForce" <<< ${gpu_type}; then
-    pacman -S nvidia --noconfirm --needed
+    pacman -S nvidia lib32-nvidia-utils lib32-vulkan-icd-loader --noconfirm --needed
 	nvidia-xconfig
+	echo "VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json" >> /etc/environment
 elif lspci | grep 'VGA' | grep -E "Radeon|AMD"; then
     pacman -S xf86-video-amdgpu --noconfirm --needed
 elif grep -E "Integrated Graphics Controller" <<< ${gpu_type}; then
