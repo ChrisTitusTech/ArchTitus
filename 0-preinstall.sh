@@ -74,10 +74,23 @@ createsubvolumes () {
 }
 
 mountallsubvol () {
-    mount -o ${MOUNT_OPTIONS},subvol=@home /dev/mapper/ROOT /mnt/home
-    mount -o ${MOUNT_OPTIONS},subvol=@tmp /dev/mapper/ROOT /mnt/tmp
-    mount -o ${MOUNT_OPTIONS},subvol=@.snapshots /dev/mapper/ROOT /mnt/.snapshots
-    mount -o ${MOUNT_OPTIONS},subvol=@var /dev/mapper/ROOT /mnt/var
+    mount -o ${MOUNT_OPTIONS},subvol=@home ${partition3} /mnt/home
+    mount -o ${MOUNT_OPTIONS},subvol=@tmp ${partition3} /mnt/tmp
+    mount -o ${MOUNT_OPTIONS},subvol=@.snapshots ${partition3} /mnt/.snapshots
+    mount -o ${MOUNT_OPTIONS},subvol=@var ${partition3} /mnt/var
+}
+
+subvolumesetup () {
+# create nonroot subvolumes
+    createsubvolumes     
+# unmount root to remount with subvolume 
+    umount /mnt
+# mount @ subvolume
+    mount -o ${MOUNT_OPTIONS},subvol=@ ${partition3} /mnt
+# make directories home, .snapshots, var, tmp
+    mkdir -p /mnt/{home,var,tmp,.snapshots}
+# mount subvolumes
+    mountallsubvol
 }
 
 if [[ "${DISK}" =~ "nvme" ]]; then
@@ -92,6 +105,7 @@ if [[ "${FS}" == "btrfs" ]]; then
     mkfs.vfat -F32 -n "EFIBOOT" ${partition2}
     mkfs.btrfs -L ROOT ${partition3} -f
     mount -t btrfs ${partition3} /mnt
+    subvolumesetup
 elif [[ "${FS}" == "ext4" ]]; then
     mkfs.vfat -F32 -n "EFIBOOT" ${partition2}
     mkfs.ext4 -L ROOT ${partition3}
@@ -103,27 +117,12 @@ elif [[ "${FS}" == "luks" ]]; then
 # open luks container and ROOT will be place holder 
     echo -n "${LUKS_PASSWORD}" | cryptsetup open ${partition3} ROOT -
 # now format that container
-    mkfs.btrfs -L ROOT /dev/mapper/ROOT
+    mkfs.btrfs -L ROOT ${partition3}
 # create subvolumes for btrfs
-    mount -t btrfs /dev/mapper/ROOT /mnt
-    createsubvolumes       
-    umount /mnt
-# mount @ subvolume
-    mount -o ${MOUNT_OPTIONS},subvol=@ /dev/mapper/ROOT /mnt
-# make directories home, .snapshots, var, tmp
-    mkdir -p /mnt/{home,var,tmp,.snapshots}
-# mount subvolumes
-    mountallsubvol
+    mount -t btrfs ${partition3} /mnt
+    subvolumesetup
 # store uuid of encrypted partition for grub
     echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value ${partition3}) >> setup.conf
-fi
-
-# checking if user selected btrfs
-if [[ ${FS} =~ "btrfs" ]]; then
-ls /mnt | xargs btrfs subvolume delete
-btrfs subvolume create /mnt/@
-umount /mnt
-mount -t btrfs -o subvol=@ -L ROOT /mnt
 fi
 
 # mount target
