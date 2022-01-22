@@ -16,7 +16,6 @@ Final Setup and Configurations
 GRUB EFI Bootloader Install & Check
 "
 source /root/ArchTitus/setup.conf
-genfstab -U /mnt >> /mnt/etc/fstab
 if [[ -d "/sys/firmware/efi" ]]; then
     grub-install --efi-directory=/boot ${DISK}
 fi
