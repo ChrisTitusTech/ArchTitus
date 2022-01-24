@@ -193,24 +193,22 @@ drivessd () {
     esac
 }
 
-# selection for disk type
-diskpart () {
-# show disks present on system
-lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print NR,"/dev/"$2" - "$3}' # show disks with /dev/ prefix and size
-echo -ne "
-------------------------------------------------------------------------
-    THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK             
-    Please make sure you know what you are doing because         
-    after formating your disk there is no way to get data back      
-------------------------------------------------------------------------
-
-Please enter full path to disk: (example /dev/sda):
-"
-read -r option
-echo "DISK=$option" >> setup.conf
-
-drivessd
-set_option DISK "$option"
+diskselection () {
+    # selection for disk type
+    # show disks present on system
+    DISKLIST="$(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2" - "$3}')" # show disks with /dev/ prefix and size
+    PS3="$PROMPT"
+    select _DISK in "${DISKLIST[@]}"; do
+        if elements_present "$_DISK" "${DISKLIST[@]}"; then
+            # remove size from string
+            DISK=$(echo "$_DISK" | awk '{print $1}')
+            set_option DISK "$DISK"
+            break
+        else
+            invalid_option
+            break
+        fi
+    done
 }
 
 userinfo () {
