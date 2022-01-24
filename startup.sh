@@ -163,18 +163,19 @@ keymap () {
 }
 
 drivessd () {
-echo -ne "
-Is this an ssd? yes/no:
-"
-read -r ssd_drive
-
-case $ssd_drive in
-    y|Y|yes|Yes|YES)
-    echo "mountoptions=noatime,compress=zstd,ssd,commit=120" >> setup.conf;;
-    n|N|no|NO|No)
-    echo "mountoptions=noatime,compress=zstd,commit=120" >> setup.conf;;
-    *) echo "Wrong option. Try again";drivessd;;
-esac
+    # confirm if ssd is present
+    read -pr "Is this system using an SSD? yes/no: " _SSD
+    case "$_SSD" in
+        y|Y|yes|Yes|YES)
+            set_option "SSD" 1
+            set_option "MOUNTOPTION" "noatime,compress=zstd,ssd,commit=120"
+            ;;
+        n|N|no|NO|No)
+            set_option "SSD" 0
+            set_option "MOUNTOPTION" "noatime,compress=zstd,commit=120"
+            ;;
+        *) echo "Wrong option. Try again";drivessd;;
+    esac
 }
 
 # selection for disk type
