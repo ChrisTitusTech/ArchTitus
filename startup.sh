@@ -269,6 +269,14 @@ done
 read -rep "Please enter your hostname: " nameofmachine
 set_option NAME_OF_MACHINE $nameofmachine
 }
+
+aurhelper () {
+  echo -ne "Please enter your desired AUR helper:"
+  options=(paru yay picaur aura trizen pacaur none)
+  select_option $? 4 "${options[@]}"
+  aur_helper=${options[$?]}
+  set_option AUR_HELPER $aur_helper
+}
 # More features in future
 # language (){}
 
@@ -276,6 +284,9 @@ set_option NAME_OF_MACHINE $nameofmachine
 clear
 logo
 userinfo
+clear
+logo
+aurhelper
 clear
 logo
 diskpart
