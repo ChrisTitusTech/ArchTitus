@@ -2,6 +2,7 @@
 # This script will ask users about their prefrences 
 # like disk, file system, timezone, keyboard layout,
 # user name, password, etc.
+# shellcheck disable=SC2207
 
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
@@ -217,6 +218,21 @@ userinfo () {
     set_password "PASSWORD"
     read -pr "Please enter your hostname: " HOSTNAME
     set_option HOSTNAME "$HOSTNAME"
+}
+
+setlocale (){
+    # set locale
+    locale_list=($(grep UTF-8 /etc/locale.gen | sed 's/\..*$//' | sed '/@/d' | awk '{print $1}' | uniq | sed 's/#//g'))
+    PS3="$PROMPT"
+    select LOCALE in "${locale_list[@]}"; do
+        if elements_present "$LOCALE" "${locale_list[@]}"; then
+            set_option LOCALE "${LOCALE}.UTF-8 UTF-8"
+            break
+        else
+            invalid_option
+            break
+        fi
+    done
 }
 # More features in future
 # language (){}
