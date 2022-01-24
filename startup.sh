@@ -55,29 +55,44 @@ echo -ne "
 ------------------------------------------------------------------------
 "
 }
+
 filesystem () {
-# This function will handle file systems. At this movement we are handling only
-# btrfs and ext4. Others will be added in future.
-echo -ne "
-    Please Select your file system for both boot and root
-    1)      btrfs
-    2)      ext4
-    3)      luks with btrfs
-    0)      exit
-"
-read -r FS
-case $FS in
-1) set_option FS btrfs;;
-2) set_option FS ext4;;
-3) 
-echo -ne "Please enter your luks password: "
-read -rs luks_password # read password without echo
-set_option luks_password "$luks_password"
-set_option FS luks;;
-0) exit ;;
-*) echo "Wrong option please select again"; filesystem;;
-esac
+    # This function will handle file systems. At this movement we are handling only
+    # btrfs and ext4. Others will be added in future.
+    title "File System"
+    FILESYS=("btrfs" "ext2" "ext3" "ext4" "f2fs" "jfs" "nilfs2" "ntfs" "reiserfs" "vfat" "xfs")
+    PS3="$PROMPT"
+    select OPT in "${FILESYS[@]}"; do
+        if elements_present "$OPT" "${FILESYS[@]}"; then
+            if [ "$OPT" == "btrfs" ]; then
+                # used -a to get more than one argument
+                echo -ne "Please enter your btrfs subvolume names separated by space\n"
+                echo -ne "usualy they are @, @home, @root etc. Defaults are @, @home, @var, @tmp, @.snapshots \n"
+                read -pr "or press enter to use defaults: " -a ARR
+                if [[  "${ARR[*]}" -eq 0 ]]; then
+                    set_option "BTRFS_SUBVOLUME" "(@ @home @var @tmp @.snapshots)"
+                    break
+                else
+                    # An array is a list of values.
+                    NAMES=()
+                    for i in "${ARR[@]}"; do
+                        # push values to array
+                        NAMES+=("$i")
+                    done
+                    # set to config file
+                    set_option "BTRFS_SUBVOLUMES" "(${NAMES[*]})"
+                    break
+                fi
+            fi
+            set_option "FS" "$OPT"
+            break
+        else
+            invalid_option
+            break
+        fi
+    done
 }
+
 timezone () {
 # Added this from arch wiki https://wiki.archlinux.org/title/System_time
 time_zone="$(curl --fail https://ipapi.co/timezone)"
