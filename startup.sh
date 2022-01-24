@@ -23,6 +23,14 @@ set_option() {
     # else add option
     echo "${1}=${2}" >> "$CONFIG_FILE" 
 }
+# Adding global functions and variables to use in this script
+
+check_root() {
+	if [[ "$(id -u)" != "0" ]]; then
+		echo -ne "Error: This script has to be run under the 'root' user!"
+        exit 1
+	fi
+} 
 
 logo () {
 # This will be shown on every set as user is progressing
