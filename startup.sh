@@ -148,40 +148,18 @@ timezone () {
 }
 
 keymap () {
-# These are default key maps as presented in official arch repo archinstall
-echo -ne "
-Please select key board layout from this list
-    -by
-    -ca
-    -cf
-    -cz
-    -de
-    -dk
-    -es
-    -et
-    -fa
-    -fi
-    -fr
-    -gr
-    -hu
-    -il
-    -it
-    -lt
-    -lv
-    -mk
-    -nl
-    -no
-    -pl
-    -ro
-    -ru
-    -sg
-    -ua
-    -uk
-    -us
-
-"
-read -rp "Your key boards layout:" keymap
-set_option KEYMAP $keymap
+    # These are default key maps as presented in official arch repo archinstall
+    KEYMAPS=("by" "ca" "cf" "cz" "de" "dk" "es" "et" "fa" "fi" "fr" "gr" "hu" "il" "it" "lt" "lv" "mk" "nl" "no" "pl" "ro" "ru" "sg" "ua" "uk" "us")
+    PS3="$PROMPT"
+    select OPT in "${KEYMAPS[@]}"; do
+        if elements_present "$OPT" "${KEYMAPS[@]}"; then
+            set_option KEYMAP "$OPT"
+            break
+        else
+            invalid_option
+            keymap
+        fi
+    done
 }
 
 drivessd () {
