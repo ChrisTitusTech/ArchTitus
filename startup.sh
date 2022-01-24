@@ -32,6 +32,11 @@ check_root() {
 	fi
 }
 
+elements_present() {
+    # check if an element exists
+	for e in "${@:2}"; do [[ "$e" == "$1" ]] && break; done
+}
+
 invalid_option() {
     # invalid option message
     echo -ne "Please select a valid option: \n"
