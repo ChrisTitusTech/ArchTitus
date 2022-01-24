@@ -85,6 +85,48 @@ echo -ne "
 "
 }
 
+setpartionlayout() {
+    # Set partioning layouts
+    title "Partioning Layout"
+    LAYOUTS=("Default" "LVM" "LVM+LUKS" "Maintain Current")
+    PS3="$PROMPT"
+    select OPT in "${LAYOUTS[@]}"; do
+        if elements_present "$OPT" "${LAYOUTS[@]}"; then
+            case "$REPLY" in
+                1)
+                    set_option "LAYOUT" 1
+                    break
+                    ;;
+                2)
+                    set_option "LAYOUT" "$OPT"
+                    set_option "LVM" 1
+                    set_option "LUKS" 0
+                    break
+                    ;;
+                3)
+                    set_option "LAYOUT" "$OPT"
+                    set_password "LUKS_PASSWORD"
+                    set_option "LUKS" 1
+                    set_option "LVM" 1
+                    break
+                    ;;
+                4)
+                    echo -ne "Maintaining current settings"
+                    set_option "LAYOUT" 0
+                    break
+                    ;;
+                *)
+                    invalid_option
+                    setpartionlayout
+                    ;;
+            esac
+        else
+            invalid_option
+            filesystem
+        fi
+    done
+}
+
 filesystem () {
     # This function will handle file systems. At this movement we are handling only
     # btrfs and ext4. Others will be added in future.
