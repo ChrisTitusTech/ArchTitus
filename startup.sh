@@ -42,6 +42,14 @@ invalid_option() {
     echo -ne "Please select a valid option: \n"
 }
 
+# make a title 
+title () {
+    echo -ne "\n"
+    echo -ne "------------------------------------------------------------------------\n"
+    echo -ne "\t\t\t$1\n"
+    echo -ne "------------------------------------------------------------------------\n"
+}
+
 # ask user for option
 PROMPT="Please enter your option: "
 
