@@ -276,8 +276,78 @@ setlocale (){
         fi
     done
 }
-# More features in future
-# language (){}
+
+setdisktop() {
+    title "Select either Disktop Environment or Window Manager"
+
+    selections=("KDE" "Gnome" "XFCE" "Mate" "LXQT" "Minimal" "Awesome" "OpenBox" "i3" "i3-Gaps")
+    PS3="$PROMPT"
+    select OPT in "${selections[@]}"; do
+        if elements_present "$OPT" "${selections[@]}"; then
+            case "$OPT" in
+                1) 
+                    # more packages can be added here
+                    set_option "DE" "('plasma')" 
+                    set_option "DM" "sddm"
+                    break
+                    ;;
+                2) 
+                    set_option "DE" "('gnome')"
+                    set_option "DM" "gdm"
+                    break
+                    ;;
+                3)
+                    set_option "DE" "('xfce4')"
+                    set_option "DM" "lightdm"
+                    break
+                    ;;
+                4)
+                    set_option "DE" "('mate')"
+                    set_option "DM" "lightdm"
+                    break
+                    ;;
+                5)
+                    set_option "DE" "('lxqt')"
+                    set_option "DM" "lightdm"
+                    break
+                    ;;
+                6)
+                    set_option "DE" 0
+                    set_option "DM" 0
+                    break
+                    ;;
+                7)
+                    set_option "DE" 0
+                    set_option "WM" "awesome"
+                    break
+                    ;;
+                8)  # openbox
+                    set_option "DE" 0
+                    set_option "WM" "openbox"
+                    break
+                    ;;
+                9)  # i3
+                    set_option "DE" 0
+                    set_option "WM" "i3"
+                    break
+                    ;;
+                10) # i3-gaps
+                    set_option "DE" 0
+                    set_option "WM" "i3-gaps"
+                    break
+                    ;;
+                *) echo "Wrong option. Try again"
+                    break
+                    ;;
+            esac
+        else
+            invalid_option
+            break
+        fi
+    done
+   
+}
+
 
 # Starting functions
 clear
