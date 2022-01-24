@@ -4,19 +4,26 @@
 # user name, password, etc.
 
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 # set up a config file
 CONFIG_FILE=$SCRIPT_DIR/setup.conf
-if [ ! -f "$CONFIG_FILE" ]; then # check if file exists
-    touch -f "$CONFIG_FILE" # create file if not exists
+# check if file exists
+if [ ! -f "$CONFIG_FILE" ]; then
+    # create file if not exists
+    touch -f "$CONFIG_FILE"
 fi
 
 # set options in setup.conf
 set_option() {
-    if grep -Eq "^${1}.*" "$CONFIG_FILE"; then # check if option exists
-        sed -i -e "/^${1}.*/d" "$CONFIG_FILE" # delete option if exists
+    # check if option exists
+    if grep -Eq "^${1}.*" "$CONFIG_FILE"; then
+        # delete option if exists
+        sed -i -e "/^${1}.*/d" "$CONFIG_FILE" 
     fi
-    echo "${1}=${2}" >> "$CONFIG_FILE" # add option
+    # else add option
+    echo "${1}=${2}" >> "$CONFIG_FILE" 
 }
+
 logo () {
 # This will be shown on every set as user is progressing
 echo -ne "
