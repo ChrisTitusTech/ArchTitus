@@ -21,6 +21,7 @@ echo -ne "
     ( arch-chroot /mnt /root/ArchTitus/1-setup.sh )|& tee 1-setup.log
     ( arch-chroot /mnt /usr/bin/runuser -u $USERNAME -- /home/$USERNAME/ArchTitus/2-user.sh )|& tee 2-user.log
     ( arch-chroot /mnt /root/ArchTitus/3-post-setup.sh )|& tee 3-post-setup.log
+    ( arch-chroot /mnt /root/ArchTitus/4-desktop.sh )|& tee 4-desktop.log
 
 echo -ne "
 -------------------------------------------------------------------------

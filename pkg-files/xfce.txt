@@ -1,0 +1,2 @@
+xfce4
+xfce-goodies

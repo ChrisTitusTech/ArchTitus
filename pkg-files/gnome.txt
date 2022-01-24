@@ -1,0 +1,4 @@
+gnome
+gnome-tweaks
+dconf-editor
+gnome-extras

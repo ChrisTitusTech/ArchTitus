@@ -1,0 +1,2 @@
+budgie-desktop
+gnome

@@ -271,12 +271,23 @@ set_option NAME_OF_MACHINE $nameofmachine
 }
 
 aurhelper () {
-  echo -ne "Please enter your desired AUR helper:"
+  # Let the user choose AUR helper from predefined list
+  echo -ne "Please enter your desired AUR helper:\n"
   options=(paru yay picaur aura trizen pacaur none)
   select_option $? 4 "${options[@]}"
   aur_helper=${options[$?]}
   set_option AUR_HELPER $aur_helper
 }
+
+desktopenv () {
+  # Let the user choose Desktop Enviroment from predefined list
+  echo -ne "Please select your desired Desktop Enviroment:\n"
+  options=(gnome kde cinnamon xfce mate budgie lxde deepin openbox)
+  select_option $? 4 "${options[@]}"
+  desktop_env=${options[$?]}
+  set_option DESKTOP_ENV $desktop_env
+}
+
 # More features in future
 # language (){}
 
@@ -284,6 +295,9 @@ aurhelper () {
 clear
 logo
 userinfo
+clear
+logo
+desktopenv
 clear
 logo
 aurhelper
