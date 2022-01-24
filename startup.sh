@@ -107,21 +107,46 @@ filesystem () {
 }
 
 timezone () {
-# Added this from arch wiki https://wiki.archlinux.org/title/System_time
-time_zone="$(curl --fail https://ipapi.co/timezone)"
-echo -ne "System detected your timezone to be '$time_zone' \n"
-echo -ne "Is this correct? yes/no:" 
-read -r answer
-case $answer in
-    y|Y|yes|Yes|YES)
-    set_option TIMEZONE "$time_zone";;
-    n|N|no|NO|No)
-    echo "Please enter your desired timezone e.g. Europe/London :" 
-    read -r new_timezone
-    set_option TIMEZONE "$new_timezone";;
-    *) echo "Wrong option. Try again";timezone;;
-esac
+    # Added this from arch wiki https://wiki.archlinux.org/title/System_time
+    _TIMEZONE="$(curl --fail https://ipapi.co/timezone)"
+    _ZONE=($(timedatectl list-timezones | sed 's/\/.*$//' | uniq))
+    echo -ne "System detected your timezone to be '$_TIMEZONE'"
+    echo -ne  "\n"
+    read -pr "Is this correct? yes/no: " ANSWER
+    case "$ANSWER" in
+        y|Y|yes|Yes|YES)
+            set_option TIMEZONE "$_TIMEZONE"
+            ;;
+        n|N|no|NO|No)
+            title "Manually setting timezone"
+            PS3="$PROMPT"
+            echo -ne "Please select your zone: \n"
+            select ZONE in "${_ZONE[@]}"; do
+                if elements_present "$ZONE" "${_ZONE[@]}"; then
+                    _SUBZONE=($(timedatectl list-timezones | grep "${ZONE}" | sed 's/^.*\///'))
+                    PS3="$PROMPT"
+                    echo -ne "Please select your subzone: \n"
+                    select SUBZONE in "${_SUBZONE[@]}"; do
+                        if elements_present "$SUBZONE" "${_SUBZONE[@]}"; then
+                            set_option TIMEZONE "${ZONE}/${SUBZONE}"
+                            break
+                        else
+                            invalid_option
+                            break
+                        fi
+                    done
+                    break
+                else
+                    invalid_option
+                    break
+                fi
+            done
+            ;;
+
+        *) echo "Wrong option. Try again";timezone;;
+    esac
 }
+
 keymap () {
 # These are default key maps as presented in official arch repo archinstall
 echo -ne "
