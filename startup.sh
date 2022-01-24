@@ -30,7 +30,15 @@ check_root() {
 		echo -ne "Error: This script has to be run under the 'root' user!"
         exit 1
 	fi
-} 
+}
+
+invalid_option() {
+    # invalid option message
+    echo -ne "Please select a valid option: \n"
+}
+
+# ask user for option
+PROMPT="Please enter your option: "
 
 logo () {
 # This will be shown on every set as user is progressing
