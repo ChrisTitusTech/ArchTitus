@@ -42,6 +42,21 @@ invalid_option() {
     echo -ne "Please select a valid option: \n"
 }
 
+set_password() {
+    # password helper function
+    # read password without echoing (-s)
+    read -prs "Please enter password: " PASSWORD1 
+    echo -ne "\n"
+    read -prs "Please re-enter password: " PASSWORD2
+    echo -ne "\n"
+    if [ "$PASSWORD1" == "$PASSWORD2" ]; then
+       set_option "$1" "$PASSWORD1"
+    else
+        echo -ne "Passwords do not match \n"
+        return
+    fi
+}
+
 # make a title 
 title () {
     echo -ne "\n"
@@ -197,14 +212,13 @@ echo "DISK=$option" >> setup.conf
 drivessd
 set_option DISK "$option"
 }
+
 userinfo () {
-read -rp "Please enter your username: " username
-set_option USERNAME "${username,,} "# convert to lower case as in issue #109 
-echo -ne "Please enter your password: \n"
-read -rs password # read password without echo
-set_option PASSWORD "$password"
-read -rp "Please enter your hostname: " nameofmachine
-set_option nameofmachine "$nameofmachine"
+    read -pr "Please enter your username: " USERNAME
+    set_option USERNAME "${USERNAME,,}" # convert to lower case as in issue #109 
+    set_password "PASSWORD"
+    read -pr "Please enter your hostname: " HOSTNAME
+    set_option HOSTNAME "$HOSTNAME"
 }
 # More features in future
 # language (){}
