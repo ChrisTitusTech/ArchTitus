@@ -348,20 +348,24 @@ setdisktop() {
    
 }
 
-
+# Backround checks
+check_root
 # Starting functions
 clear
 logo
 userinfo
-clear
-logo
-diskpart
-clear
-logo
+setpartionlayout
 filesystem
+clear
+logo
+diskselection
+drivessd
 clear
 logo
 timezone
 clear
 logo
 keymap
+clear
+logo
+setlocale
