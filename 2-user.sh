@@ -25,7 +25,7 @@ addAUR () {
   cd ~
 }
 
-if [${AURHELPER} -ne ""] then
+if [ "$AURHELPER" != "" ]; then
   addAUR ${AURHELPER}
 fi
 
