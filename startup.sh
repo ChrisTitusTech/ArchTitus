@@ -24,6 +24,7 @@ set_option() {
     # else add option
     echo "${1}=${2}" >> "$CONFIG_FILE" 
 }
+
 # Adding global functions and variables to use in this script
 
 check_root() {
@@ -46,9 +47,9 @@ invalid_option() {
 set_password() {
     # password helper function
     # read password without echoing (-s)
-    read -prs "Please enter password: " PASSWORD1 
+    read -rs -p "Please enter password: " PASSWORD1 
     echo -ne "\n"
-    read -prs "Please re-enter password: " PASSWORD2
+    read -rs -p "Please re-enter password: " PASSWORD2
     echo -ne "\n"
     if [ "$PASSWORD1" == "$PASSWORD2" ]; then
        set_option "$1" "$PASSWORD1"
@@ -139,7 +140,7 @@ filesystem () {
                 # used -a to get more than one argument
                 echo -ne "Please enter your btrfs subvolume names separated by space\n"
                 echo -ne "usualy they are @, @home, @root etc. Defaults are @, @home, @var, @tmp, @.snapshots \n"
-                read -pr "or press enter to use defaults: " -a ARR
+                read -r -p "or press enter to use defaults: " -a ARR
                 if [[  "${ARR[*]}" -eq 0 ]]; then
                     set_option "BTRFS_SUBVOLUME" "(@ @home @var @tmp @.snapshots)"
                     break
@@ -170,7 +171,7 @@ timezone () {
     _ZONE=($(timedatectl list-timezones | sed 's/\/.*$//' | uniq))
     echo -ne "System detected your timezone to be '$_TIMEZONE'"
     echo -ne  "\n"
-    read -pr "Is this correct? yes/no: " ANSWER
+    read -r -p "Is this correct? yes/no: " ANSWER
     case "$ANSWER" in
         y|Y|yes|Yes|YES)
             set_option TIMEZONE "$_TIMEZONE"
@@ -222,7 +223,7 @@ keymap () {
 
 drivessd () {
     # confirm if ssd is present
-    read -pr "Is this system using an SSD? yes/no: " _SSD
+    read -r -p "Is this system using an SSD? yes/no: " _SSD
     case "$_SSD" in
         y|Y|yes|Yes|YES)
             set_option "SSD" 1
@@ -255,11 +256,11 @@ diskselection () {
 }
 
 userinfo () {
-    read -pr "Please enter your username: " USERNAME
-    set_option USERNAME "${USERNAME,,}" # convert to lower case as in issue #109 
+    read -r -p "Please enter your username: " USERNAME
+    set_option "USERNAME" "${USERNAME,,}" # convert to lower case as in issue #109 
     set_password "PASSWORD"
-    read -pr "Please enter your hostname: " HOSTNAME
-    set_option HOSTNAME "$HOSTNAME"
+    read -r -p "Please enter your hostname: " HOSTNAME
+    set_option "HOSTNAME" "$HOSTNAME"
 }
 
 setlocale (){
@@ -349,7 +350,7 @@ setdisktop() {
 }
 
 # Backround checks
-check_root
+# check_root
 # Starting functions
 clear
 logo
