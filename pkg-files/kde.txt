@@ -1,10 +1,13 @@
+plasma-desktop
+sddm
+dolphin
+--END OF MINIMAL INSTALL--
 ark
 audiocd-kio
 bluedevil
 breeze
 breeze-gtk
 discover
-dolphin
 extra-cmake-modules
 filelight
 gwenview
@@ -21,11 +24,10 @@ layer-shell-qt
 milou
 okular
 oxygen
-plasma-desktop
 plasma-nm
+plasma-pa
 powerdevil
 print-manager
-sddm-kcm
 spectacle
 systemsettings
 xdg-desktop-portal-kde

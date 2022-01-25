@@ -282,10 +282,20 @@ aurhelper () {
 desktopenv () {
   # Let the user choose Desktop Enviroment from predefined list
   echo -ne "Please select your desired Desktop Enviroment:\n"
-  options=(gnome kde cinnamon xfce mate budgie lxde deepin openbox)
+  options=(gnome kde cinnamon xfce mate budgie lxde deepin openbox server)
   select_option $? 4 "${options[@]}"
   desktop_env=${options[$?]}
   set_option DESKTOP_ENV $desktop_env
+}
+
+installtype () {
+  echo -ne "Please select type of installation:\n\n
+  Full install: Installs full featured desktop enviroment, with added apps and themes needed for everyday use\n
+  Minimal Install: Installs only apps few selected apps to get you started\n"
+  options=(FULL MINIMAL)
+  select_option $? 4 "${options[@]}"
+  install_type=${options[$?]}
+  set_option INSTALL_TYPE $install_type
 }
 
 # More features in future
@@ -298,9 +308,17 @@ userinfo
 clear
 logo
 desktopenv
-clear
-logo
-aurhelper
+# Set fixed options that installation uses if user choses server installation
+set_option INSTALL_TYPE MINIMAL
+set_option AUR_HELPER NONE
+if [[ ! $desktop_env == server ]]; then
+  clear
+  logo
+  aurhelper
+  clear
+  logo
+  installtype
+fi
 clear
 logo
 diskpart

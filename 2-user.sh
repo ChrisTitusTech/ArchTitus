@@ -28,15 +28,27 @@ if [[ ! $AUR_HELPER == none ]]; then
   git clone "https://aur.archlinux.org/$AUR_HELPER.git"
   cd ~/$AUR_HELPER
   makepkg -si --noconfirm
-  $AUR_HELPER -S --noconfirm --needed - < ~/ArchTitus/pkg-files/aur-pkgs.txt
+  # sed $INSTALL_TYPE is using install typeto check for MINIMAL installation, if it's true, stop
+  # stop the script and move on, not installing any more packages below that line
+  sed -n '/'$INSTALL_TYPE'/q;p' ~/ArchTitus/pkg-files/aur-pkgs.txt | while read line
+  do
+    if [[ ${line} == '--END OF MINIMAL INSTALL--' ]]; then
+      # If selected installation type is FULL, skip the --END OF THE MINIMAL INSTALLATION-- line
+      continue
+    fi
+    echo "INSTALLING: ${line}"
+    $AUR_HELPER -S --noconfirm --needed ${line}
+  done
 fi
 
 export PATH=$PATH:~/.local/bin
-cp -r ~/ArchTitus/dotfiles/* ~/.config/
-pip install konsave
-konsave -i ~/ArchTitus/kde.knsv
-sleep 1
-konsave -a kde
+if [[ $DESKTOP_ENV == "kde" ]] && [[ $INSTALL_TYPE == "FULL" ]]; then
+  cp -r ~/ArchTitus/dotfiles/* ~/.config/
+  pip install konsave
+  konsave -i ~/ArchTitus/kde.knsv
+  sleep 1
+  konsave -a kde
+fi
 
 echo -ne "
 -------------------------------------------------------------------------
