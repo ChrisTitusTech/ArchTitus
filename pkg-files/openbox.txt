@@ -1,6 +1,6 @@
 openbox
 lightdm
-lightdm-webkit2-greeter
+lightdm-gtk-greeter
 thunar
 lxsession
 rxvt-unicode
@@ -14,6 +14,7 @@ dunst
 tint2
 rofi
 feh
+lightdm-webkit2-greeter
 lightdm-webkit-theme-litarvan
 lxappearance
 qt5ct
