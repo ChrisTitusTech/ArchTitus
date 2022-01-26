@@ -8,6 +8,7 @@ SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # set up a config file
 CONFIG_FILE=$SCRIPT_DIR/setup.conf
+
 # check if file exists
 if [ ! -f "$CONFIG_FILE" ]; then
     # create file if not exists
@@ -27,11 +28,36 @@ set_option() {
 
 # Adding global functions and variables to use in this script
 
+# check for root user
 check_root() {
 	if [[ "$(id -u)" != "0" ]]; then
-		echo -ne "Error: This script has to be run under the 'root' user!"
+		echo -ne "ERROR! This script has to be run under the 'root' user!"
         exit 1
 	fi
+}
+
+# check if distro is arch
+check_arch() {
+    if [[ ! -e /etc/arch-release ]]; then
+        echo -ne "ERROR! This script has to be run under Arch Linux!"
+        exit 1
+    fi
+}
+
+# check for internet connection
+connection_test() {
+    ping -q -w 1 -c 1 "$(ip r | grep default | awk 'NR==1 {print $3}')" &>/dev/null && return 1 || return 0
+}
+
+# Backround checks
+background () {
+    if connection_test; then
+        echo -ne "ERROR! There seems to be no internet connection.\n"
+        exit 1
+    else 
+        check_root
+        check_arch
+    fi
 }
 
 elements_present() {
@@ -74,21 +100,20 @@ logo () {
 # This will be shown on every set as user is progressing
 echo -ne "
 -------------------------------------------------------------------------
+
  █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
 ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
 ███████║██████╔╝██║     ███████║   ██║   ██║   ██║   ██║   ██║███████╗
 ██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
 ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
-------------------------------------------------------------------------
-            Please select presetup settings for your system              
-------------------------------------------------------------------------
+
 "
 }
 
 setpartionlayout() {
     # Set partioning layouts
-    title "Partioning Layout"
+    title "Setup Partioning Layout"
     LAYOUTS=("Default" "LVM" "LVM+LUKS" "Maintain Current")
     PS3="$PROMPT"
     select OPT in "${LAYOUTS[@]}"; do
@@ -131,18 +156,19 @@ setpartionlayout() {
 filesystem () {
     # This function will handle file systems. At this movement we are handling only
     # btrfs and ext4. Others will be added in future.
-    title "File System"
+    title "Setup File System"
     FILESYS=("btrfs" "ext2" "ext3" "ext4" "f2fs" "jfs" "nilfs2" "ntfs" "reiserfs" "vfat" "xfs")
     PS3="$PROMPT"
     select OPT in "${FILESYS[@]}"; do
         if elements_present "$OPT" "${FILESYS[@]}"; then
             if [ "$OPT" == "btrfs" ]; then
                 # used -a to get more than one argument
-                echo -ne "Please enter your btrfs subvolume names separated by space\n"
-                echo -ne "usualy they are @, @home, @root etc. Defaults are @, @home, @var, @tmp, @.snapshots \n"
-                read -r -p "or press enter to use defaults: " -a ARR
-                if [[  "${ARR[*]}" -eq 0 ]]; then
-                    set_option "BTRFS_SUBVOLUME" "(@ @home @var @tmp @.snapshots)"
+                echo -ne "Please enter your btrfs subvolumes separated by space\n"
+                echo -ne "usualy they start with @ for root or @home, @temp etc.\n"
+                echo -ne "Defaults are @, @home, @var, @tmp, @.snapshots \n"
+                read -r -p "press enter to use default: " -a ARR
+                if [[ -z "${ARR[*]}" ]]; then
+                    set_option "SUBVOLUMES" "(@ @home @var @tmp @.snapshots)"
                     break
                 else
                     # An array is a list of values.
@@ -152,7 +178,7 @@ filesystem () {
                         NAMES+=("$i")
                     done
                     # set to config file
-                    set_option "BTRFS_SUBVOLUMES" "(${NAMES[*]})"
+                    set_option "SUBVOLUMES" "(${NAMES[*]})"
                     break
                 fi
             fi
@@ -167,6 +193,7 @@ filesystem () {
 
 timezone () {
     # Added this from arch wiki https://wiki.archlinux.org/title/System_time
+    title "Setup Time Zone"
     _TIMEZONE="$(curl --fail https://ipapi.co/timezone)"
     _ZONE=($(timedatectl list-timezones | sed 's/\/.*$//' | uniq))
     echo -ne "System detected your timezone to be '$_TIMEZONE'"
@@ -187,7 +214,7 @@ timezone () {
                     echo -ne "Please select your subzone: \n"
                     select SUBZONE in "${_SUBZONE[@]}"; do
                         if elements_present "$SUBZONE" "${_SUBZONE[@]}"; then
-                            set_option TIMEZONE "${ZONE}/${SUBZONE}"
+                            set_option "TIMEZONE" "${ZONE}/${SUBZONE}"
                             break
                         else
                             invalid_option
@@ -208,11 +235,12 @@ timezone () {
 
 keymap () {
     # These are default key maps as presented in official arch repo archinstall
+    title "Setup Keymap"
     KEYMAPS=("by" "ca" "cf" "cz" "de" "dk" "es" "et" "fa" "fi" "fr" "gr" "hu" "il" "it" "lt" "lv" "mk" "nl" "no" "pl" "ro" "ru" "sg" "ua" "uk" "us")
     PS3="$PROMPT"
     select OPT in "${KEYMAPS[@]}"; do
         if elements_present "$OPT" "${KEYMAPS[@]}"; then
-            set_option KEYMAP "$OPT"
+            set_option "KEYMAP" "$OPT"
             break
         else
             invalid_option
@@ -223,6 +251,7 @@ keymap () {
 
 drivessd () {
     # confirm if ssd is present
+    title "SSD Drive Confirmation"
     read -r -p "Is this system using an SSD? yes/no: " _SSD
     case "$_SSD" in
         y|Y|yes|Yes|YES)
@@ -237,16 +266,17 @@ drivessd () {
     esac
 }
 
-diskselection () {
-    # selection for disk type
+diskSELECTION () {
+    # Selection for disk type
     # show disks present on system
+    title "Disk Selection"
     DISKLIST="$(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2" - "$3}')" # show disks with /dev/ prefix and size
     PS3="$PROMPT"
     select _DISK in "${DISKLIST[@]}"; do
         if elements_present "$_DISK" "${DISKLIST[@]}"; then
             # remove size from string
             DISK=$(echo "$_DISK" | awk '{print $1}')
-            set_option DISK "$DISK"
+            set_option "DISK" "$DISK"
             break
         else
             invalid_option
@@ -256,6 +286,7 @@ diskselection () {
 }
 
 userinfo () {
+    title "Add Your Information"
     read -r -p "Please enter your username: " USERNAME
     set_option "USERNAME" "${USERNAME,,}" # convert to lower case as in issue #109 
     set_password "PASSWORD"
@@ -265,11 +296,12 @@ userinfo () {
 
 setlocale (){
     # set locale
-    locale_list=($(grep UTF-8 /etc/locale.gen | sed 's/\..*$//' | sed '/@/d' | awk '{print $1}' | uniq | sed 's/#//g'))
+    title "Setup Locale"
+    LOCALES=($(grep UTF-8 /etc/locale.gen | sed 's/\..*$//' | sed '/@/d' | awk '{print $1}' | uniq | sed 's/#//g'))
     PS3="$PROMPT"
-    select LOCALE in "${locale_list[@]}"; do
-        if elements_present "$LOCALE" "${locale_list[@]}"; then
-            set_option LOCALE "${LOCALE}.UTF-8 UTF-8"
+    select LOCALE in "${LOCALES[@]}"; do
+        if elements_present "$LOCALE" "${LOCALES[@]}"; then
+            set_option "LOCALE" "${LOCALE}.UTF-8 UTF-8"
             break
         else
             invalid_option
@@ -280,12 +312,11 @@ setlocale (){
 
 setdisktop() {
     title "Select either Disktop Environment or Window Manager"
-
-    selections=("KDE" "Gnome" "XFCE" "Mate" "LXQT" "Minimal" "Awesome" "OpenBox" "i3" "i3-Gaps")
+    SELECTION=("KDE" "Gnome" "XFCE" "Mate" "LXQT" "Minimal" "Awesome" "OpenBox" "i3" "i3-Gaps")
     PS3="$PROMPT"
-    select OPT in "${selections[@]}"; do
-        if elements_present "$OPT" "${selections[@]}"; then
-            case "$OPT" in
+    select OPT in "${SELECTION[@]}"; do
+        if elements_present "$OPT" "${SELECTION[@]}"; then
+            case "$REPLY" in
                 1) 
                     # more packages can be added here
                     set_option "DE" "('plasma')" 
@@ -349,24 +380,55 @@ setdisktop() {
    
 }
 
-# Backround checks
+makechoice () {
+    # make choice for installation
+    title "Make your choice"
+    CHOICE=("Default Install" "Custom Install")
+    PS3="$PROMPT"
+    select OPT in "${CHOICE[@]}"; do
+        if elements_present "$OPT" "${CHOICE[@]}"; then
+            case "$REPLY" in
+                1)
+                    logo
+                    break
+                    ;;
+                2)
+                    userinfo
+                    break
+                    ;;
+                *) echo "Wrong option. Try again"
+                    break
+                    ;;
+            esac
+        else
+            invalid_option
+            break
+        fi
+    done
+}
+background
+logo
+makechoice
+# setdisktop
+
 # check_root
 # Starting functions
-clear
-logo
-userinfo
-setpartionlayout
-filesystem
-clear
-logo
-diskselection
-drivessd
-clear
-logo
-timezone
-clear
-logo
-keymap
-clear
-logo
-setlocale
+# clear
+# logo
+# title "Please select presetup \n\t\t\tsettings for your system"
+# userinfo
+# setpartionlayout
+# filesystem
+# clear
+# logo
+# diskselection
+# drivessd
+# clear
+# logo
+# timezone
+# clear
+# logo
+# keymap
+# clear
+# logo
+# setlocale
