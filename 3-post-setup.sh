@@ -18,7 +18,7 @@ GRUB EFI Bootloader Install & Check
 source /root/ArchTitus/setup.conf
 genfstab -U / >> /etc/fstab
 if [[ -d "/sys/firmware/efi" ]]; then
-    grub-install --efi-directory=/boot ${DISK}
+   grub-install --target=x86_64-efi --efi-directory=/boot/efi --recheck ${DISK}
 fi
 # set kernel parameter for decrypting the drive
 if [[ "${FS}" == "luks" ]]; then

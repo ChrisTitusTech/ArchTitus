@@ -35,4 +35,8 @@ echo -ne "
                     Automated Arch Linux Installer
 -------------------------------------------------------------------------
                 Done - Please Eject Install Media and Reboot
+
+  Do not forgot to edit '/etc/mkinitcpio.conf' and put the correct
+   parameters for LUKS and btrfs (if those were selected) and run
+   'arch-chroot /mnt mkinitcpio -P' or your system will not boot!
 "
