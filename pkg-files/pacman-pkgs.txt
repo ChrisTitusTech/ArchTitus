@@ -6,19 +6,12 @@ xorg-drivers
 xorg-xkill
 xorg-xinit
 xterm
-base
 binutils
 dosfstools
-grub
 iptables-nft
-linux
-linux-firmware
 linux-headers
-networkmanager
 noto-fonts-emoji
-sudo
 usbutils
-vim
 xdg-user-dirs
 --END OF MINIMAL INSTALL--
 alsa-plugins
@@ -51,7 +44,6 @@ fuseiso
 gamemode
 gcc
 gimp
-git
 gparted
 gptfdisk
 grub-customizer
@@ -63,14 +55,12 @@ htop
 jdk-openjdk
 kitty
 libdvdcss
-libnewt
 libtool
 lsof
 lutris
 lzop
 m4
 make
-nano
 neofetch
 ntfs-3g
 ntp
@@ -78,7 +68,6 @@ openbsd-netcat
 openssh
 os-prober
 p7zip
-pacman-contrib
 papirus-icon-theme
 patch
 picom
@@ -92,7 +81,6 @@ python-psutil
 python-pyqt5
 python-pip
 qemu
-rsync
 snap-pack
 snapper
 steam
@@ -108,7 +96,6 @@ unrar
 unzip
 virt-manager
 virt-viewer
-wget
 which
 wine-gecko
 wine-mono
