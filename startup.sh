@@ -1,34 +1,34 @@
 #!/usr/bin/env bash
-# This script will ask users about their prefrences 
+# This script will ask users about their prefrences
 # like disk, file system, timezone, keyboard layout,
 # user name, password, etc.
 # shellcheck disable=SC2207
 
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-# set up a config file
+# Set up a config file
 CONFIG_FILE=$SCRIPT_DIR/setup.conf
 
-# check if file exists
+# Check if file exists
 if [ ! -f "$CONFIG_FILE" ]; then
-    # create file if not exists
+    # Create file if not exists
     touch -f "$CONFIG_FILE"
 fi
 
-# set options in setup.conf
+# Set options in setup.conf
 set_option() {
-    # check if option exists
+    # Check if option exists
     if grep -Eq "^${1}.*" "$CONFIG_FILE"; then
         # delete option if exists
-        sed -i -e "/^${1}.*/d" "$CONFIG_FILE" 
+        sed -i -e "/^${1}.*/d" "$CONFIG_FILE"
     fi
-    # else add option
-    echo "${1}=${2}" >> "$CONFIG_FILE" 
+    # Else add option
+    echo "${1}=${2}" >> "$CONFIG_FILE"
 }
 
 # Adding global functions and variables to use in this script
 
-# check for root user
+# Check for root user
 check_root() {
 	if [[ "$(id -u)" != "0" ]]; then
 		echo -ne "ERROR! This script has to be run under the 'root' user!"
@@ -36,7 +36,7 @@ check_root() {
 	fi
 }
 
-# check if distro is arch
+# Check if distro is arch
 check_arch() {
     if [[ ! -e /etc/arch-release ]]; then
         echo -ne "ERROR! This script has to be run under Arch Linux!"
@@ -44,9 +44,23 @@ check_arch() {
     fi
 }
 
-# check for internet connection
+# Check for internet connection
 connection_test() {
     ping -q -w 1 -c 1 "$(ip r | grep default | awk 'NR==1 {print $3}')" &>/dev/null && return 1 || return 0
+}
+
+# Check for UEFI
+efi_check () {
+    if [[ -d "/sys/firmware/efi/" ]]; then
+		if (mount | grep /sys/firmware/efi/efivars); then
+			mount -t efivarfs efivarfs /sys/firmware/efi/efivars
+		fi
+        # UEFI detected
+		set_option "UEFI" 1
+	else
+        # No UEFI detected
+		set_option "UEFI" 0
+    fi
 }
 
 # Backround checks
@@ -54,26 +68,26 @@ background () {
     if connection_test; then
         echo -ne "ERROR! There seems to be no internet connection.\n"
         exit 1
-    else 
+    else
         check_root
         check_arch
     fi
 }
 
+# Check if an element exists
 elements_present() {
-    # check if an element exists
 	for e in "${@:2}"; do [[ "$e" == "$1" ]] && break; done
 }
 
+# Invalid option message
 invalid_option() {
-    # invalid option message
     echo -ne "Please select a valid option: \n"
 }
 
+# Password helper function
 set_password() {
-    # password helper function
-    # read password without echoing (-s)
-    read -rs -p "Please enter password: " PASSWORD1 
+    # Read password without echoing (-s)
+    read -rs -p "Please enter password: " PASSWORD1
     echo -ne "\n"
     read -rs -p "Please re-enter password: " PASSWORD2
     echo -ne "\n"
@@ -85,7 +99,7 @@ set_password() {
     fi
 }
 
-# make a title 
+# Make a title
 title () {
     echo -ne "\n"
     echo -ne "------------------------------------------------------------------------\n"
@@ -93,11 +107,34 @@ title () {
     echo -ne "------------------------------------------------------------------------\n"
 }
 
-# ask user for option
+# Write shared functions to to setup.conf
+write_to_config() {
+    cat << EOF >> "$CONFIG_FILE"
+#!/usr/bin/env bash
+title () {
+    echo -ne "\n"
+    echo -ne "------------------------------------------------------------------------\n"
+    echo -ne "\t\t\t$1\n"
+    echo -ne "------------------------------------------------------------------------\n"
+}
+install_pkg () {
+    pacman -S --noconfirm --needed "$@"
+}
+refresh_pacman() {
+    pacman -Syy
+}
+# Setup for logging
+LOG="${SCRIPT_DIR}/main.log"
+[[ -f $LOG ]] && rm -f "$LOG"
+EOF
+}
+
+
+# Ask user for option
 PROMPT="Please enter your option: "
 
-logo () {
 # This will be shown on every set as user is progressing
+logo () {
 echo -ne "
 -------------------------------------------------------------------------
 
@@ -111,8 +148,8 @@ echo -ne "
 "
 }
 
+# Set partioning layouts
 setpartionlayout() {
-    # Set partioning layouts
     title "Setup Partioning Layout"
     LAYOUTS=("Default" "LVM" "LVM+LUKS" "Maintain Current")
     PS3="$PROMPT"
@@ -153,16 +190,15 @@ setpartionlayout() {
     done
 }
 
+# This function will handle file systems.
 filesystem () {
-    # This function will handle file systems. At this movement we are handling only
-    # btrfs and ext4. Others will be added in future.
     title "Setup File System"
     FILESYS=("btrfs" "ext2" "ext3" "ext4" "f2fs" "jfs" "nilfs2" "ntfs" "reiserfs" "vfat" "xfs")
     PS3="$PROMPT"
     select OPT in "${FILESYS[@]}"; do
         if elements_present "$OPT" "${FILESYS[@]}"; then
             if [ "$OPT" == "btrfs" ]; then
-                # used -a to get more than one argument
+                # Used -a to get more than one argument
                 echo -ne "Please enter your btrfs subvolumes separated by space\n"
                 echo -ne "usualy they start with @ for root or @home, @temp etc.\n"
                 echo -ne "Defaults are @, @home, @var, @tmp, @.snapshots \n"
@@ -177,7 +213,7 @@ filesystem () {
                         # push values to array
                         NAMES+=("$i")
                     done
-                    # set to config file
+                    # Set to config file
                     set_option "SUBVOLUMES" "(${NAMES[*]})"
                     break
                 fi
@@ -191,8 +227,8 @@ filesystem () {
     done
 }
 
+# Added this from arch wiki https://wiki.archlinux.org/title/System_time
 timezone () {
-    # Added this from arch wiki https://wiki.archlinux.org/title/System_time
     title "Setup Time Zone"
     _TIMEZONE="$(curl --fail https://ipapi.co/timezone)"
     _ZONE=($(timedatectl list-timezones | sed 's/\/.*$//' | uniq))
@@ -233,8 +269,8 @@ timezone () {
     esac
 }
 
+# These are default key maps as presented in official arch repo archinstall
 keymap () {
-    # These are default key maps as presented in official arch repo archinstall
     title "Setup Keymap"
     KEYMAPS=("by" "ca" "cf" "cz" "de" "dk" "es" "et" "fa" "fi" "fr" "gr" "hu" "il" "it" "lt" "lv" "mk" "nl" "no" "pl" "ro" "ru" "sg" "ua" "uk" "us")
     PS3="$PROMPT"
@@ -249,8 +285,8 @@ keymap () {
     done
 }
 
+# Confirm if ssd is present
 drivessd () {
-    # confirm if ssd is present
     title "SSD Drive Confirmation"
     read -r -p "Is this system using an SSD? yes/no: " _SSD
     case "$_SSD" in
@@ -266,8 +302,8 @@ drivessd () {
     esac
 }
 
+# Selection for disk type
 diskSELECTION () {
-    # Selection for disk type
     # show disks present on system
     title "Disk Selection"
     DISKLIST="$(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2" - "$3}')" # show disks with /dev/ prefix and size
@@ -288,14 +324,14 @@ diskSELECTION () {
 userinfo () {
     title "Add Your Information"
     read -r -p "Please enter your username: " USERNAME
-    set_option "USERNAME" "${USERNAME,,}" # convert to lower case as in issue #109 
+    set_option "USERNAME" "${USERNAME,,}" # convert to lower case as in issue #109
     set_password "PASSWORD"
     read -r -p "Please enter your hostname: " HOSTNAME
     set_option "HOSTNAME" "$HOSTNAME"
 }
 
+# Set locale
 setlocale (){
-    # set locale
     title "Setup Locale"
     LOCALES=($(grep UTF-8 /etc/locale.gen | sed 's/\..*$//' | sed '/@/d' | awk '{print $1}' | uniq | sed 's/#//g'))
     PS3="$PROMPT"
@@ -310,6 +346,7 @@ setlocale (){
     done
 }
 
+# Disktop selection
 setdisktop() {
     title "Select either Disktop Environment or Window Manager"
     SELECTION=("KDE" "Gnome" "XFCE" "Mate" "LXQT" "Minimal" "Awesome" "OpenBox" "i3" "i3-Gaps")
@@ -317,13 +354,13 @@ setdisktop() {
     select OPT in "${SELECTION[@]}"; do
         if elements_present "$OPT" "${SELECTION[@]}"; then
             case "$REPLY" in
-                1) 
-                    # more packages can be added here
-                    set_option "DE" "('plasma')" 
+                1)
+                    # More packages can be added here
+                    set_option "DE" "('plasma')"
                     set_option "DM" "sddm"
                     break
                     ;;
-                2) 
+                2)
                     set_option "DE" "('gnome')"
                     set_option "DM" "gdm"
                     break
@@ -377,11 +414,11 @@ setdisktop() {
             break
         fi
     done
-   
+
 }
 
+# Make choice for installation
 makechoice () {
-    # make choice for installation
     title "Make your choice"
     CHOICE=("Default Install" "Custom Install")
     PS3="$PROMPT"
@@ -409,26 +446,26 @@ makechoice () {
 background
 logo
 makechoice
-# setdisktop
+# Setdisktop
 
-# check_root
+# Check_root
 # Starting functions
-# clear
-# logo
-# title "Please select presetup \n\t\t\tsettings for your system"
-# userinfo
-# setpartionlayout
-# filesystem
-# clear
-# logo
-# diskselection
-# drivessd
-# clear
-# logo
-# timezone
-# clear
-# logo
-# keymap
-# clear
-# logo
-# setlocale
+# Clear
+# Logo
+# Title "Please select presetup \n\t\t\tsettings for your system"
+# Userinfo
+# Setpartionlayout
+# Filesystem
+# Clear
+# Logo
+# Diskselection
+# Drivessd
+# Clear
+# Logo
+# Timezone
+# Clear
+# Logo
+# Keymap
+# Clear
+# Logo
+# Setlocale
