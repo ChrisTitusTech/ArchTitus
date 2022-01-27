@@ -1,8 +1,8 @@
-# ArchTitus Installer Script
+# ArchTitus server Installer Script
 
 <img src="https://i.imgur.com/YiNMnan.png" />
 
-This README contains the steps I do to install and configure a fully-functional Arch Linux installation containing a desktop environment, all the support packages (network, bluetooth, audio, printers, etc.), along with all my preferred applications and utilities. The shell scripts in this repo allow the entire process to be automated.)
+This README contains the steps I do to install a base Arch Linux installation containing the bare minimum software (no gui)
 
 ---
 ## Create Arch ISO or Use Image
@@ -17,13 +17,13 @@ From initial Prompt type the following commands:
 
 ```
 pacman -Sy git
-git clone https://github.com/ChrisTitusTech/ArchTitus
+git clone -b server https://github.com/ChrisTitusTech/ArchTitus
 cd ArchTitus
 ./archtitus.sh
 ```
 
 ### System Description
-This is completely automated arch install of the KDE desktop environment on arch using all the packages I use on a daily basis. 
+This is completely automated base arch install using the bare minimum packages to have a functioning system. 
 
 ## Troubleshooting
 
