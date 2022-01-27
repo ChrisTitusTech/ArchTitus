@@ -54,10 +54,12 @@ sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
 
 # create partitions
 if [ -d /sys/firmware/efi ]; then
+	# UEFI mode
 	sgdisk -n 1::+250M --typecode=1:8300 --change-name=1:'BIOSBOOT' ${DISK} # partition 1 (Linux System Partition)
 	sgdisk -n 2::+100M --typecode=2:ef00 --change-name=2:'EFIBOOT' ${DISK} # partition 2 (UEFI Boot Partition)
 	sgdisk -n 3::-0 --typecode=3:8300 --change-name=3:'ROOT' ${DISK} # partition 3 (Root), default start, remaining
 else
+	# BOOT mode
 	sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:'BIOSBOOT' ${DISK} # partition 1 (BIOS Boot Partition)
 	sgdisk -n 2::+300M --typecode=2:ef00 --change-name=2:'EFIBOOT' ${DISK} # partition 2 (UEFI Boot Partition)
 	sgdisk -n 3::-0 --typecode=3:8300 --change-name=3:'ROOT' ${DISK} # partition 3 (Root), default start, remaining
@@ -110,9 +112,9 @@ elif [[ "${FS}" == "ext4" ]]; then
     mount -t ext4 ${partition3} /mnt
 elif [[ "${FS}" == "luks" ]]; then
     mkfs.vfat -F32 -n "EFIBOOT" ${partition2}
-    #mkfs.ext2 -L "BOOT" ${partition1}
+    #mkfs.btrfs -L "BOOT" ${partition1}
 # enter luks password to cryptsetup and format root partition
-    echo -n "${luks_password}" | cryptsetup -y -v luksFormat ${partition3} -
+    echo -n "${luks_password}" | cryptsetup -y -v luksFormat --type luks1 ${partition3} -
 # open luks container and ROOT will be place holder 
     echo -n "${luks_password}" | cryptsetup open ${partition3} ROOT -
 # now format that container
