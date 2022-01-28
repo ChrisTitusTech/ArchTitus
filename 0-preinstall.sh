@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
 
-SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-if [[ -f "$SCRIPT_DIR"/setup.conf ]]; then
+if [[ -f $(pwd)/setup.conf ]]; then
 	source setup.conf
 else
 	echo "missing file: setup.conf"
@@ -220,7 +219,7 @@ mount -t vfat -L EFIBOOT /mnt/boot/
 #     # The line below is written to /mnt/ but doesn't contain /mnt/, since it's just / for the system itself.
 #     echo "/opt/swap/swapfile	none	swap	sw	0	0" >> /mnt/etc/fstab # Add swap to fstab, so it KEEPS working after installation.
 # fi
-# echo -ne "
+echo -ne "
 -------------------------------------------------------------------------
                     SYSTEM READY FOR 1-setup.sh
 -------------------------------------------------------------------------
