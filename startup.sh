@@ -81,7 +81,7 @@ set_btrfs () {
     # Used -a to get more than one argument
     echo "Please enter your btrfs subvolumes separated by space"
     echo "usualy they start with @ like @home, @temp etc."
-    echo "Defaults are @, @home, @var, @tmp, @.snapshots"
+    echo "Defaults are @home, @var, @tmp, @.snapshots"
     echo " "
     read -r -p "press enter to use default: " -a ARR
     if [[ -z "${ARR[*]}" ]]; then
@@ -90,6 +90,7 @@ set_btrfs () {
         # An array is a list of values.
         NAMES=(@)
         for i in "${ARR[@]}"; do
+            # Check for user input for @
             if [[ $i =~ [@] ]]; then
             # push values to array
                 NAMES+=("$i")
@@ -97,8 +98,10 @@ set_btrfs () {
                 NAMES+=(@"${i}")
             fi
         done
+        # Check for duplicates
+        IFS=" " read -r -a SUBS <<< "$(tr ' ' '\n' <<< "${NAMES[@]}" | sort -u | tr '\n' ' ')"
         # Set to config file
-        set_option "SUBVOLUMES" "(${NAMES[*]})"
+        set_option "SUBVOLUMES" "${SUBS[*]}"
     fi
 }
 
@@ -131,7 +134,7 @@ set_password() {
 title () {
     echo -ne "\n"
     echo -ne "------------------------------------------------------------------------\n"
-    echo -ne "\t\t\t\"$1\"\n"
+    echo -ne "\t\t\"$1\"\n"
     echo -ne "------------------------------------------------------------------------\n"
 }
 
@@ -143,7 +146,7 @@ cat << EOF > "$CONFIG_FILE"
 title () {
     echo -ne "\n"
     echo -ne "------------------------------------------------------------------------\n"
-    echo -ne "\t\t\t\$1\n"
+    echo -ne "\t\t\$1\n"
     echo -ne "------------------------------------------------------------------------\n"
 }
 
@@ -198,6 +201,7 @@ background_check () {
         echo -ne "ERROR! There seems to be no internet connection.\n"
         exit 1
     fi
+    set_option "SCRIPT_DIR" "$SCRIPT_DIR"
     check_arch
     efi_check
     check_root
@@ -402,27 +406,27 @@ set_desktop() {
             case "$REPLY" in
                 1)
                     # More packages can be added here
-                    set_option "DE" "('plasma')"
+                    set_option "DE" "plasma"
                     set_option "DM" "sddm"
                     break
                     ;;
                 2)
-                    set_option "DE" "('gnome')"
+                    set_option "DE" "gnome"
                     set_option "DM" "gdm"
                     break
                     ;;
                 3)
-                    set_option "DE" "('xfce4')"
+                    set_option "DE" "xfce4"
                     set_option "DM" "lightdm"
                     break
                     ;;
                 4)
-                    set_option "DE" "('mate')"
+                    set_option "DE" "mate"
                     set_option "DM" "lightdm"
                     break
                     ;;
                 5)
-                    set_option "DE" "('lxqt')"
+                    set_option "DE" "lxqt"
                     set_option "DM" "lightdm"
                     break
                     ;;
@@ -488,19 +492,32 @@ make_choice () {
                     clear
                     set_locale
                     clear
-                    ssd_drive
+                    set_timezone
                     set_keymap
+                    ssd_drive
                     set_btrfs
                     set_option "FS" "btrfs"
-                    set_option "DE" "('plasma')"
+                    set_option "DE" "plasma"
                     set_option "DM" "sddm"
                     set_option "LAYOUT" 1
 
                     break
                     ;;
                 2)
+                    clear
                     logo
-                    # more option needed
+                    user_info
+                    disk_selection
+                    clear
+                    set_locale
+                    clear
+                    set_timezone
+                    set_keymap
+                    ssd_drive
+                    # Advance options
+                    set_partion_layout
+                    set_filesystem
+                    set_desktop
                     break
                     ;;
                 *) echo "Wrong option. Try again"
@@ -513,9 +530,8 @@ make_choice () {
         fi
     done
 }
-# background_check
+background_check
 # write_to_config
 clear
 logo
-# title "Automated Arch Linux Installer"
 make_choice
