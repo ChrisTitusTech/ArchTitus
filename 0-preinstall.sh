@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
 
-logo
+SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 if [[ -f "$SCRIPT_DIR"/setup.conf ]]; then
 	source setup.conf
@@ -10,6 +10,7 @@ else
 	exit 1
 fi
 
+logo
 title "Setting up mirrors for faster downloads"
 install_pkg pacman-contrib reflector rsync gptfdisk btrfs-progs
 
