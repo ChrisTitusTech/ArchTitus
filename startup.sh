@@ -9,11 +9,8 @@ SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 # Set up a config file
 CONFIG_FILE=$SCRIPT_DIR/setup.conf
 
-# Check if file exists
-if [ ! -f "$CONFIG_FILE" ]; then
-    # Create file if not exists
-    touch -f "$CONFIG_FILE"
-fi
+# Check if file exists and remove it if it does
+[[ -f "$CONFIG_FILE" ]] && rm -f "$CONFIG_FILE"
 
 # Set options in setup.conf
 set_option() {
@@ -49,6 +46,17 @@ connection_test() {
     ping -q -w 1 -c 1 "$(ip r | grep default | awk 'NR==1 {print $3}')" &>/dev/null && return 1 || return 0
 }
 
+# check coutry for mirrorlist
+check_country () {
+    _ISO=$(curl --fail https://ifconfig.co/country-iso)
+    set_option "ISO" "$_ISO"
+}
+
+# install fonts
+install_font () {
+    pacman -S --noconfirm --needed terminus-font
+}
+
 # Check for UEFI
 efi_check () {
     if [[ -d "/sys/firmware/efi/" ]]; then
@@ -68,10 +76,12 @@ background () {
     if connection_test; then
         echo -ne "ERROR! There seems to be no internet connection.\n"
         exit 1
-    else
-        check_root
-        check_arch
     fi
+    check_arch
+    efi_check
+    check_root
+    check_country
+    install_font
 }
 
 # Check if an element exists
@@ -91,7 +101,7 @@ set_password() {
     echo -ne "\n"
     read -rs -p "Please re-enter password: " PASSWORD2
     echo -ne "\n"
-    if [ "$PASSWORD1" == "$PASSWORD2" ]; then
+    if [[ "$PASSWORD1" == "$PASSWORD2" ]]; then
        set_option "$1" "$PASSWORD1"
     else
         echo -ne "Passwords do not match \n"
@@ -111,21 +121,39 @@ title () {
 write_to_config() {
     cat << EOF >> "$CONFIG_FILE"
 #!/usr/bin/env bash
+
 title () {
     echo -ne "\n"
     echo -ne "------------------------------------------------------------------------\n"
     echo -ne "\t\t\t$1\n"
     echo -ne "------------------------------------------------------------------------\n"
 }
+
 install_pkg () {
     pacman -S --noconfirm --needed "$@"
 }
+
 refresh_pacman() {
     pacman -Syy
 }
+
 # Setup for logging
 LOG="${SCRIPT_DIR}/main.log"
 [[ -f $LOG ]] && rm -f "$LOG"
+
+logo () {
+echo -ne "
+-------------------------------------------------------------------------
+
+ █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
+██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
+███████║██████╔╝██║     ███████║   ██║   ██║   ██║   ██║   ██║███████╗
+██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
+██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
+╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
+
+"
+}
 EOF
 }
 
@@ -161,16 +189,16 @@ setpartionlayout() {
                     break
                     ;;
                 2)
-                    set_option "LAYOUT" "$OPT"
+                    # set_option "LAYOUT" "$OPT"
                     set_option "LVM" 1
                     set_option "LUKS" 0
                     break
                     ;;
                 3)
-                    set_option "LAYOUT" "$OPT"
-                    set_password "LUKS_PASSWORD"
+                    # set_option "LAYOUT" "$OPT"
                     set_option "LUKS" 1
                     set_option "LVM" 1
+                    set_password "LUKS_PASSWORD"
                     break
                     ;;
                 4)
@@ -346,9 +374,9 @@ setlocale (){
     done
 }
 
-# Disktop selection
-setdisktop() {
-    title "Select either Disktop Environment or Window Manager"
+# Desktop selection
+setdesktop() {
+    title "Select either desktop Environment or Window Manager"
     SELECTION=("KDE" "Gnome" "XFCE" "Mate" "LXQT" "Minimal" "Awesome" "OpenBox" "i3" "i3-Gaps")
     PS3="$PROMPT"
     select OPT in "${SELECTION[@]}"; do
@@ -446,26 +474,26 @@ makechoice () {
 background
 logo
 makechoice
-# Setdisktop
+# setdesktop
 
-# Check_root
-# Starting functions
-# Clear
-# Logo
-# Title "Please select presetup \n\t\t\tsettings for your system"
-# Userinfo
-# Setpartionlayout
-# Filesystem
-# Clear
-# Logo
-# Diskselection
-# Drivessd
-# Clear
-# Logo
-# Timezone
-# Clear
-# Logo
-# Keymap
-# Clear
-# Logo
-# Setlocale
+# check_root
+# starting functions
+# clear
+# logo
+# title "Please select presetup \n\t\t\tsettings for your system"
+# userinfo
+# setpartionlayout
+# filesystem
+# clear
+# logo
+# diskselection
+# drivessd
+# clear
+# logo
+# timezone
+# clear
+# logo
+# keymap
+# clear
+# logo
+# setlocale
