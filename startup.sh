@@ -474,7 +474,9 @@ make_choice () {
                     # title "Please select presetup \n\t\t\tsettings for your system"
                     user_info
                     disk_selection
+                    clear
                     set_locale
+                    clear
                     ssd_drive
                     set_keymap
                     set_btrfs
