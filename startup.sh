@@ -80,7 +80,7 @@ efi_check () {
 set_btrfs () {
     # Used -a to get more than one argument
     echo "Please enter your btrfs subvolumes separated by space"
-    echo "usualy they start with @ for root or @home, @temp etc."
+    echo "usualy they start with @ like @home, @temp etc."
     echo "Defaults are @, @home, @var, @tmp, @.snapshots"
     echo " "
     read -r -p "press enter to use default: " -a ARR
@@ -88,7 +88,7 @@ set_btrfs () {
         set_option "SUBVOLUMES" "(@ @home @var @tmp @.snapshots)"
     else
         # An array is a list of values.
-        NAMES=()
+        NAMES=(@)
         for i in "${ARR[@]}"; do
             # push values to array
             NAMES+=("$i")

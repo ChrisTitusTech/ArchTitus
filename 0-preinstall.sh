@@ -41,12 +41,17 @@ if [[ "$LAYOUT" ]]; then
     mkfs.vfat -F32 -n "EFIBOOT" "$PART2"
     mkfs.btrfs -L "ROOT" "$PART3" -f
     mount -t btrfs "$PART3" /mnt
-    for x in "${SUBVOLUMES[@]}"; do
+    IFS=' ' read -r -a _LIST <<< "$SUBVOLUMES"
+    for x in "${_LIST[@]}"; do
         btrfs subvolume create /mnt/"${x}"
     done
     umount /mnt
-    for y in "${SUBVOLUMES[@]}"; do
-        mount -o "$MOUNTOPTION",subvol="${y}" "$PART3" /mnt
+    mount -o "$MOUNTOPTION",subvol=@ "$PART3" /mnt
+    for y in "${_LIST[@]:1}"; do
+        mkdir /mnt/"${y}"
+    done
+    for z in "${_LIST[@]:1}"; do
+        mount -o "$MOUNTOPTION",subvol="${z}" "$PART3" /mnt/"${z}"
     done
 else
     modprobe dm-mod
