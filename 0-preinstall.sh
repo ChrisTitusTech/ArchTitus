@@ -56,7 +56,8 @@ if [[ "$LAYOUT" ]]; then
     done
 
     for z in "${SUBVOLUMES[@]:1}"; do
-        mount -o "$MOUNTOPTION",subvol="${z}" "$PART3" /mnt/"${z}"
+        w="$(echo "$z" | sed 's/@//g')"
+        mount -o "$MOUNTOPTION",subvol="${z}" "$PART3" /mnt/"${w}"
     done
 else
     modprobe dm-mod
