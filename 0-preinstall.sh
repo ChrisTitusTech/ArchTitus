@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1091
+# shellcheck disable=SC1091,SC2001
 
 
 if [[ -f $(pwd)/setup.conf ]]; then
@@ -50,7 +50,8 @@ if [[ "$LAYOUT" ]]; then
     umount /mnt
     mount -o "$MOUNTOPTION",subvol=@ "$PART3" /mnt
 
-    for y in "${SUBVOLUMES[@]:1}"; do
+    for _y in "${SUBVOLUMES[@]:1}"; do
+        y="$(echo "$_y" | sed 's/@//g')"
         mkdir /mnt/"${y}"
     done
 

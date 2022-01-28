@@ -90,8 +90,12 @@ set_btrfs () {
         # An array is a list of values.
         NAMES=(@)
         for i in "${ARR[@]}"; do
+            if [[ $i =~ [@] ]]; then
             # push values to array
-            NAMES+=("$i")
+                NAMES+=("$i")
+            else 
+                NAMES+=(@"${i}")
+            fi
         done
         # Set to config file
         set_option "SUBVOLUMES" "(${NAMES[*]})"
@@ -509,7 +513,7 @@ make_choice () {
         fi
     done
 }
-background_check
+# background_check
 # write_to_config
 clear
 logo
