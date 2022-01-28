@@ -82,6 +82,7 @@ background () {
     check_root
     check_country
     install_font
+    setfont ter-v22b
 }
 
 # Check if an element exists
@@ -472,6 +473,7 @@ makechoice () {
     done
 }
 background
+clear
 logo
 makechoice
 # setdesktop
