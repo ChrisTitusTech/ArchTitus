@@ -368,7 +368,7 @@ user_info () {
 }
 
 # Set locale
-setlocale (){
+set_locale (){
     title "Setup Locale"
     LOCALES=($(grep UTF-8 /etc/locale.gen | sed 's/\..*$//' | sed '/@/d' | awk '{print $1}' | uniq | sed 's/#//g'))
     PS3="$PROMPT"
@@ -456,7 +456,7 @@ set_desktop() {
 
 # Make choice for installation
 make_choice () {
-    title "Make your choice"
+    title "Your system choice"
     CHOICE=("Default Install" "Custom Install")
     PS3="$PROMPT"
     select OPT in "${CHOICE[@]}"; do
@@ -470,6 +470,12 @@ make_choice () {
                     disk_selection
                     set_locale
                     ssd_drive
+                    set_keymap
+                    set_option "FS" "btrfs"
+                    set_option "DE" "('plasma')"
+                    set_option "DM" "sddm"
+                    set_option "LAYOUT" 1
+
                     break
                     ;;
                 2)
