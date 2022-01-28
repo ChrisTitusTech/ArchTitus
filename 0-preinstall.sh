@@ -42,11 +42,11 @@ if [[ "$LAYOUT" ]]; then
     mkfs.btrfs -L "ROOT" "$PART3" -f
     mount -t btrfs "$PART3" /mnt
     for x in "${SUBVOLUMES[@]}"; do
-        btrfs subvolume create /mnt/"$x"
+        btrfs subvolume create /mnt/"${x}"
     done
     umount /mnt
     for y in "${SUBVOLUMES[@]}"; do
-        mount -o "$MOUNTOPTION",subvol="$y" "$PART3" /mnt
+        mount -o "$MOUNTOPTION",subvol="${y}" "$PART3" /mnt
     done
 else
     modprobe dm-mod
