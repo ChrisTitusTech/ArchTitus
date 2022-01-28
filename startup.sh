@@ -118,7 +118,7 @@ set_password() {
        set_option "$1" "$PASSWORD1"
     else
         echo -ne "Passwords do not match \n"
-        return
+        set_password
     fi
 }
 
@@ -143,7 +143,7 @@ title () {
 }
 
 install_pkg () {
-    pacman -S --noconfirm --needed "$@"
+    pacman -S --noconfirm --needed "\$@"
 }
 
 refresh_pacman() {
@@ -152,7 +152,7 @@ refresh_pacman() {
 
 # Setup for logging
 LOG="${SCRIPT_DIR}/main.log"
-[[ -f $LOG ]] && rm -f "$LOG"
+[[ -f \$LOG ]] && rm -f "\$LOG"
 
 logo () {
 echo -ne "
@@ -502,8 +502,9 @@ make_choice () {
         fi
     done
 }
-background_check
+#background_check
+write_to_config
 clear
 logo
-title "Automated Arch Linux Installer"
+# title "Automated Arch Linux Installer"
 make_choice
