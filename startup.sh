@@ -2,7 +2,7 @@
 # This script will ask users about their prefrences
 # like disk, file system, timezone, keyboard layout,
 # user name, password, etc.
-# shellcheck disable=SC2207
+# shellcheck disable=SC2207,SC2120
 
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
@@ -57,6 +57,11 @@ install_font () {
     pacman -S --noconfirm --needed terminus-font
 }
 
+# timedatectl set-ntp true
+set_ntp () {
+    timedatectl set-ntp true
+}
+
 # Check for UEFI
 efi_check () {
     if [[ -d "/sys/firmware/efi/" ]]; then
@@ -69,20 +74,6 @@ efi_check () {
         # No UEFI detected
 		set_option "UEFI" 0
     fi
-}
-
-# Backround checks
-background () {
-    if connection_test; then
-        echo -ne "ERROR! There seems to be no internet connection.\n"
-        exit 1
-    fi
-    check_arch
-    efi_check
-    check_root
-    check_country
-    install_font
-    setfont ter-v22b
 }
 
 # Check if an element exists
@@ -120,7 +111,7 @@ title () {
 
 # Write shared functions to to setup.conf
 write_to_config() {
-    cat << EOF >> "$CONFIG_FILE"
+cat << EOF > "$CONFIG_FILE"
 #!/usr/bin/env bash
 
 title () {
@@ -175,6 +166,23 @@ echo -ne "
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 
 "
+}
+
+# Backround checks
+background () {
+    if connection_test; then
+        echo -ne "ERROR! There seems to be no internet connection.\n"
+        exit 1
+    fi
+    check_arch
+    efi_check
+    check_root
+    set_ntp
+    refresh_pacman
+    check_country
+    install_font
+    setfont ter-v22b
+    write_to_config
 }
 
 # Set partioning layouts
