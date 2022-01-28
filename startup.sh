@@ -76,6 +76,27 @@ efi_check () {
     fi
 }
 
+# if btrfs is selected
+set_btrfs () {
+    # Used -a to get more than one argument
+    echo -ne "Please enter your btrfs subvolumes separated by space\n"
+    echo -ne "usualy they start with @ for root or @home, @temp etc.\n"
+    echo -ne "Defaults are @, @home, @var, @tmp, @.snapshots \n"
+    read -r -p "press enter to use default: " -a ARR
+    if [[ -z "${ARR[*]}" ]]; then
+        set_option "SUBVOLUMES" "(@ @home @var @tmp @.snapshots)"
+    else
+        # An array is a list of values.
+        NAMES=()
+        for i in "${ARR[@]}"; do
+            # push values to array
+            NAMES+=("$i")
+        done
+        # Set to config file
+        set_option "SUBVOLUMES" "(${NAMES[*]})"
+    fi
+}
+
 # Check if an element exists
 elements_present() {
 	for e in "${@:2}"; do [[ "$e" == "$1" ]] && break; done
@@ -227,6 +248,8 @@ set_partion_layout() {
     done
 }
 
+
+
 # This function will handle file systems.
 set_filesystem () {
     title "Setup File System"
@@ -235,25 +258,8 @@ set_filesystem () {
     select OPT in "${FILESYS[@]}"; do
         if elements_present "$OPT" "${FILESYS[@]}"; then
             if [ "$OPT" == "btrfs" ]; then
-                # Used -a to get more than one argument
-                echo -ne "Please enter your btrfs subvolumes separated by space\n"
-                echo -ne "usualy they start with @ for root or @home, @temp etc.\n"
-                echo -ne "Defaults are @, @home, @var, @tmp, @.snapshots \n"
-                read -r -p "press enter to use default: " -a ARR
-                if [[ -z "${ARR[*]}" ]]; then
-                    set_option "SUBVOLUMES" "(@ @home @var @tmp @.snapshots)"
-                    break
-                else
-                    # An array is a list of values.
-                    NAMES=()
-                    for i in "${ARR[@]}"; do
-                        # push values to array
-                        NAMES+=("$i")
-                    done
-                    # Set to config file
-                    set_option "SUBVOLUMES" "(${NAMES[*]})"
-                    break
-                fi
+               set_btrfs
+               break
             fi
             set_option "FS" "$OPT"
             break
@@ -465,12 +471,13 @@ make_choice () {
                 1)
                     clear
                     logo
-                    title "Please select presetup \n\t\t\tsettings for your system"
+                    # title "Please select presetup \n\t\t\tsettings for your system"
                     user_info
                     disk_selection
                     set_locale
                     ssd_drive
                     set_keymap
+                    set_btrfs
                     set_option "FS" "btrfs"
                     set_option "DE" "('plasma')"
                     set_option "DM" "sddm"
@@ -479,7 +486,8 @@ make_choice () {
                     break
                     ;;
                 2)
-                    user_info
+                    logo
+                    # more option needed
                     break
                     ;;
                 *) echo "Wrong option. Try again"
@@ -495,4 +503,5 @@ make_choice () {
 background_check
 clear
 logo
+title "Automated Arch Linux Installer"
 make_choice
