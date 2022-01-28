@@ -46,13 +46,13 @@ connection_test() {
     ping -q -w 1 -c 1 "$(ip r | grep default | awk 'NR==1 {print $3}')" &>/dev/null && return 1 || return 0
 }
 
-# check coutry for mirrorlist
+# Check coutry for mirrorlist
 check_country () {
     _ISO=$(curl --fail https://ifconfig.co/country-iso)
     set_option "ISO" "$_ISO"
 }
 
-# install fonts
+# Install fonts
 install_font () {
     pacman -S --noconfirm --needed terminus-font
 }
@@ -169,7 +169,7 @@ echo -ne "
 }
 
 # Backround checks
-background () {
+background_check () {
     if connection_test; then
         echo -ne "ERROR! There seems to be no internet connection.\n"
         exit 1
@@ -186,7 +186,7 @@ background () {
 }
 
 # Set partioning layouts
-setpartionlayout() {
+set_partion_layout() {
     title "Setup Partioning Layout"
     LAYOUTS=("Default" "LVM" "LVM+LUKS" "Maintain Current")
     PS3="$PROMPT"
@@ -228,7 +228,7 @@ setpartionlayout() {
 }
 
 # This function will handle file systems.
-filesystem () {
+set_filesystem () {
     title "Setup File System"
     FILESYS=("btrfs" "ext2" "ext3" "ext4" "f2fs" "jfs" "nilfs2" "ntfs" "reiserfs" "vfat" "xfs")
     PS3="$PROMPT"
@@ -265,7 +265,7 @@ filesystem () {
 }
 
 # Added this from arch wiki https://wiki.archlinux.org/title/System_time
-timezone () {
+set_timezone () {
     title "Setup Time Zone"
     _TIMEZONE="$(curl --fail https://ipapi.co/timezone)"
     _ZONE=($(timedatectl list-timezones | sed 's/\/.*$//' | uniq))
@@ -307,7 +307,7 @@ timezone () {
 }
 
 # These are default key maps as presented in official arch repo archinstall
-keymap () {
+set_keymap () {
     title "Setup Keymap"
     KEYMAPS=("by" "ca" "cf" "cz" "de" "dk" "es" "et" "fa" "fi" "fr" "gr" "hu" "il" "it" "lt" "lv" "mk" "nl" "no" "pl" "ro" "ru" "sg" "ua" "uk" "us")
     PS3="$PROMPT"
@@ -323,7 +323,7 @@ keymap () {
 }
 
 # Confirm if ssd is present
-drivessd () {
+ssd_drive () {
     title "SSD Drive Confirmation"
     read -r -p "Is this system using an SSD? yes/no: " _SSD
     case "$_SSD" in
@@ -335,12 +335,12 @@ drivessd () {
             set_option "SSD" 0
             set_option "MOUNTOPTION" "noatime,compress=zstd,commit=120"
             ;;
-        *) echo "Wrong option. Try again";drivessd;;
+        *) echo "Wrong option. Try again";ssddrive;;
     esac
 }
 
 # Selection for disk type
-diskSELECTION () {
+disk_selection () {
     # show disks present on system
     title "Disk Selection"
     DISKLIST="$(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2" - "$3}')" # show disks with /dev/ prefix and size
@@ -358,7 +358,7 @@ diskSELECTION () {
     done
 }
 
-userinfo () {
+user_info () {
     title "Add Your Information"
     read -r -p "Please enter your username: " USERNAME
     set_option "USERNAME" "${USERNAME,,}" # convert to lower case as in issue #109
@@ -384,7 +384,7 @@ setlocale (){
 }
 
 # Desktop selection
-setdesktop() {
+set_desktop() {
     title "Select either desktop Environment or Window Manager"
     SELECTION=("KDE" "Gnome" "XFCE" "Mate" "LXQT" "Minimal" "Awesome" "OpenBox" "i3" "i3-Gaps")
     PS3="$PROMPT"
@@ -455,7 +455,7 @@ setdesktop() {
 }
 
 # Make choice for installation
-makechoice () {
+make_choice () {
     title "Make your choice"
     CHOICE=("Default Install" "Custom Install")
     PS3="$PROMPT"
@@ -463,11 +463,17 @@ makechoice () {
         if elements_present "$OPT" "${CHOICE[@]}"; then
             case "$REPLY" in
                 1)
+                    clear
                     logo
+                    title "Please select presetup \n\t\t\tsettings for your system"
+                    user_info
+                    disk_selection
+                    set_locale
+                    ssd_drive
                     break
                     ;;
                 2)
-                    userinfo
+                    user_info
                     break
                     ;;
                 *) echo "Wrong option. Try again"
@@ -480,30 +486,7 @@ makechoice () {
         fi
     done
 }
-background
+background_check
 clear
 logo
-makechoice
-# setdesktop
-
-# check_root
-# starting functions
-# clear
-# logo
-# title "Please select presetup \n\t\t\tsettings for your system"
-# userinfo
-# setpartionlayout
-# filesystem
-# clear
-# logo
-# diskselection
-# drivessd
-# clear
-# logo
-# timezone
-# clear
-# logo
-# keymap
-# clear
-# logo
-# setlocale
+make_choice
