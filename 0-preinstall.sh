@@ -41,9 +41,13 @@ if [[ "$LAYOUT" ]]; then
     mkfs.vfat -F32 -n "EFIBOOT" "$PART2"
     mkfs.btrfs -L "ROOT" "$PART3" -f
     mount -t btrfs "$PART3" /mnt
-    btrfs subvolume create /mnt/"${SUBVOLUMES[*]}"
+    for x in "${SUBVOLUMES[@]}"; do
+        btrfs subvolume create /mnt/"$x"
+    done
     umount /mnt
-    mount -o "$MOUNTOPTION",subvol="${SUBVOLUMES[*]}" "$PART3" /mnt
+    for y in "${SUBVOLUMES[@]}"; do
+        mount -o "$MOUNTOPTION",subvol="$y" "$PART3" /mnt
+    done
 else
     modprobe dm-mod
     vgscan &>/dev/null
