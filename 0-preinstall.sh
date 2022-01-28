@@ -174,52 +174,52 @@ mkdir /mnt/boot
 mkdir /mnt/boot/efi
 mount -t vfat -L EFIBOOT /mnt/boot/
 
-if ! grep -qs '/mnt' /proc/mounts; then
-    echo "Drive is not mounted can not continue"
-    echo "Rebooting in 3 Seconds ..." && sleep 1
-    echo "Rebooting in 2 Seconds ..." && sleep 1
-    echo "Rebooting in 1 Second ..." && sleep 1
-    reboot now
-fi
-echo -ne "
--------------------------------------------------------------------------
-                    Arch Install on Main Drive
--------------------------------------------------------------------------
-"
-pacstrap /mnt base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
-echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
-# check pacstrap installed or not
-
-cp -R "${SCRIPT_DIR}" /mnt/root/ArchTitus
-cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
-echo -ne "
--------------------------------------------------------------------------
-                    GRUB BIOS Bootloader Install & Check
--------------------------------------------------------------------------
-"
-# if [[ ! -d "/sys/firmware/efi" ]]; then
-#     grub-install --boot-directory=/mnt/boot "${DISK}"
+# if ! grep -qs '/mnt' /proc/mounts; then
+#     echo "Drive is not mounted can not continue"
+#     echo "Rebooting in 3 Seconds ..." && sleep 1
+#     echo "Rebooting in 2 Seconds ..." && sleep 1
+#     echo "Rebooting in 1 Second ..." && sleep 1
+#     reboot now
 # fi
-echo -ne "
--------------------------------------------------------------------------
-                    Checking for low memory systems <8G
--------------------------------------------------------------------------
-"
-# TOTALMEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
-TOTALMEM=$(grep -i "memtotal" "/proc/meminfo" | grep -o '[[:digit:]]*')
-if [[  $TOTALMEM -lt 8000000 ]]; then
-    # Put swap into the actual system, not into RAM disk, otherwise there is no point in it, it'll cache RAM into RAM. So, /mnt/ everything.
-    mkdir /mnt/opt/swap # make a dir that we can apply NOCOW to to make it btrfs-friendly.
-    chattr +C /mnt/opt/swap # apply NOCOW, btrfs needs that.
-    dd if=/dev/zero of=/mnt/opt/swap/swapfile bs=1M count=2048 status=progress
-    chmod 600 /mnt/opt/swap/swapfile # set permissions.
-    chown root /mnt/opt/swap/swapfile
-    mkswap /mnt/opt/swap/swapfile
-    swapon /mnt/opt/swap/swapfile
-    # The line below is written to /mnt/ but doesn't contain /mnt/, since it's just / for the system itself.
-    echo "/opt/swap/swapfile	none	swap	sw	0	0" >> /mnt/etc/fstab # Add swap to fstab, so it KEEPS working after installation.
-fi
-echo -ne "
+# echo -ne "
+# -------------------------------------------------------------------------
+#                     Arch Install on Main Drive
+# -------------------------------------------------------------------------
+# "
+# pacstrap /mnt base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
+# echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
+# # check pacstrap installed or not
+
+# cp -R "${SCRIPT_DIR}" /mnt/root/ArchTitus
+# cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
+# echo -ne "
+# -------------------------------------------------------------------------
+#                     GRUB BIOS Bootloader Install & Check
+# -------------------------------------------------------------------------
+# "
+# # if [[ ! -d "/sys/firmware/efi" ]]; then
+# #     grub-install --boot-directory=/mnt/boot "${DISK}"
+# # fi
+# echo -ne "
+# -------------------------------------------------------------------------
+#                     Checking for low memory systems <8G
+# -------------------------------------------------------------------------
+# "
+# # TOTALMEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
+# TOTALMEM=$(grep -i "memtotal" "/proc/meminfo" | grep -o '[[:digit:]]*')
+# if [[  $TOTALMEM -lt 8000000 ]]; then
+#     # Put swap into the actual system, not into RAM disk, otherwise there is no point in it, it'll cache RAM into RAM. So, /mnt/ everything.
+#     mkdir /mnt/opt/swap # make a dir that we can apply NOCOW to to make it btrfs-friendly.
+#     chattr +C /mnt/opt/swap # apply NOCOW, btrfs needs that.
+#     dd if=/dev/zero of=/mnt/opt/swap/swapfile bs=1M count=2048 status=progress
+#     chmod 600 /mnt/opt/swap/swapfile # set permissions.
+#     chown root /mnt/opt/swap/swapfile
+#     mkswap /mnt/opt/swap/swapfile
+#     swapon /mnt/opt/swap/swapfile
+#     # The line below is written to /mnt/ but doesn't contain /mnt/, since it's just / for the system itself.
+#     echo "/opt/swap/swapfile	none	swap	sw	0	0" >> /mnt/etc/fstab # Add swap to fstab, so it KEEPS working after installation.
+# fi
+# echo -ne "
 -------------------------------------------------------------------------
                     SYSTEM READY FOR 1-setup.sh
 -------------------------------------------------------------------------
