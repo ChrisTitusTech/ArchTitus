@@ -79,9 +79,10 @@ efi_check () {
 # if btrfs is selected
 set_btrfs () {
     # Used -a to get more than one argument
-    echo -ne "Please enter your btrfs subvolumes separated by space\n"
-    echo -ne "usualy they start with @ for root or @home, @temp etc.\n"
-    echo -ne "Defaults are @, @home, @var, @tmp, @.snapshots \n"
+    echo "Please enter your btrfs subvolumes separated by space"
+    echo "usualy they start with @ for root or @home, @temp etc."
+    echo "Defaults are @, @home, @var, @tmp, @.snapshots"
+    echo " "
     read -r -p "press enter to use default: " -a ARR
     if [[ -z "${ARR[*]}" ]]; then
         set_option "SUBVOLUMES" "(@ @home @var @tmp @.snapshots)"
@@ -508,8 +509,8 @@ make_choice () {
         fi
     done
 }
-#background_check
-write_to_config
+background_check
+# write_to_config
 clear
 logo
 # title "Automated Arch Linux Installer"
