@@ -229,7 +229,7 @@ title "Checking for low memory systems <8G "
 TOTALMEM=$(grep -i "memtotal" "/proc/meminfo" | grep -o '[[:digit:]]*')
 if [[  $TOTALMEM -lt 8000000 ]]; then
     # Put swap into the actual system, not into RAM disk, otherwise there is no point in it, it'll cache RAM into RAM. So, /mnt/ everything.
-    mkdir /mnt/opt/swap # make a dir that we can apply NOCOW to to make it btrfs-friendly.
+    mkdir -p /mnt/opt/swap # make a dir that we can apply NOCOW to to make it btrfs-friendly.
     chattr +C /mnt/opt/swap # apply NOCOW, btrfs needs that.
     dd if=/dev/zero of=/mnt/opt/swap/swapfile bs=1M count=2048 status=progress
     chmod 600 /mnt/opt/swap/swapfile # set permissions.
@@ -241,4 +241,3 @@ if [[  $TOTALMEM -lt 8000000 ]]; then
 fi
 
 title "SYSTEM READY FOR 1-setup.sh"
-
