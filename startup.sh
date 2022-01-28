@@ -156,7 +156,7 @@ LOG="${SCRIPT_DIR}/main.log"
 
 logo () {
 echo -ne "
--------------------------------------------------------------------------
+------------------------------------------------------------------------
 
  █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
 ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
@@ -164,7 +164,6 @@ echo -ne "
 ██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
 ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
-
 "
 }
 EOF
@@ -177,7 +176,7 @@ PROMPT="Please enter your option: "
 # This will be shown on every set as user is progressing
 logo () {
 echo -ne "
--------------------------------------------------------------------------
+------------------------------------------------------------------------
 
  █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
 ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
@@ -185,7 +184,6 @@ echo -ne "
 ██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
 ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
-
 "
 }
 
@@ -465,6 +463,14 @@ make_choice () {
     title "Your system choice"
     CHOICE=("Default Install" "Custom Install")
     PS3="$PROMPT"
+    
+    echo "Default installation comprises of the settings and the packages used"
+    echo "by Chris Titus himself. More specifically, it uses 3 partitions, GPT"
+    echo "btrfs as file systems, KDE Plasma as desktop environment and sddm as "
+    echo "window manager and package list is in 'pkg-files/pacman-pkgs.txt'."
+    echo "While custom install allows you to choose your choices i.e. LVM, LUKS,"
+    echo "DE, WM, file systems and etc."
+    echo " "
     select OPT in "${CHOICE[@]}"; do
         if elements_present "$OPT" "${CHOICE[@]}"; then
             case "$REPLY" in
