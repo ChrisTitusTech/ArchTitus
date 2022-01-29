@@ -68,7 +68,7 @@ do_format() {
         mkfs."$FS" "$PART3" \
                     "$([[ $FS == xfs || $FS == reiserfs ]] && echo "-f")" \
                     "$([[ $FS == vfat ]] && echo "-F32")" \
-                    "$([[ $TRIM -eq 1 && $FS == ext4 ]] && echo "-E discard")"
+                    "$([[ $FS == ext4 ]] && echo "-E discard -F")"
     fi
 
 }
