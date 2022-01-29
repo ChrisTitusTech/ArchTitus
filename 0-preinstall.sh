@@ -43,8 +43,10 @@ do_lvm() {
     while [[ "$i" -le "$LVM_PART_NUM" ]]; do
         if [[ "$i" -eq "$LVM_PART_NUM" ]]; then
             lvcreate -l 100%FREE "$LVM_VG" -n "${LVM_NAMES[$i]}"
+            do_format "${LVM_NAMES[$i]}"
         else
             lvcreate -L "${LVM_SIZES[$i]}" "$LVM_VG" -n "${LVM_NAMES[$i]}"
+            do_format "${LVM_NAMES[$i]}"
         fi
         i=$((i + 1))
     done
@@ -63,12 +65,12 @@ do_partition() {
 
 do_format() {
     if [[ $FS =~ "btrfs" ]]; then
-        do_btrfs "$ROOT" "$PART3"
+        do_btrfs "$ROOT" "$1"
     else
-        mkfs."$FS" "$PART3" \
+        mkfs."$FS" "$1" \
                     "$([[ $FS == xfs || $FS == reiserfs ]] && echo "-f")" \
                     "$([[ $FS == vfat ]] && echo "-F32")" \
-                    "$([[ $FS == ext4 ]] && echo "-E discard -F")"
+                    "$([[ $TRIM -eq 1 && ${filesystem} == ext4 ]] && echo "-E discard -F")"
     fi
 
 }
@@ -102,14 +104,12 @@ if [[ "$LAYOUT" -eq 1 ]]; then
 
 elif [[ "$LVM" -eq 1 ]]; then
     do_partition
-    do_format
     pvcreate "$PART3"
     vgcreate "$LVM_VG" "$PART3"
     do_lvm
 
 elif [[ "$LUKS" -eq 1 ]]; then
     do_partition
-    do_format
     # enter luks password to cryptsetup and format root partition
     echo -n "$LUKS_PASSWORD" | cryptsetup -y -v luksFormat "$PART3" -
     # open luks container and ROOT will be place holder
