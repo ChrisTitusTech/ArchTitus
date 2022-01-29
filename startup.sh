@@ -105,6 +105,31 @@ set_btrfs() {
     fi
 }
 
+# If lvm is selected
+set_lvm() {
+    read -r -p "Name your lvm volume group [like MyVolGroup]: " _VG
+    read -r -p "Enter number of partitions [like 2]: " _PART_NUM
+    i=1
+    _LVM_NAMES=()
+    _LVM_SIZES=()
+    if [[ -z "$PART_NUM" ]]; then
+        PART_NUM=1
+    fi
+    while [[ $i -le "$_PART_NUM" ]]; do
+        read -r -p "Enter $iª partition name [like home]: " _LVM_NAME
+        _LVM_NAMES+=("$_LVM_NAME")
+        read -r -p "Enter $iª partition size [like 25G, 200M]: " _LVM_SIZE
+        _LVM_SIZES+=("$_LVM_SIZE")
+		i=$((i + 1))
+	done
+    IFS=" " read -r -a LVM_NAMES <<<"$(tr ' ' '\n' <<<"${_LVM_NAMES[@]}" | sort -u | tr '\n' ' ')"
+    IFS=" " read -r -a LVM_SIZES <<<"$(tr ' ' '\n' <<<"${_LVM_SIZES[@]}" | sort -u | tr '\n' ' ')"
+    set_option "LVM_VG" "$_VG"
+    set_option "LVM_PART_NUM" "$_PART_NUM"
+    set_option "LVM_NAMES" "${LVM_NAMES[*]}"
+    set_option "LVM_SIZES" "${LVM_SIZES[*]}"
+}
+
 # Check if an element exists
 elements_present() {
     for e in "${@:2}"; do [[ "$e" == "$1" ]] && break; done
@@ -222,24 +247,36 @@ set_partion_layout() {
             case "$REPLY" in
             1)
                 set_option "LAYOUT" 1
+                set_option "DEFAULT" 1
                 break
                 ;;
             2)
-                # set_option "LAYOUT" "$OPT"
+                set_lvm
+                set_option "LAYOUT" 1
                 set_option "LVM" 1
                 set_option "LUKS" 0
                 break
                 ;;
             3)
-                # set_option "LAYOUT" "$OPT"
+                set_lvm
+                set_option "LAYOUT" 1
                 set_option "LUKS" 1
                 set_option "LVM" 1
+                set_option "LUKS_PATH" "/dev/mapper/ROOT"
                 set_password "LUKS_PASSWORD"
                 break
                 ;;
             4)
                 echo -ne "Maintaining current settings"
-                set_option "LAYOUT" 0
+                CHOICE=($(lsblk | grep 'part' | awk '{print "/dev/" substr($1,3)}'))
+                PS3="$PROMPT"
+                select OPT in "${CHOICE[@]}"; do
+                    if elements_present "$OPT" "${CHOICE[@]}"; then
+                        set_option "LAYOUT" 0
+                        set_option "PARTITION" "$OPT"
+                        break
+                    fi
+                done
                 break
                 ;;
             *)
@@ -281,7 +318,7 @@ set_timezone() {
     _ZONE=($(timedatectl list-timezones | sed 's/\/.*$//' | uniq))
     echo -ne "System detected your timezone to be '$_TIMEZONE'"
     echo -ne "\n"
-    read -r -p "Is this correct? yes/no: " ANSWER
+    read -r -p "Is this correct? [yes/no]: " ANSWER
     case "$ANSWER" in
     y | Y | yes | Yes | YES)
         set_option TIMEZONE "$_TIMEZONE"
@@ -338,7 +375,7 @@ set_keymap() {
 # Confirm if ssd is present
 ssd_drive() {
     title "SSD Drive Confirmation"
-    read -r -p "Is this system using an SSD? yes/no: " _SSD
+    read -r -p "Is this system using an SSD? [yes/no]: " _SSD
     case "$_SSD" in
     y | Y | yes | Yes | YES)
         set_option "SSD" 1
