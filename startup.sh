@@ -247,19 +247,16 @@ set_partion_layout() {
             case "$REPLY" in
             1)
                 set_option "LAYOUT" 1
-                set_option "DEFAULT" 1
                 break
                 ;;
             2)
                 set_lvm
-                set_option "LAYOUT" 1
                 set_option "LVM" 1
                 set_option "LUKS" 0
                 break
                 ;;
             3)
                 set_lvm
-                set_option "LAYOUT" 1
                 set_option "LUKS" 1
                 set_option "LVM" 1
                 set_option "LUKS_PATH" "/dev/mapper/ROOT"
