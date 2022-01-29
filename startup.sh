@@ -4,7 +4,7 @@
 # user name, password, etc.
 # shellcheck disable=SC2207,SC2120
 
-SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 # Set up a config file
 CONFIG_FILE=$SCRIPT_DIR/setup.conf
@@ -20,17 +20,17 @@ set_option() {
         sed -i -e "/^${1}.*/d" "$CONFIG_FILE"
     fi
     # Else add option
-    echo "${1}=${2}" >> "$CONFIG_FILE"
+    echo "${1}=${2}" >>"$CONFIG_FILE"
 }
 
 # Adding global functions and variables to use in this script
 
 # Check for root user
 check_root() {
-	if [[ "$(id -u)" != "0" ]]; then
-		echo -ne "ERROR! This script has to be run under the 'root' user!"
+    if [[ "$(id -u)" != "0" ]]; then
+        echo -ne "ERROR! This script has to be run under the 'root' user!"
         exit 1
-	fi
+    fi
 }
 
 # Check if distro is arch
@@ -47,37 +47,37 @@ connection_test() {
 }
 
 # Check coutry for mirrorlist
-check_country () {
+check_country() {
     _ISO=$(curl --fail https://ifconfig.co/country-iso)
     set_option "ISO" "$_ISO"
 }
 
 # Install fonts
-install_font () {
+install_font() {
     pacman -S --noconfirm --needed terminus-font
 }
 
 # timedatectl set-ntp true
-set_ntp () {
+set_ntp() {
     timedatectl set-ntp true
 }
 
 # Check for UEFI
-efi_check () {
+efi_check() {
     if [[ -d "/sys/firmware/efi/" ]]; then
-		if (mount | grep /sys/firmware/efi/efivars); then
-			mount -t efivarfs efivarfs /sys/firmware/efi/efivars
-		fi
+        if (mount | grep /sys/firmware/efi/efivars); then
+            mount -t efivarfs efivarfs /sys/firmware/efi/efivars
+        fi
         # UEFI detected
-		set_option "UEFI" 1
-	else
+        set_option "UEFI" 1
+    else
         # No UEFI detected
-		set_option "UEFI" 0
+        set_option "UEFI" 0
     fi
 }
 
 # if btrfs is selected
-set_btrfs () {
+set_btrfs() {
     # Used -a to get more than one argument
     echo "Please enter your btrfs subvolumes separated by space"
     echo "usualy they start with @ like @home, @temp etc."
@@ -92,14 +92,14 @@ set_btrfs () {
         for i in "${ARR[@]}"; do
             # Check for user input for @
             if [[ $i =~ [@] ]]; then
-            # push values to array
+                # push values to array
                 NAMES+=("$i")
-            else 
+            else
                 NAMES+=(@"${i}")
             fi
         done
         # Check for duplicates
-        IFS=" " read -r -a SUBS <<< "$(tr ' ' '\n' <<< "${NAMES[@]}" | sort -u | tr '\n' ' ')"
+        IFS=" " read -r -a SUBS <<<"$(tr ' ' '\n' <<<"${NAMES[@]}" | sort -u | tr '\n' ' ')"
         # Set to config file
         set_option "SUBVOLUMES" "${SUBS[*]}"
     fi
@@ -107,7 +107,7 @@ set_btrfs () {
 
 # Check if an element exists
 elements_present() {
-	for e in "${@:2}"; do [[ "$e" == "$1" ]] && break; done
+    for e in "${@:2}"; do [[ "$e" == "$1" ]] && break; done
 }
 
 # Invalid option message
@@ -123,7 +123,7 @@ set_password() {
     read -rs -p "Please re-enter password: " PASSWORD2
     echo -ne "\n"
     if [[ "$PASSWORD1" == "$PASSWORD2" ]]; then
-       set_option "$1" "$PASSWORD1"
+        set_option "$1" "$PASSWORD1"
     else
         echo -ne "Passwords do not match \n"
         set_password
@@ -131,7 +131,7 @@ set_password() {
 }
 
 # Make a title
-title () {
+title() {
     echo -ne "\n"
     echo -ne "------------------------------------------------------------------------\n"
     echo -ne "\t\t\"$1\"\n"
@@ -140,7 +140,7 @@ title () {
 
 # Write shared functions to to setup.conf
 write_to_config() {
-cat << EOF > "$CONFIG_FILE"
+    cat <<EOF >"$CONFIG_FILE"
 #!/usr/bin/env bash
 
 title () {
@@ -177,13 +177,12 @@ echo -ne "
 EOF
 }
 
-
 # Ask user for option
 PROMPT="Please enter your option: "
 
 # This will be shown on every set as user is progressing
-logo () {
-echo -ne "
+logo() {
+    echo -ne "
 ------------------------------------------------------------------------
 
  █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
@@ -196,7 +195,7 @@ echo -ne "
 }
 
 # Backround checks
-background_check () {
+background_check() {
     if connection_test; then
         echo -ne "ERROR! There seems to be no internet connection.\n"
         exit 1
@@ -221,52 +220,50 @@ set_partion_layout() {
     select OPT in "${LAYOUTS[@]}"; do
         if elements_present "$OPT" "${LAYOUTS[@]}"; then
             case "$REPLY" in
-                1)
-                    set_option "LAYOUT" 1
-                    break
-                    ;;
-                2)
-                    # set_option "LAYOUT" "$OPT"
-                    set_option "LVM" 1
-                    set_option "LUKS" 0
-                    break
-                    ;;
-                3)
-                    # set_option "LAYOUT" "$OPT"
-                    set_option "LUKS" 1
-                    set_option "LVM" 1
-                    set_password "LUKS_PASSWORD"
-                    break
-                    ;;
-                4)
-                    echo -ne "Maintaining current settings"
-                    set_option "LAYOUT" 0
-                    break
-                    ;;
-                *)
-                    invalid_option
-                    setpartionlayout
-                    ;;
+            1)
+                set_option "LAYOUT" 1
+                break
+                ;;
+            2)
+                # set_option "LAYOUT" "$OPT"
+                set_option "LVM" 1
+                set_option "LUKS" 0
+                break
+                ;;
+            3)
+                # set_option "LAYOUT" "$OPT"
+                set_option "LUKS" 1
+                set_option "LVM" 1
+                set_password "LUKS_PASSWORD"
+                break
+                ;;
+            4)
+                echo -ne "Maintaining current settings"
+                set_option "LAYOUT" 0
+                break
+                ;;
+            *)
+                invalid_option
+                set_partion_layout
+                ;;
             esac
         else
             invalid_option
-            filesystem
+            set_partion_layout
         fi
     done
 }
 
-
-
 # This function will handle file systems.
-set_filesystem () {
+set_filesystem() {
     title "Setup File System"
     FILESYS=("btrfs" "ext2" "ext3" "ext4" "f2fs" "jfs" "nilfs2" "ntfs" "reiserfs" "vfat" "xfs")
     PS3="$PROMPT"
     select OPT in "${FILESYS[@]}"; do
         if elements_present "$OPT" "${FILESYS[@]}"; then
             if [ "$OPT" == "btrfs" ]; then
-               set_btrfs
-               break
+                set_btrfs
+                break
             fi
             set_option "FS" "$OPT"
             break
@@ -278,49 +275,52 @@ set_filesystem () {
 }
 
 # Added this from arch wiki https://wiki.archlinux.org/title/System_time
-set_timezone () {
+set_timezone() {
     title "Setup Time Zone"
     _TIMEZONE="$(curl --fail https://ipapi.co/timezone)"
     _ZONE=($(timedatectl list-timezones | sed 's/\/.*$//' | uniq))
     echo -ne "System detected your timezone to be '$_TIMEZONE'"
-    echo -ne  "\n"
+    echo -ne "\n"
     read -r -p "Is this correct? yes/no: " ANSWER
     case "$ANSWER" in
-        y|Y|yes|Yes|YES)
-            set_option TIMEZONE "$_TIMEZONE"
-            ;;
-        n|N|no|NO|No)
-            title "Manually setting timezone"
-            PS3="$PROMPT"
-            echo -ne "Please select your zone: \n"
-            select ZONE in "${_ZONE[@]}"; do
-                if elements_present "$ZONE" "${_ZONE[@]}"; then
-                    _SUBZONE=($(timedatectl list-timezones | grep "${ZONE}" | sed 's/^.*\///'))
-                    PS3="$PROMPT"
-                    echo -ne "Please select your subzone: \n"
-                    select SUBZONE in "${_SUBZONE[@]}"; do
-                        if elements_present "$SUBZONE" "${_SUBZONE[@]}"; then
-                            set_option "TIMEZONE" "${ZONE}/${SUBZONE}"
-                            break
-                        else
-                            invalid_option
-                            break
-                        fi
-                    done
-                    break
-                else
-                    invalid_option
-                    break
-                fi
-            done
-            ;;
+    y | Y | yes | Yes | YES)
+        set_option TIMEZONE "$_TIMEZONE"
+        ;;
+    n | N | no | NO | No)
+        title "Manually setting timezone"
+        PS3="$PROMPT"
+        echo -ne "Please select your zone: \n"
+        select ZONE in "${_ZONE[@]}"; do
+            if elements_present "$ZONE" "${_ZONE[@]}"; then
+                _SUBZONE=($(timedatectl list-timezones | grep "${ZONE}" | sed 's/^.*\///'))
+                PS3="$PROMPT"
+                echo -ne "Please select your subzone: \n"
+                select SUBZONE in "${_SUBZONE[@]}"; do
+                    if elements_present "$SUBZONE" "${_SUBZONE[@]}"; then
+                        set_option "TIMEZONE" "${ZONE}/${SUBZONE}"
+                        break
+                    else
+                        invalid_option
+                        break
+                    fi
+                done
+                break
+            else
+                invalid_option
+                break
+            fi
+        done
+        ;;
 
-        *) echo "Wrong option. Try again";timezone;;
+    *)
+        echo "Wrong option. Try again"
+        set_timezone
+        ;;
     esac
 }
 
 # These are default key maps as presented in official arch repo archinstall
-set_keymap () {
+set_keymap() {
     title "Setup Keymap"
     KEYMAPS=("by" "ca" "cf" "cz" "de" "dk" "es" "et" "fa" "fi" "fr" "gr" "hu" "il" "it" "lt" "lv" "mk" "nl" "no" "pl" "ro" "ru" "sg" "ua" "uk" "us")
     PS3="$PROMPT"
@@ -330,30 +330,33 @@ set_keymap () {
             break
         else
             invalid_option
-            keymap
+            set_keymap
         fi
     done
 }
 
 # Confirm if ssd is present
-ssd_drive () {
+ssd_drive() {
     title "SSD Drive Confirmation"
     read -r -p "Is this system using an SSD? yes/no: " _SSD
     case "$_SSD" in
-        y|Y|yes|Yes|YES)
-            set_option "SSD" 1
-            set_option "MOUNTOPTION" "noatime,compress=zstd,ssd,commit=120"
-            ;;
-        n|N|no|NO|No)
-            set_option "SSD" 0
-            set_option "MOUNTOPTION" "noatime,compress=zstd,commit=120"
-            ;;
-        *) echo "Wrong option. Try again";ssddrive;;
+    y | Y | yes | Yes | YES)
+        set_option "SSD" 1
+        set_option "MOUNTOPTION" "noatime,compress=zstd,ssd,commit=120"
+        ;;
+    n | N | no | NO | No)
+        set_option "SSD" 0
+        set_option "MOUNTOPTION" "noatime,compress=zstd,commit=120"
+        ;;
+    *)
+        echo "Wrong option. Try again"
+        ssd_drive
+        ;;
     esac
 }
 
 # Selection for disk type
-disk_selection () {
+disk_selection() {
     # show disks present on system
     title "Disk Selection"
     DISKLIST="$(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2" - "$3}')" # show disks with /dev/ prefix and size
@@ -371,7 +374,7 @@ disk_selection () {
     done
 }
 
-user_info () {
+user_info() {
     title "Add Your Information"
     read -r -p "Please enter your username: " USERNAME
     set_option "USERNAME" "${USERNAME,,}" # convert to lower case as in issue #109
@@ -381,7 +384,7 @@ user_info () {
 }
 
 # Set locale
-set_locale (){
+set_locale() {
     title "Setup Locale"
     LOCALES=($(grep UTF-8 /etc/locale.gen | sed 's/\..*$//' | sed '/@/d' | awk '{print $1}' | uniq | sed 's/#//g'))
     PS3="$PROMPT"
@@ -404,60 +407,61 @@ set_desktop() {
     select OPT in "${SELECTION[@]}"; do
         if elements_present "$OPT" "${SELECTION[@]}"; then
             case "$REPLY" in
-                1)
-                    # More packages can be added here
-                    set_option "DE" "plasma"
-                    set_option "DM" "sddm"
-                    break
-                    ;;
-                2)
-                    set_option "DE" "gnome"
-                    set_option "DM" "gdm"
-                    break
-                    ;;
-                3)
-                    set_option "DE" "xfce4"
-                    set_option "DM" "lightdm"
-                    break
-                    ;;
-                4)
-                    set_option "DE" "mate"
-                    set_option "DM" "lightdm"
-                    break
-                    ;;
-                5)
-                    set_option "DE" "lxqt"
-                    set_option "DM" "lightdm"
-                    break
-                    ;;
-                6)
-                    set_option "DE" 0
-                    set_option "DM" 0
-                    break
-                    ;;
-                7)
-                    set_option "DE" 0
-                    set_option "WM" "awesome"
-                    break
-                    ;;
-                8)  # openbox
-                    set_option "DE" 0
-                    set_option "WM" "openbox"
-                    break
-                    ;;
-                9)  # i3
-                    set_option "DE" 0
-                    set_option "WM" "i3"
-                    break
-                    ;;
-                10) # i3-gaps
-                    set_option "DE" 0
-                    set_option "WM" "i3-gaps"
-                    break
-                    ;;
-                *) echo "Wrong option. Try again"
-                    break
-                    ;;
+            1)
+                # More packages can be added here
+                set_option "DE" "plasma"
+                set_option "DM" "sddm"
+                break
+                ;;
+            2)
+                set_option "DE" "gnome"
+                set_option "DM" "gdm"
+                break
+                ;;
+            3)
+                set_option "DE" "xfce4"
+                set_option "DM" "lightdm"
+                break
+                ;;
+            4)
+                set_option "DE" "mate"
+                set_option "DM" "lightdm"
+                break
+                ;;
+            5)
+                set_option "DE" "lxqt"
+                set_option "DM" "lightdm"
+                break
+                ;;
+            6)
+                set_option "DE" 0
+                set_option "DM" 0
+                break
+                ;;
+            7)
+                set_option "DE" 0
+                set_option "WM" "awesome"
+                break
+                ;;
+            8) # openbox
+                set_option "DE" 0
+                set_option "WM" "openbox"
+                break
+                ;;
+            9) # i3
+                set_option "DE" 0
+                set_option "WM" "i3"
+                break
+                ;;
+            10) # i3-gaps
+                set_option "DE" 0
+                set_option "WM" "i3-gaps"
+                break
+                ;;
+            *)
+                echo "Wrong option. Try again"
+                break
+                ;;
             esac
         else
             invalid_option
@@ -468,11 +472,11 @@ set_desktop() {
 }
 
 # Make choice for installation
-make_choice () {
+make_choice() {
     title "Your system choice"
     CHOICE=("Default Install" "Custom Install")
     PS3="$PROMPT"
-    
+
     echo "Default installation comprises of the settings and the packages used"
     echo "by Chris Titus himself. More specifically, it uses 3 partitions, GPT"
     echo "btrfs as file systems, KDE Plasma as desktop environment and sddm as "
@@ -483,46 +487,47 @@ make_choice () {
     select OPT in "${CHOICE[@]}"; do
         if elements_present "$OPT" "${CHOICE[@]}"; then
             case "$REPLY" in
-                1)
-                    clear
-                    logo
-                    # title "Please select presetup \n\t\t\tsettings for your system"
-                    user_info
-                    disk_selection
-                    clear
-                    set_locale
-                    clear
-                    set_timezone
-                    set_keymap
-                    ssd_drive
-                    set_btrfs
-                    set_option "FS" "btrfs"
-                    set_option "DE" "plasma"
-                    set_option "DM" "sddm"
-                    set_option "LAYOUT" 1
+            1)
+                clear
+                logo
+                # title "Please select presetup \n\t\t\tsettings for your system"
+                user_info
+                disk_selection
+                clear
+                set_locale
+                clear
+                set_timezone
+                set_keymap
+                ssd_drive
+                set_btrfs
+                set_option "FS" "btrfs"
+                set_option "DE" "plasma"
+                set_option "DM" "sddm"
+                set_option "LAYOUT" 1
 
-                    break
-                    ;;
-                2)
-                    clear
-                    logo
-                    user_info
-                    disk_selection
-                    clear
-                    set_locale
-                    clear
-                    set_timezone
-                    set_keymap
-                    ssd_drive
-                    # Advance options
-                    set_partion_layout
-                    set_filesystem
-                    set_desktop
-                    break
-                    ;;
-                *) echo "Wrong option. Try again"
-                    break
-                    ;;
+                break
+                ;;
+            2)
+                clear
+                logo
+                user_info
+                disk_selection
+                clear
+                set_locale
+                clear
+                set_timezone
+                set_keymap
+                ssd_drive
+                # Advance options
+                set_partion_layout
+                set_filesystem
+                set_desktop
+                break
+                ;;
+            *)
+                echo "Wrong option. Try again"
+                break
+                ;;
             esac
         else
             invalid_option
