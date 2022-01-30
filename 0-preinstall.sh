@@ -39,16 +39,32 @@ do_btrfs() {
     done
 }
 
+do_format() {
+    mkfs."$FS" "$1" \
+        "$([[ $FS == xfs || $FS == btrfs || $FS == reiserfs ]] && echo "-f")" \
+        "$([[ $FS == vfat ]] && echo "-F32")" \
+        "$([[ $TRIM -eq 1 && $FS == ext4 ]] && echo "-E discard -F")"
+
+}
+
 do_lvm() {
     while [[ "$i" -le "$LVM_PART_NUM" ]]; do
         if [[ "$i" -eq "$LVM_PART_NUM" ]]; then
             lvcreate -l 100%FREE "$LVM_VG" -n "${LVM_NAMES[$i]}"
-            do_format "${LVM_NAMES[$i]}"
+            do_format /dev/"$LVM_VG"/"${LVM_NAMES[$i]}"
         else
             lvcreate -L "${LVM_SIZES[$i]}" "$LVM_VG" -n "${LVM_NAMES[$i]}"
-            do_format "${LVM_NAMES[$i]}"
+            do_format /dev/"$LVM_VG"/"${LVM_NAMES[$i]}"
         fi
         i=$((i + 1))
+    done
+}
+
+lvm_mount() {
+    mount /dev/"$LVM_VG"/"${LVM_NAMES[1]}" "$MOUNTPOINT"/
+    for x in "${LVM_NAMES[@]:1}"; do
+        mkdir "$MOUNTPOINT"/"$x"
+        mount /dev/"$LVM_VG"/"$x" "$MOUNTPOINT"/"$x"
     done
 }
 
@@ -63,17 +79,7 @@ do_partition() {
     fi
 }
 
-do_format() {
-    if [[ $FS =~ "btrfs" ]]; then
-        do_btrfs "$ROOT" "$1"
-    else
-        mkfs."$FS" "$1" \
-                    "$([[ $FS == xfs || $FS == reiserfs ]] && echo "-f")" \
-                    "$([[ $FS == vfat ]] && echo "-F32")" \
-                    "$([[ $TRIM -eq 1 && ${filesystem} == ext4 ]] && echo "-E discard -F")"
-    fi
 
-}
 
 # format a partition from given list of filesystems
 
@@ -100,13 +106,14 @@ fi
 if [[ "$LAYOUT" -eq 1 ]]; then
     do_partition
     make_boot "$BOOT" "$PART2"
-    do_format
+    do_btrfs "$ROOT" "$PART3"
 
 elif [[ "$LVM" -eq 1 ]]; then
     do_partition
     pvcreate "$PART3"
     vgcreate "$LVM_VG" "$PART3"
     do_lvm
+    lvm_mount
 
 elif [[ "$LUKS" -eq 1 ]]; then
     do_partition
@@ -117,7 +124,7 @@ elif [[ "$LUKS" -eq 1 ]]; then
     pvcreate "$LUKS_PATH"
     vgcreate "$LVM_VG" "$LUKS_PATH"
     do_lvm
-
+    lvm_mount
 else
     modprobe dm-mod
     vgscan &>/dev/null

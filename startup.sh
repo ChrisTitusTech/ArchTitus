@@ -80,8 +80,8 @@ efi_check() {
 set_btrfs() {
     # Used -a to get more than one argument
     echo "Please enter your btrfs subvolumes separated by space"
-    echo "usualy they start with @ like @home, @temp etc."
-    echo "Defaults are @home, @var, @tmp, @.snapshots"
+    echo "usualy they start with @."
+    echo "[like @home, default are @home, @var, @tmp, @.snapshots]"
     echo " "
     read -r -p "press enter to use default: " -a ARR
     if [[ -z "${ARR[*]}" ]]; then
@@ -107,21 +107,30 @@ set_btrfs() {
 
 # If lvm is selected
 set_lvm() {
-    read -r -p "Name your lvm volume group [like MyVolGroup]: " _VG
-    read -r -p "Enter number of partitions [like 2]: " _PART_NUM
-    i=1
-    _LVM_NAMES=()
-    _LVM_SIZES=()
+    read -r -p "Name your lvm volume group [like MyVolGroup, default is MyVolGroup]: " _VG
+    if [[ -z "$_VG" ]]; then
+        _VG="MyVolGroup"
+    fi
+    read -r -p "Enter number of partitions [like 2, default is 1]: " _PART_NUM
+    echo "Please make sure 1st partition is considered as root partition"
+    echo "And will be mounted at /mnt/ and other partitions will be mounted"
+    echo "at /mnt/partition_name by making a mkdir /mnt/partition_name"
     if [[ -z "$PART_NUM" ]]; then
         PART_NUM=1
     fi
+    i=1
+    _LVM_NAMES=()
+    _LVM_SIZES=()
     while [[ $i -le "$_PART_NUM" ]]; do
-        read -r -p "Enter $iª partition name [like home]: " _LVM_NAME
+        read -r -p "Enter $i partition name [like root, default is root]: " _LVM_NAME
+        if [[ -z "$_LVM_NAME" ]]; then
+            _LVM_NAME="root"
+        fi
         _LVM_NAMES+=("$_LVM_NAME")
-        read -r -p "Enter $iª partition size [like 25G, 200M]: " _LVM_SIZE
+        read -r -p "Enter $i partition size [like 25G, 200M]: " _LVM_SIZE
         _LVM_SIZES+=("$_LVM_SIZE")
-		i=$((i + 1))
-	done
+        i=$((i + 1))
+    done
     IFS=" " read -r -a LVM_NAMES <<<"$(tr ' ' '\n' <<<"${_LVM_NAMES[@]}" | sort -u | tr '\n' ' ')"
     IFS=" " read -r -a LVM_SIZES <<<"$(tr ' ' '\n' <<<"${_LVM_SIZES[@]}" | sort -u | tr '\n' ' ')"
     set_option "LVM_VG" "$_VG"
@@ -314,8 +323,11 @@ set_timezone() {
     _TIMEZONE="$(curl --fail https://ipapi.co/timezone)"
     _ZONE=($(timedatectl list-timezones | sed 's/\/.*$//' | uniq))
     echo -ne "System detected your timezone to be '$_TIMEZONE'"
-    echo -ne "\n"
-    read -r -p "Is this correct? [yes/no]: " ANSWER
+    echo " "
+    read -r -p "Is this correct? [like yes/no, default is yes]: " ANSWER
+    if [[ -z "$ANSWER" ]]; then
+        ANSWER="yes"
+    fi
     case "$ANSWER" in
     y | Y | yes | Yes | YES)
         set_option TIMEZONE "$_TIMEZONE"
@@ -364,7 +376,7 @@ set_keymap() {
             break
         else
             invalid_option
-            set_keymap
+            break
         fi
     done
 }
@@ -372,7 +384,10 @@ set_keymap() {
 # Confirm if ssd is present
 ssd_drive() {
     title "SSD Drive Confirmation"
-    read -r -p "Is this system using an SSD? [yes/no]: " _SSD
+    read -r -p "Is this system using an SSD? [like yes/no, default is no]: " _SSD
+    if [[ -z "$_SSD" ]]; then
+        _SSD="no"
+    fi
     case "$_SSD" in
     y | Y | yes | Yes | YES)
         set_option "SSD" 1
@@ -410,10 +425,16 @@ disk_selection() {
 
 user_info() {
     title "Add Your Information"
-    read -r -p "Please enter your username: " USERNAME
+    read -r -p "Please enter your username [default is archtitus]: " USERNAME
+    if [[ -z "$USERNAME" ]]; then
+        USERNAME="archtitus"
+    fi
     set_option "USERNAME" "${USERNAME,,}" # convert to lower case as in issue #109
     set_password "PASSWORD"
-    read -r -p "Please enter your hostname: " HOSTNAME
+    read -r -p "Please enter your hostname [default is ArchLinux]: " HOSTNAME
+    if [[ -z "$HOSTNAME" ]]; then
+        HOSTNAME="ArchLinux"
+    fi
     set_option "HOSTNAME" "$HOSTNAME"
 }
 
@@ -512,9 +533,9 @@ make_choice() {
     PS3="$PROMPT"
 
     echo "Default installation comprises of the settings and the packages used"
-    echo "by Chris Titus himself. More specifically, it uses 3 partitions, GPT"
-    echo "btrfs as file systems, KDE Plasma as desktop environment and sddm as "
-    echo "window manager and package list is in 'pkg-files/pacman-pkgs.txt'."
+    echo "by Chris Titus himself. More specifically, it uses btrfs as file systems,"
+    echo "KDE Plasma as desktop environment and sddm as window manager and package"
+    echo "list is in 'pkg-files/pacman-pkgs.txt'."
     echo "While custom install allows you to choose your choices i.e. LVM, LUKS,"
     echo "DE, WM, file systems and etc."
     echo " "
