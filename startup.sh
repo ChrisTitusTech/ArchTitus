@@ -7,10 +7,10 @@
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 # Set up a config file
-CONFIG_FILE=$SCRIPT_DIR/setup.conf
+CONFIG_FILE="$SCRIPT_DIR"/setup.conf 
 
 # Check if file exists and remove it if it does
-[[ -f "$CONFIG_FILE" ]] && rm -f "$CONFIG_FILE"
+[[ -f "$CONFIG_FILE" ]] && rm -f "$CONFIG_FILE" > /dev/null 2>&1
 
 # Set options in setup.conf
 set_option() {
@@ -47,7 +47,7 @@ connection_test() {
 }
 
 # Check coutry for mirrorlist
-check_country() {
+do_curl() {
     _ISO=$(curl --fail https://ifconfig.co/country-iso)
     set_option "ISO" "$_ISO"
 }
@@ -66,7 +66,7 @@ set_ntp() {
 efi_check() {
     if [[ -d "/sys/firmware/efi/" ]]; then
         if (mount | grep /sys/firmware/efi/efivars); then
-            mount -t efivarfs efivarfs /sys/firmware/efi/efivars
+            (mount -t efivarfs efivarfs /sys/firmware/efi/efivars) > /dev/null 2>&1
         fi
         # UEFI detected
         set_option "UEFI" 1
@@ -114,7 +114,7 @@ set_lvm() {
     read -r -p "Enter number of partitions [like 2, default is 1]: " _PART_NUM
     echo "Please make sure 1st partition is considered as root partition"
     echo "And will be mounted at /mnt/ and other partitions will be mounted"
-    echo "at /mnt/partition_name by making a mkdir /mnt/partition_name"
+    echo "at /mnt/partition_name by making a directory /mnt/partition_name"
     if [[ -z "$PART_NUM" ]]; then
         PART_NUM=1
     fi
@@ -230,6 +230,7 @@ logo() {
 
 # Backround checks
 background_check() {
+    write_to_config
     if connection_test; then
         echo -ne "ERROR! There seems to be no internet connection.\n"
         exit 1
@@ -237,13 +238,11 @@ background_check() {
     set_option "SCRIPT_DIR" "$SCRIPT_DIR"
     check_arch
     efi_check
-    check_root
+    # check_root
     set_ntp
-    refresh_pacman
-    check_country
+    do_curl
     install_font
     setfont ter-v22b
-    write_to_config
 }
 
 # Set partioning layouts
@@ -304,10 +303,6 @@ set_filesystem() {
     PS3="$PROMPT"
     select OPT in "${FILESYS[@]}"; do
         if elements_present "$OPT" "${FILESYS[@]}"; then
-            if [ "$OPT" == "btrfs" ]; then
-                set_btrfs
-                break
-            fi
             set_option "FS" "$OPT"
             break
         else
@@ -591,7 +586,7 @@ make_choice() {
     done
 }
 background_check
-# write_to_config
-clear
-logo
-make_choice
+# # write_to_config
+# clear
+# logo
+# make_choice
