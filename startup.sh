@@ -586,7 +586,7 @@ make_choice() {
     done
 }
 background_check
-# # write_to_config
-# clear
-# logo
-# make_choice
+# write_to_config
+clear
+logo
+make_choice
