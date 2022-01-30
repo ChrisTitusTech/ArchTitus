@@ -88,6 +88,22 @@ systemctl disable dhcpcd.service
 systemctl stop dhcpcd.service
 systemctl enable NetworkManager.service
 systemctl enable bluetooth
+
+if [[ "${FS}" == "luks" || "${FS}" == "btrfs" ]]; then
+echo -ne "
+-------------------------------------------------------------------------
+                    Creating Snapper Config
+-------------------------------------------------------------------------
+"
+
+SNAPPER_CONF="/root/ArchTitus/configs/etc/snapper/configs/root"
+SNAPPER_CONF_D="/root/ArchTitus/configs/etc/conf.d/snapper"
+
+cp -a ${SNAPPER_CONF} /home/$USERNAME/etc/snapper/configs/
+cp -a ${SNAPPER_CONF_D} /home/$USERNAME/etc/conf.d/
+
+fi
+
 echo -ne "
 -------------------------------------------------------------------------
                     Cleaning
