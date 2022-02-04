@@ -594,9 +594,9 @@ make_choice() {
         fi
     done
 }
-# background_check
-# # write_to_config
-# clear
-# logo
-# make_choice
-set_partion_layout
+background_check
+# write_to_config
+clear
+logo
+make_choice
+# set_partion_layout
