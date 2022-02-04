@@ -60,8 +60,13 @@ do_lvm() {
 
 lvm_mount() {
     vgchange -ay &>/dev/null
-    lvchange -ay /dev/"$LVM_VG"/"${LVM_NAMES[$i]}" &>/dev/null
-    do_format /dev/"$LVM_VG"/"${LVM_NAMES[$i]}"
+    i=1
+    while [[ "$i" -le "$LVM_PART_NUM" ]]; do
+        lvchange -ay /dev/"$LVM_VG"/"${LVM_NAMES[$i]}" &>/dev/null
+        do_format /dev/"$LVM_VG"/"${LVM_NAMES[$i]}"
+
+        i=$((i + 1))
+    done
     mount /dev/"$LVM_VG"/"${LVM_NAMES[0]}" "$MOUNTPOINT"
     for x in "${LVM_NAMES[@]:1}"; do
         mkdir "$MOUNTPOINT"/"$x"
