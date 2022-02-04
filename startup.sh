@@ -184,6 +184,16 @@ title () {
     echo -ne "------------------------------------------------------------------------\n"
 }
 
+set_option() {
+    # Check if option exists
+    if grep -Eq "^${1}.*" "$CONFIG_FILE"; then
+        # delete option if exists
+        sed -i -e "/^${1}.*/d" "$CONFIG_FILE"
+    fi
+    # Else add option
+    echo "${1}=${2}" >>"$CONFIG_FILE"
+}
+
 install_pkg () {
     pacman -S --noconfirm --needed "\$@"
 }
@@ -208,6 +218,11 @@ echo -ne "
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 "
 }
+
+# TODO ask user for mount points i.e. boot may be home etc
+BOOT=EFIBOOT
+ROOT=ROOT
+MOUNTPOINT="/mnt"
 EOF
 }
 
@@ -286,7 +301,7 @@ set_partion_layout() {
                 ;;
             *)
                 invalid_option
-                set_partion_layout
+                break
                 ;;
             esac
         else
@@ -354,7 +369,7 @@ set_timezone() {
         ;;
 
     *)
-        echo "Wrong option. Try again"
+        invalid_option
         set_timezone
         ;;
     esac
@@ -379,10 +394,7 @@ set_keymap() {
 # Confirm if ssd is present
 ssd_drive() {
     title "SSD Drive Confirmation"
-    read -r -p "Is this system using an SSD? [like yes/no, default is no]: " _SSD
-    if [[ -z "$_SSD" ]]; then
-        _SSD="no"
-    fi
+    read -r -p "Is this system using an SSD? [like yes/no]: " _SSD
     case "$_SSD" in
     y | Y | yes | Yes | YES)
         set_option "SSD" 1
@@ -393,7 +405,7 @@ ssd_drive() {
         set_option "MOUNTOPTION" "noatime,compress=zstd,commit=120"
         ;;
     *)
-        echo "Wrong option. Try again"
+        invalid_option
         ssd_drive
         ;;
     esac
@@ -575,7 +587,7 @@ make_choice() {
                 break
                 ;;
             *)
-                echo "Wrong option. Try again"
+                invalid_option
                 break
                 ;;
             esac
