@@ -115,12 +115,17 @@ set_lvm() {
     echo "Please make sure 1st partition is considered as root partition"
     echo "And will be mounted at /mnt/ and other partitions will be mounted"
     echo "at /mnt/partition_name by making a directory /mnt/partition_name"
-    if [[ -z "$PART_NUM" ]]; then
-        PART_NUM=1
-    fi
+
     i=1
     _LVM_NAMES=()
     _LVM_SIZES=()
+        if [[ -z "$_PART_NUM" ]]; then
+        _PART_NUM=1
+        _LVM_NAMES+=("root")
+        _LVM_SIZES+=("100%FREE")
+        # Stop loop if only 1 partition
+        i=2
+    fi
     while [[ $i -le "$_PART_NUM" ]]; do
         read -r -p "Enter $i partition name [like root]: " _LVM_NAME
         _LVM_NAMES+=("$_LVM_NAME")
@@ -132,8 +137,8 @@ set_lvm() {
     IFS=" " read -r -a LVM_SIZES <<<"$(tr ' ' '\n' <<<"${_LVM_SIZES[@]}" | sort -u | tr '\n' ' ')"
     set_option "LVM_VG" "$_VG"
     set_option "LVM_PART_NUM" "$_PART_NUM"
-    set_option "LVM_NAMES" "${LVM_NAMES[*]}"
-    set_option "LVM_SIZES" "${LVM_SIZES[*]}"
+    set_option "LVM_NAMES" "(${LVM_NAMES[*]})"
+    set_option "LVM_SIZES" "(${LVM_SIZES[*]})"
 }
 
 # Check if an element exists
@@ -596,3 +601,4 @@ background_check
 clear
 logo
 make_choice
+# set_lvm
