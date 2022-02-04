@@ -47,20 +47,22 @@ do_format() {
 }
 
 do_lvm() {
+    i=1
     while [[ "$i" -le "$LVM_PART_NUM" ]]; do
         if [[ "$i" -eq "$LVM_PART_NUM" ]]; then
             lvcreate -l 100%FREE "$LVM_VG" -n "${LVM_NAMES[$i]}"
-            do_format /dev/"$LVM_VG"/"${LVM_NAMES[$i]}"
         else
             lvcreate -L "${LVM_SIZES[$i]}" "$LVM_VG" -n "${LVM_NAMES[$i]}"
-            do_format /dev/"$LVM_VG"/"${LVM_NAMES[$i]}"
         fi
         i=$((i + 1))
     done
 }
 
 lvm_mount() {
-    mount /dev/"$LVM_VG"/"${LVM_NAMES[0]}" "$MOUNTPOINT"/
+    vgchange -ay &>/dev/null
+    lvchange -ay /dev/"$LVM_VG"/"${LVM_NAMES[$i]}" &>/dev/null
+    do_format /dev/"$LVM_VG"/"${LVM_NAMES[$i]}"
+    mount /dev/"$LVM_VG"/"${LVM_NAMES[0]}" "$MOUNTPOINT"
     for x in "${LVM_NAMES[@]:1}"; do
         mkdir "$MOUNTPOINT"/"$x"
         mount /dev/"$LVM_VG"/"$x" "$MOUNTPOINT"/"$x"

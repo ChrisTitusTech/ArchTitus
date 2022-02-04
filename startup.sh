@@ -301,6 +301,7 @@ set_partion_layout() {
                 ;;
             *)
                 invalid_option
+                set_partion_layout
                 break
                 ;;
             esac
@@ -322,6 +323,7 @@ set_filesystem() {
             break
         else
             invalid_option
+            set_filesystem
             break
         fi
     done
@@ -360,6 +362,7 @@ set_timezone() {
                 break
             else
                 invalid_option
+                set_timezone
                 break
             fi
         done
@@ -383,6 +386,7 @@ set_keymap() {
             break
         else
             invalid_option
+            set_keymap
             break
         fi
     done
@@ -422,6 +426,7 @@ disk_selection() {
             break
         else
             invalid_option
+            disk_selection
             break
         fi
     done
@@ -453,6 +458,7 @@ set_locale() {
             break
         else
             invalid_option
+            set_locale
             break
         fi
     done
@@ -524,6 +530,7 @@ set_desktop() {
             esac
         else
             invalid_option
+            set_desktop
             break
         fi
     done
@@ -585,11 +592,13 @@ make_choice() {
                 ;;
             *)
                 invalid_option
+                make_choice
                 break
                 ;;
             esac
         else
             invalid_option
+            make_choice
             break
         fi
     done
