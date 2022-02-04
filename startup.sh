@@ -7,10 +7,10 @@
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 # Set up a config file
-CONFIG_FILE="$SCRIPT_DIR"/setup.conf 
+CONFIG_FILE="$SCRIPT_DIR"/setup.conf
 
 # Check if file exists and remove it if it does
-[[ -f "$CONFIG_FILE" ]] && rm -f "$CONFIG_FILE" > /dev/null 2>&1
+[[ -f "$CONFIG_FILE" ]] && rm -f "$CONFIG_FILE" >/dev/null 2>&1
 
 # Set options in setup.conf
 set_option() {
@@ -66,7 +66,7 @@ set_ntp() {
 efi_check() {
     if [[ -d "/sys/firmware/efi/" ]]; then
         if (mount | grep /sys/firmware/efi/efivars); then
-            (mount -t efivarfs efivarfs /sys/firmware/efi/efivars) > /dev/null 2>&1
+            (mount -t efivarfs efivarfs /sys/firmware/efi/efivars) >/dev/null 2>&1
         fi
         # UEFI detected
         set_option "UEFI" 1
@@ -118,11 +118,11 @@ set_lvm() {
 
     i=1
     _LVM_NAMES=()
-    _LVM_SIZES=()
-        if [[ -z "$_PART_NUM" ]]; then
+    LVM_SIZES=()
+    if [[ -z "$_PART_NUM" ]]; then
         _PART_NUM=1
         _LVM_NAMES+=("root")
-        _LVM_SIZES+=("100%FREE")
+        LVM_SIZES+=("100%FREE")
         # Stop loop if only 1 partition
         i=2
     fi
@@ -130,11 +130,10 @@ set_lvm() {
         read -r -p "Enter $i partition name [like root]: " _LVM_NAME
         _LVM_NAMES+=("$_LVM_NAME")
         read -r -p "Enter $i partition size [like 25G, 200M]: " _LVM_SIZE
-        _LVM_SIZES+=("$_LVM_SIZE")
+        LVM_SIZES+=("$_LVM_SIZE")
         i=$((i + 1))
     done
     IFS=" " read -r -a LVM_NAMES <<<"$(tr ' ' '\n' <<<"${_LVM_NAMES[@]}" | sort -u | tr '\n' ' ')"
-    IFS=" " read -r -a LVM_SIZES <<<"$(tr ' ' '\n' <<<"${_LVM_SIZES[@]}" | sort -u | tr '\n' ' ')"
     set_option "LVM_VG" "$_VG"
     set_option "LVM_PART_NUM" "$_PART_NUM"
     set_option "LVM_NAMES" "(${LVM_NAMES[*]})"
@@ -275,15 +274,14 @@ set_partion_layout() {
                 break
                 ;;
             2)
-                set_lvm
                 set_option "LVM" 1
-                set_option "LUKS" 0
+                # just weired bug with set_option
+                set_lvm
                 break
                 ;;
             3)
                 set_lvm
                 set_option "LUKS" 1
-                set_option "LVM" 1
                 set_option "LUKS_PATH" "/dev/mapper/ROOT"
                 set_password "LUKS_PASSWORD"
                 break
@@ -596,9 +594,9 @@ make_choice() {
         fi
     done
 }
-background_check
-# write_to_config
-clear
-logo
-make_choice
-# set_lvm
+# background_check
+# # write_to_config
+# clear
+# logo
+# make_choice
+set_partion_layout
