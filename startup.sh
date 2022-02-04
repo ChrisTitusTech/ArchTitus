@@ -122,10 +122,7 @@ set_lvm() {
     _LVM_NAMES=()
     _LVM_SIZES=()
     while [[ $i -le "$_PART_NUM" ]]; do
-        read -r -p "Enter $i partition name [like root, default is root]: " _LVM_NAME
-        if [[ -z "$_LVM_NAME" ]]; then
-            _LVM_NAME="root"
-        fi
+        read -r -p "Enter $i partition name [like root]: " _LVM_NAME
         _LVM_NAMES+=("$_LVM_NAME")
         read -r -p "Enter $i partition size [like 25G, 200M]: " _LVM_SIZE
         _LVM_SIZES+=("$_LVM_SIZE")
@@ -334,10 +331,7 @@ set_timezone() {
     _ZONE=($(timedatectl list-timezones | sed 's/\/.*$//' | uniq))
     echo -ne "System detected your timezone to be '$_TIMEZONE'"
     echo " "
-    read -r -p "Is this correct? [like yes/no, default is yes]: " ANSWER
-    if [[ -z "$ANSWER" ]]; then
-        ANSWER="yes"
-    fi
+    read -r -p "Is this correct? [like yes/no]: " ANSWER
     case "$ANSWER" in
     y | Y | yes | Yes | YES)
         set_option TIMEZONE "$_TIMEZONE"
