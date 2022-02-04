@@ -10,14 +10,13 @@ else
     exit 1
 fi
 
-# Common functions and varibales
-
-BOOT=EFIBOOT
-ROOT=ROOT
-MOUNTPOINT="/mnt"
-
 make_boot() {
     mkfs.vfat -F32 -n "$1" "$2"
+}
+
+something_failed() {
+    echo "Something failed. Exiting."
+    exit 1
 }
 
 do_btrfs() {
@@ -61,7 +60,7 @@ do_lvm() {
 }
 
 lvm_mount() {
-    mount /dev/"$LVM_VG"/"${LVM_NAMES[1]}" "$MOUNTPOINT"/
+    mount /dev/"$LVM_VG"/"${LVM_NAMES[0]}" "$MOUNTPOINT"/
     for x in "${LVM_NAMES[@]:1}"; do
         mkdir "$MOUNTPOINT"/"$x"
         mount /dev/"$LVM_VG"/"$x" "$MOUNTPOINT"/"$x"
@@ -103,6 +102,7 @@ else
     PART3=${DISK}3
 fi
 
+
 if [[ "$LAYOUT" -eq 1 ]]; then
     do_partition
     make_boot "$BOOT" "$PART2"
@@ -110,6 +110,7 @@ if [[ "$LAYOUT" -eq 1 ]]; then
 
 elif [[ "$LVM" -eq 1 ]]; then
     do_partition
+    make_boot "$BOOT" "$PART2"
     pvcreate "$PART3"
     vgcreate "$LVM_VG" "$PART3"
     do_lvm
@@ -117,6 +118,7 @@ elif [[ "$LVM" -eq 1 ]]; then
 
 elif [[ "$LUKS" -eq 1 ]]; then
     do_partition
+    make_boot "$BOOT" "$PART2"
     # enter luks password to cryptsetup and format root partition
     echo -n "$LUKS_PASSWORD" | cryptsetup -y -v luksFormat "$PART3" -
     # open luks container and ROOT will be place holder
@@ -125,14 +127,15 @@ elif [[ "$LUKS" -eq 1 ]]; then
     vgcreate "$LVM_VG" "$LUKS_PATH"
     do_lvm
     lvm_mount
-else
+elif [[ "$LAYOUT" == 0 ]]; then
     modprobe dm-mod
     vgscan &>/dev/null
     vgchange -ay &>/dev/null
     # need to address boot partition
     # need to get root partition
     # need to format root partition
-
+else
+    something_failed
 fi
 
 # mount target
@@ -157,55 +160,6 @@ genfstab -U /mnt >>/mnt/etc/fstab
 
 cp -R "${SCRIPT_DIR}" /mnt/root/ArchTitus
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
-
-# check if layout is default
-# if [[ "$LAYOUT" == "default" ]]; then
-#     # check if disk is already formatted
-#     if [[ "$(lsblk -o NAME,FSTYPE | grep"$DISK" | awk '{print $2}')" == "btrfs" ]]; then
-#         echo "Disk already formatted"
-#     else
-#         # format disk
-#         btrfs device scan
-#         btrfs filesystem label "$DISK" "$LABEL"
-#     fi
-# else
-#     # check if disk is already formatted
-#     if [[ "$(lsblk -o NAME,FSTYPE | grep "$DISK" | awk '{print $2}')" == "btrfs" ]]; then
-#         echo "Disk already formatted"
-#     else
-#         # format disk
-#         btrfs device scan
-#         btrfs filesystem label "$DISK" "$LABEL"
-#         # create partitions
-#         parted -s "$DISK" mklabel gpt
-#         parted -s "$DISK" mkpart ESP fat32 1MiB 513MiB
-#         parted -s "$DISK" set 1 boot on
-#         parted -s "$DISK" mkpart primary 513MiB 100%
-#         parted -s "$DISK" set 2 lvm on
-#         parted -s "$DISK" print
-#         # create volume group
-#         pvcreate "$DISK"2
-#         vgcreate "$VG" "$DISK"2
-#         # create logical volumes
-#         lvcreate -L "$LV_ROOT" -n "$LV_ROOT" "$VG"
-#         lvcreate -L "$LV_HOME" -n "$LV_HOME" "$VG"
-#         lvcreate -L "$LV_SWAP" -n "$LV_SWAP" "$VG"
-#         # format partitions
-#         mkfs.fat -F32 "$DISK"1
-#         mkfs.btrfs -L "$LABEL" "$DISK"2
-#         mkswap "$DISK"3
-#         # mount partitions
-#         mount "$DISK"2 /mnt
-#         mkdir /
-
-# echo -ne "
-# -------------------------------------------------------------------------
-#                     GRUB BIOS Bootloader Install & Check
-# -------------------------------------------------------------------------
-# "
-# # if [[ ! -d "/sys/firmware/efi" ]]; then
-# #     grub-install --boot-directory=/mnt/boot "${DISK}"
-# # fi
 
 title "Checking for low memory systems <8G "
 
