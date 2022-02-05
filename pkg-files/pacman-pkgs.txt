@@ -34,6 +34,7 @@ cronie
 cups
 dialog
 discover
+discord
 dolphin
 dosfstools
 dtc
@@ -137,6 +138,7 @@ unrar
 unzip
 usbutils
 vim
+vlc
 virt-manager
 virt-viewer
 wget
