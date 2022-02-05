@@ -117,6 +117,8 @@ if [[ "$LAYOUT" -eq 1 ]]; then
 
 elif [[ "$LVM" -eq 1 ]]; then
     do_partition
+    sgdisk --typecode=3:8e00 "$DISK"
+    partprobe "$DISK"
     make_boot "$BOOT" "$PART2"
     pvcreate "$PART3"
     vgcreate "$LVM_VG" "$PART3"
