@@ -52,7 +52,7 @@ do_lvm() {
     i=0
     while [[ "$i" -le "${#LVM_PART_NUM[@]}" ]]; do
         if [[ "$i" -eq "${#LVM_PART_NUM[@]}" ]]; then
-            lvcreate --extents 100%FREE "$LVM_VG" --name`` "${LVM_NAMES[$i]}"
+            lvcreate --extents 100%FREE "$LVM_VG" --name "${LVM_NAMES[$i]}"
         else
             lvcreate --size "${LVM_SIZES[$i]}" "$LVM_VG" --name "${LVM_NAMES[$i]}"
         fi
