@@ -63,17 +63,16 @@ do_lvm() {
 lvm_mount() {
     vgchange -ay &>/dev/null
     i=0
-    LVM_PATH=/dev/"$LVM_VG"/
     while [[ "$i" -le "${#LVM_PART_NUM[@]}" ]]; do
-        lvchange -ay "$LVM_PATH ${LVM_NAMES[$i]}" &>/dev/null
-        do_format "$LVM_PATH ${LVM_NAMES[$i]}"
+        lvchange -ay /dev/"$LVM_VG"/"${LVM_NAMES[$i]}" &>/dev/null
+        do_format /dev/"$LVM_VG"/"${LVM_NAMES[$i]}"
 
         i=$((i + 1))
     done
-    mount "$LVM_PATH ${LVM_NAMES[0]}" "$MOUNTPOINT"
+    mount /dev/"$LVM_VG"/"${LVM_NAMES[0]}" "$MOUNTPOINT"
     for x in "${LVM_NAMES[@]:1}"; do
         mkdir "$MOUNTPOINT"/"$x"
-        mount "$LVM_PATH $x" "$MOUNTPOINT"/"$x"
+        mount /dev/"$LVM_VG"/"$x" "$MOUNTPOINT"/"$x"
     done
 }
 
@@ -148,7 +147,7 @@ elif [[ "$LUKS" -eq 1 ]]; then
     # enter luks password to cryptsetup and format root partition
     echo -n "$LUKS_PASSWORD" | cryptsetup -y -v luksFormat "$PART2" -
     # open luks container and ROOT will be place holder
-    echo -n "$LUKS_PASSWORD" | cryptsetup open "$PART2" "$ROOT" -
+    echo -n "$LUKS_PASSWORD" | cryptsetup open "$PART2" luks -
     pvcreate "$LUKS_PATH"
     vgcreate "$LVM_VG" "$LUKS_PATH"
     do_lvm
