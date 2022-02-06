@@ -41,6 +41,14 @@ check_arch() {
     fi
 }
 
+check_pacman() {
+	if [[ -f /var/lib/pacman/db.lck ]]; then
+		echo "ERROR! Pacman is blocked." 
+        echo "If not running remove /var/lib/pacman/db.lck."
+        exit 1
+	fi
+} 
+
 # Check for internet connection
 connection_test() {
     ping -q -w 1 -c 1 "$(ip r | grep default | awk 'NR==1 {print $3}')" &>/dev/null && return 1 || return 0
@@ -99,7 +107,7 @@ set_btrfs() {
             fi
         done
         # Check for duplicates
-        IFS=" " read -r -a SUBS <<<"$(tr ' ' '\n' <<<"${NAMES[@]}" | sort -u | tr '\n' ' ')"
+        IFS=" " read -r -a SUBS <<<"$(tr ' ' '\n' <<<"${NAMES[@]}" | awk '!x[$0]++' | tr '\n' ' ')"
         # Set to config file
         set_option "SUBVOLUMES" "${SUBS[*]}"
     fi
@@ -133,7 +141,7 @@ set_lvm() {
         LVM_SIZES+=("$_LVM_SIZE")
         i=$((i + 1))
     done
-    IFS=" " read -r -a LVM_NAMES <<<"$(tr ' ' '\n' <<<"${_LVM_NAMES[@]}" | sort -u | tr '\n' ' ')"
+    IFS=" " read -r -a LVM_NAMES <<<"$(tr ' ' '\n' <<<"${_LVM_NAMES[@]}" | awk '!x[$0]++' | tr '\n' ' ')"
     set_option "LVM_VG" "$_VG"
     set_option "LVM_PART_NUM" "$_PART_NUM"
     set_option "LVM_NAMES" "(${LVM_NAMES[*]})"
@@ -253,6 +261,7 @@ background_check() {
     fi
     set_option "SCRIPT_DIR" "$SCRIPT_DIR"
     check_arch
+    check_pacman
     efi_check
     # check_root
     set_ntp
