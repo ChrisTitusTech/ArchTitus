@@ -44,7 +44,7 @@ do_format() {
     mkfs."$FS" "$1" \
         "$([[ $FS == xfs || $FS == btrfs || $FS == reiserfs ]] && echo "-f")" \
         "$([[ $FS == vfat ]] && echo "-F32")" \
-        "$([[ $TRIM -eq 1 && $FS == ext4 ]] && echo "-E discard -F")"
+        "$([[ $FS == ext4 ]] && echo "-E discard -F")"
 
 }
 
@@ -82,7 +82,7 @@ do_partition() {
         sgdisk -a 2048 -o "$DISK"                                             # new gpt disk 2048 alignment
         sgdisk -n 1::+300M --typecode=1:ef00 --change-name=1:"$BOOT" "$DISK"  # partition 2 (UEFI Boot Partition)
         sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK"     # partition 3 (Root), default start, remaining
-    else [[ "$UEFI" -eq 0 ]]
+    else
         sgdisk -Z "$DISK"                                                     # zap all on disk
         sgdisk -a 2048 -o "$DISK" 
         sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:"BIOSBOOT" "$DISK" # partition 1 (BIOS Boot Partition)
