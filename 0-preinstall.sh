@@ -11,7 +11,9 @@ else
 fi
 
 make_boot() {
-    mkfs.vfat -F32 -n "$1" "$2"
+    if [[ "$UEFI" -eq 1 ]]; then
+        mkfs.vfat -F32 -n "$BOOT" "$PART1"
+    fi
 }
 
 something_failed() {
@@ -47,7 +49,7 @@ do_format() {
 }
 
 do_lvm() {
-    i=1
+    i=0
     while [[ "$i" -le "$LVM_PART_NUM" ]]; do
         if [[ "$i" -eq "$LVM_PART_NUM" ]]; then
             lvcreate -l 100%FREE "$LVM_VG" -n "${LVM_NAMES[$i]}"
@@ -60,7 +62,7 @@ do_lvm() {
 
 lvm_mount() {
     vgchange -ay &>/dev/null
-    i=1
+    i=0
     while [[ "$i" -le "$LVM_PART_NUM" ]]; do
         lvchange -ay /dev/"$LVM_VG"/"${LVM_NAMES[$i]}" &>/dev/null
         do_format /dev/"$LVM_VG"/"${LVM_NAMES[$i]}"
@@ -75,13 +77,17 @@ lvm_mount() {
 }
 
 do_partition() {
-    sgdisk -Z "$DISK"                                                     # zap all on disk
-    sgdisk -a 2048 -o "$DISK"                                             # new gpt disk 2048 alignment
-    sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:"BIOSBOOT" "$DISK" # partition 1 (BIOS Boot Partition)
-    sgdisk -n 2::+300M --typecode=2:ef00 --change-name=2:"$BOOT" "$DISK"  # partition 2 (UEFI Boot Partition)
-    sgdisk -n 3::-0 --typecode=3:8300 --change-name=3:"$ROOT" "$DISK"     # partition 3 (Root), default start, remaining
-    if [[ "$UEFI" -eq 0 ]]; then
-        sgdisk -A 1:set:2 "$DISK"
+    if [[ "$UEFI" -eq 1 ]]; then
+        sgdisk -Z "$DISK"                                                     # zap all on disk
+        sgdisk -a 2048 -o "$DISK"                                             # new gpt disk 2048 alignment
+        sgdisk -n 1::+300M --typecode=1:ef00 --change-name=1:"$BOOT" "$DISK"  # partition 2 (UEFI Boot Partition)
+        sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK"     # partition 3 (Root), default start, remaining
+    else [[ "$UEFI" -eq 0 ]]
+        sgdisk -Z "$DISK"                                                     # zap all on disk
+        sgdisk -a 2048 -o "$DISK" 
+        sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:"BIOSBOOT" "$DISK" # partition 1 (BIOS Boot Partition)
+        sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK"
+        
     fi
 }
 
@@ -102,36 +108,36 @@ mkdir /mnt &>/dev/null # Hiding error message if any
 
 title "Partitioning disk"
 if [[ "$SDD" -eq 1 ]]; then
+    PART1=${DISK}p1
     PART2=${DISK}p2
-    PART3=${DISK}p3
 else
+    PART1=${DISK}1
     PART2=${DISK}2
-    PART3=${DISK}3
 fi
 
 
 if [[ "$LAYOUT" -eq 1 ]]; then
     do_partition
-    make_boot "$BOOT" "$PART2"
-    do_btrfs "$ROOT" "$PART3"
+    make_boot
+    do_btrfs "$ROOT" "$PART2"
 
 elif [[ "$LVM" -eq 1 ]]; then
     do_partition
-    sgdisk --typecode=3:8e00 "$DISK"
+    sgdisk --typecode=2:8e00 "$DISK"
     partprobe "$DISK"
-    make_boot "$BOOT" "$PART2"
-    pvcreate "$PART3"
-    vgcreate "$LVM_VG" "$PART3"
+    make_boot
+    pvcreate "$PART2"
+    vgcreate "$LVM_VG" "$PART2"
     do_lvm
     lvm_mount
 
 elif [[ "$LUKS" -eq 1 ]]; then
     do_partition
-    make_boot "$BOOT" "$PART2"
+    make_boot
     # enter luks password to cryptsetup and format root partition
-    echo -n "$LUKS_PASSWORD" | cryptsetup -y -v luksFormat "$PART3" -
+    echo -n "$LUKS_PASSWORD" | cryptsetup -y -v luksFormat "$PART2" -
     # open luks container and ROOT will be place holder
-    echo -n "$LUKS_PASSWORD" | cryptsetup open "$PART3" "$ROOT" -
+    echo -n "$LUKS_PASSWORD" | cryptsetup open "$PART2" "$ROOT" -
     pvcreate "$LUKS_PATH"
     vgcreate "$LVM_VG" "$LUKS_PATH"
     do_lvm
