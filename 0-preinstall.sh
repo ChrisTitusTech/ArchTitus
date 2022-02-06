@@ -17,7 +17,7 @@ make_boot() {
 }
 
 something_failed() {
-    echo "Something failed. Exiting."
+    echo "Something is not right. Exiting."
     exit 1
 }
 
@@ -63,35 +63,46 @@ do_lvm() {
 lvm_mount() {
     vgchange -ay &>/dev/null
     i=0
+    if [[ "$LUKS" -eq 1 ]]; then
+        LVM_PATH=/dev/mapper/
+    else
+        LVM_PATH=/dev/"$LVM_VG"/
+    fi
     while [[ "$i" -le "${#LVM_PART_NUM[@]}" ]]; do
-        lvchange -ay /dev/"$LVM_VG"/"${LVM_NAMES[$i]}" &>/dev/null
-        do_format /dev/"$LVM_VG"/"${LVM_NAMES[$i]}"
+        lvchange -ay "$LVM_PATH""${LVM_NAMES[$i]}" &>/dev/null
+        do_format "$LVM_PATH""${LVM_NAMES[$i]}"
 
         i=$((i + 1))
     done
-    mount /dev/"$LVM_VG"/"${LVM_NAMES[0]}" "$MOUNTPOINT"
+    mount "$LVM_PATH""${LVM_NAMES[0]}" "$MOUNTPOINT"
     for x in "${LVM_NAMES[@]:1}"; do
         mkdir "$MOUNTPOINT"/"$x"
-        mount /dev/"$LVM_VG"/"$x" "$MOUNTPOINT"/"$x"
+        mount "$LVM_PATH""$x" "$MOUNTPOINT"/"$x"
     done
 }
 
 do_partition() {
     if [[ "$UEFI" -eq 1 ]]; then
-        sgdisk -Z "$DISK"                                                     # zap all on disk
-        sgdisk -a 2048 -o "$DISK"                                             # new gpt disk 2048 alignment
-        sgdisk -n 1::+300M --typecode=1:ef00 --change-name=1:"$BOOT" "$DISK"  # partition 2 (UEFI Boot Partition)
-        sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK"     # partition 3 (Root), default start, remaining
+        sgdisk -Z "$DISK"                                                    # zap all on disk
+        sgdisk -a 2048 -o "$DISK"                                            # new gpt disk 2048 alignment
+        sgdisk -n 1::+300M --typecode=1:ef00 --change-name=1:"$BOOT" "$DISK" # partition 2 (UEFI Boot Partition)
+        sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK"    # partition 3 (Root), default start, remaining
     else
-        sgdisk -Z "$DISK"                                                     # zap all on disk
-        sgdisk -a 2048 -o "$DISK" 
+        sgdisk -Z "$DISK" # zap all on disk
+        sgdisk -a 2048 -o "$DISK"
         sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:"BIOSBOOT" "$DISK" # partition 1 (BIOS Boot Partition)
         sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK"
-        
+
     fi
 }
 
-
+# mount boot partition
+mount_boot() {
+    if [[ "$UEFI" -eq 1 ]]; then
+        mkdir "$MOUNTPOINT"/boot
+        mount -t vfat -L EFIBOOT "$MOUNTPOINT"/boot/
+    fi
+}
 
 # format a partition from given list of filesystems
 
@@ -100,11 +111,14 @@ title "Setting up mirrors for faster downloads"
 install_pkg pacman-contrib reflector rsync gptfdisk btrfs-progs
 
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+
+if [[ ! -f /etc/pacman.d/mirrorlist.backup ]]; then
+    cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+fi
 
 # added https protocol for mirrors
 reflector --age 48 --country "$ISO" -f 5 --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
-mkdir /mnt &>/dev/null # Hiding error message if any
+mkdir "$MOUNTPOINT" &>/dev/null # Hiding error message if any
 
 title "Partitioning disk"
 if [[ "$SDD" -eq 1 ]]; then
@@ -115,11 +129,11 @@ else
     PART2=${DISK}2
 fi
 
-
 if [[ "$LAYOUT" -eq 1 ]]; then
     do_partition
     make_boot
     do_btrfs "$ROOT" "$PART2"
+    mount_boot
 
 elif [[ "$LVM" -eq 1 ]]; then
     do_partition
@@ -130,6 +144,7 @@ elif [[ "$LVM" -eq 1 ]]; then
     vgcreate "$LVM_VG" "$PART2"
     do_lvm
     lvm_mount
+    mount_boot
 
 elif [[ "$LUKS" -eq 1 ]]; then
     do_partition
@@ -142,20 +157,23 @@ elif [[ "$LUKS" -eq 1 ]]; then
     vgcreate "$LVM_VG" "$LUKS_PATH"
     do_lvm
     lvm_mount
-elif [[ "$LAYOUT" == 0 ]]; then
+    mount_boot
+
+elif [[ "$LAYOUT" -eq 0 ]]; then
     modprobe dm-mod
     vgscan &>/dev/null
     vgchange -ay &>/dev/null
-    # need to address boot partition
-    # need to get root partition
-    # need to format root partition
+    do_format "$ROOT_PARTITION"
+    mount "$ROOT_PARTITION" "$MOUNTPOINT"
+    if [[ "$UEFI" -eq 1 ]]; then
+        mkfs.vfat -F32 -n "$BOOT" "$BOOT_PARTITION"
+        mount_boot
+    fi
+
 else
+
     something_failed
 fi
-
-# mount target
-mkdir "$MOUNTPOINT"/boot
-mount -t vfat -L EFIBOOT "$MOUNTPOINT"/boot/
 
 if ! grep -qs '/mnt' /proc/mounts; then
     echo "Drive is not mounted can not continue"
@@ -169,12 +187,12 @@ title "Arch Install on Main Drive"
 # for test purposes
 pacstrap "$MOUNTPOINT" base linux linux-firmware vim --needed --noconfirm
 #pacstrap /mnt base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
-echo "keyserver hkp://keyserver.ubuntu.com" >>/mnt/etc/pacman.d/gnupg/gpg.conf
+echo "keyserver hkp://keyserver.ubuntu.com" >>"$MOUNTPOINT"/etc/pacman.d/gnupg/gpg.conf
 
-genfstab -U /mnt >>/mnt/etc/fstab
+genfstab -U "$MOUNTPOINT" >>"$MOUNTPOINT"/etc/fstab
 
-cp -R "${SCRIPT_DIR}" /mnt/root/ArchTitus
-cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
+cp -R "${SCRIPT_DIR}" "$MOUNTPOINT"/root/ArchTitus
+cp /etc/pacman.d/mirrorlist "$MOUNTPOINT"/etc/pacman.d/mirrorlist
 
 title "Checking for low memory systems <8G "
 
@@ -182,15 +200,15 @@ title "Checking for low memory systems <8G "
 TOTALMEM=$(grep -i "memtotal" "/proc/meminfo" | grep -o '[[:digit:]]*')
 if [[ $TOTALMEM -lt 8000000 ]]; then
     # Put swap into the actual system, not into RAM disk, otherwise there is no point in it, it'll cache RAM into RAM. So, /mnt/ everything.
-    mkdir -p /mnt/opt/swap  # make a dir that we can apply NOCOW to to make it btrfs-friendly.
-    chattr +C /mnt/opt/swap # apply NOCOW, btrfs needs that.
-    dd if=/dev/zero of=/mnt/opt/swap/swapfile bs=1M count=2048 status=progress
-    chmod 600 /mnt/opt/swap/swapfile # set permissions.
-    chown root /mnt/opt/swap/swapfile
-    mkswap /mnt/opt/swap/swapfile
-    swapon /mnt/opt/swap/swapfile
+    mkdir -p "$MOUNTPOINT"/opt/swap  # make a dir that we can apply NOCOW to to make it btrfs-friendly.
+    chattr +C "$MOUNTPOINT"/opt/swap # apply NOCOW, btrfs needs that.
+    dd if=/dev/zero of="$MOUNTPOINT"/opt/swap/swapfile bs=1M count=2048 status=progress
+    chmod 600 "$MOUNTPOINT"/opt/swap/swapfile # set permissions.
+    chown root "$MOUNTPOINT"/opt/swap/swapfile
+    mkswap "$MOUNTPOINT"/opt/swap/swapfile
+    swapon "$MOUNTPOINT"/opt/swap/swapfile
     # The line below is written to /mnt/ but doesn't contain /mnt/, since it's just / for the system itself.
-    echo "/opt/swap/swapfile	none	swap	sw	0	0" >>/mnt/etc/fstab # Add swap to fstab, so it KEEPS working after installation.
+    echo "/opt/swap/swapfile	none	swap	sw	0	0" >>"$MOUNTPOINT"/etc/fstab # Add swap to fstab, so it KEEPS working after installation.
 fi
 
 title "SYSTEM READY FOR 1-setup.sh"

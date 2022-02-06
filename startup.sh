@@ -270,6 +270,23 @@ background_check() {
     setfont ter-v22b
 }
 
+# This function will handle file systems.
+set_filesystem() {
+    title "Setup File System"
+    FILESYS=("btrfs" "ext2" "ext3" "ext4" "f2fs" "jfs" "nilfs2" "ntfs" "reiserfs" "vfat" "xfs")
+    PS3="$PROMPT"
+    select OPT in "${FILESYS[@]}"; do
+        if elements_present "$OPT" "${FILESYS[@]}"; then
+            set_option "FS" "$OPT"
+            break
+        else
+            invalid_option
+            set_filesystem
+            break
+        fi
+    done
+}
+
 # Set partioning layouts
 set_partion_layout() {
     title "Setup Partioning Layout"
@@ -291,21 +308,33 @@ set_partion_layout() {
             3)
                 set_lvm
                 set_option "LUKS" 1
-                set_option "LUKS_PATH" "/dev/mapper/ROOT"
+                set_option "LUKS_PATH" "/dev/mapper/luks"
                 set_password "LUKS_PASSWORD"
                 break
                 ;;
             4)
                 echo -ne "Maintaining current settings"
                 CHOICE=($(lsblk | grep 'part' | awk '{print "/dev/" substr($1,3)}'))
+                if [[ -d "/sys/firmware/efi/" ]]; then
+                    echo "Select your boot partition"
+                    PS3="$PROMPT"
+                    select OPT in "${CHOICE[@]}"; do
+                        if elements_present "$OPT" "${CHOICE[@]}"; then
+                            set_option "LAYOUT" 0
+                            set_option "BOOT_PARTITION" "$OPT"
+                            break
+                        fi
+                    done
+                fi
+                echo "Select your root partition"
                 PS3="$PROMPT"
                 select OPT in "${CHOICE[@]}"; do
                     if elements_present "$OPT" "${CHOICE[@]}"; then
-                        set_option "LAYOUT" 0
-                        set_option "PARTITION" "$OPT"
+                        set_option "ROOT_PARTITION" "$OPT"
                         break
                     fi
                 done
+                set_filesystem
                 break
                 ;;
             *)
@@ -317,23 +346,6 @@ set_partion_layout() {
         else
             invalid_option
             set_partion_layout
-        fi
-    done
-}
-
-# This function will handle file systems.
-set_filesystem() {
-    title "Setup File System"
-    FILESYS=("btrfs" "ext2" "ext3" "ext4" "f2fs" "jfs" "nilfs2" "ntfs" "reiserfs" "vfat" "xfs")
-    PS3="$PROMPT"
-    select OPT in "${FILESYS[@]}"; do
-        if elements_present "$OPT" "${FILESYS[@]}"; then
-            set_option "FS" "$OPT"
-            break
-        else
-            invalid_option
-            set_filesystem
-            break
         fi
     done
 }
