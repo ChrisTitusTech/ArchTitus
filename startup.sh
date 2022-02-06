@@ -475,7 +475,7 @@ set_locale() {
     PS3="$PROMPT"
     select LOCALE in "${LOCALES[@]}"; do
         if elements_present "$LOCALE" "${LOCALES[@]}"; then
-            set_option "LOCALE" "${LOCALE}.UTF-8 UTF-8"
+            set_option "LOCALE" "\"${LOCALE}.UTF-8 UTF-8\""
             break
         else
             invalid_option

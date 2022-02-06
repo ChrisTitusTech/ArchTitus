@@ -52,9 +52,9 @@ do_lvm() {
     i=0
     while [[ "$i" -le "${#LVM_PART_NUM[@]}" ]]; do
         if [[ "$i" -eq "${#LVM_PART_NUM[@]}" ]]; then
-            lvcreate -l 100%FREE "$LVM_VG" -n "${LVM_NAMES[$i]}"
+            lvcreate --extents 100%FREE "$LVM_VG" --name`` "${LVM_NAMES[$i]}"
         else
-            lvcreate -L "${LVM_SIZES[$i]}" "$LVM_VG" -n "${LVM_NAMES[$i]}"
+            lvcreate --size "${LVM_SIZES[$i]}" "$LVM_VG" --name "${LVM_NAMES[$i]}"
         fi
         i=$((i + 1))
     done
@@ -63,21 +63,17 @@ do_lvm() {
 lvm_mount() {
     vgchange -ay &>/dev/null
     i=0
-    if [[ "$LUKS" -eq 1 ]]; then
-        LVM_PATH=/dev/mapper/
-    else
-        LVM_PATH=/dev/"$LVM_VG"/
-    fi
+    LVM_PATH=/dev/"$LVM_VG"/
     while [[ "$i" -le "${#LVM_PART_NUM[@]}" ]]; do
-        lvchange -ay "$LVM_PATH""${LVM_NAMES[$i]}" &>/dev/null
-        do_format "$LVM_PATH""${LVM_NAMES[$i]}"
+        lvchange -ay "$LVM_PATH ${LVM_NAMES[$i]}" &>/dev/null
+        do_format "$LVM_PATH ${LVM_NAMES[$i]}"
 
         i=$((i + 1))
     done
-    mount "$LVM_PATH""${LVM_NAMES[0]}" "$MOUNTPOINT"
+    mount "$LVM_PATH ${LVM_NAMES[0]}" "$MOUNTPOINT"
     for x in "${LVM_NAMES[@]:1}"; do
         mkdir "$MOUNTPOINT"/"$x"
-        mount "$LVM_PATH""$x" "$MOUNTPOINT"/"$x"
+        mount "$LVM_PATH $x" "$MOUNTPOINT"/"$x"
     done
 }
 
