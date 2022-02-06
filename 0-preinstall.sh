@@ -50,8 +50,8 @@ do_format() {
 
 do_lvm() {
     i=0
-    while [[ "$i" -le "$LVM_PART_NUM" ]]; do
-        if [[ "$i" -eq "$LVM_PART_NUM" ]]; then
+    while [[ "$i" -le "${#LVM_PART_NUM[@]}" ]]; do
+        if [[ "$i" -eq "${#LVM_PART_NUM[@]}" ]]; then
             lvcreate -l 100%FREE "$LVM_VG" -n "${LVM_NAMES[$i]}"
         else
             lvcreate -L "${LVM_SIZES[$i]}" "$LVM_VG" -n "${LVM_NAMES[$i]}"
@@ -63,7 +63,7 @@ do_lvm() {
 lvm_mount() {
     vgchange -ay &>/dev/null
     i=0
-    while [[ "$i" -le "$LVM_PART_NUM" ]]; do
+    while [[ "$i" -le "${#LVM_PART_NUM[@]}" ]]; do
         lvchange -ay /dev/"$LVM_VG"/"${LVM_NAMES[$i]}" &>/dev/null
         do_format /dev/"$LVM_VG"/"${LVM_NAMES[$i]}"
 
