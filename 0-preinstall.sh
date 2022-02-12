@@ -156,6 +156,7 @@ else
     PART2=${DISK}2
 fi
 
+set_option "PART2" "$PART2"
 
 if [[ "$LAYOUT" -eq 1 ]]; then
     do_partition

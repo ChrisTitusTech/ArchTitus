@@ -521,6 +521,7 @@ make_choice() {
                 set_keymap
                 ssd_drive
                 set_btrfs
+                set_option "BOOTLOADER" "grub"
                 set_option "FS" "btrfs"
                 set_option "DE" "default"
                 set_option "LAYOUT" 1
