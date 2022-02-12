@@ -16,6 +16,10 @@ echo -ne "
 -------------------------------------------------------------------------
                 Scripts are in directory named ArchTitus
 "
+#!/bin/bash
+if [ -f /.dockerenv ]; then
+    echo "docker container found, i can't install"
+    break
     bash startup.sh
     source $SCRIPT_DIR/setup.conf
     bash 0-preinstall.sh
