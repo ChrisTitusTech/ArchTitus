@@ -110,11 +110,13 @@ lvm_mount() {
 
 do_partition() {
     if [[ "$UEFI" -eq 1 ]]; then
+        wipefs -a "$DISK"
         sgdisk -Z "$DISK"                                                    # zap all on disk
         sgdisk -a 2048 -o "$DISK"                                            # new gpt disk 2048 alignment
         sgdisk -n 1::+300M --typecode=1:ef00 --change-name=1:"$BOOT" "$DISK" # partition 2 (UEFI Boot Partition)
         sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK"    # partition 3 (Root), default start, remaining
     else
+        wipefs -a "$DISK"
         sgdisk -Z "$DISK" # zap all on disk
         sgdisk -a 2048 -o "$DISK"
         sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:"BIOSBOOT" "$DISK" # partition 1 (BIOS Boot Partition)
