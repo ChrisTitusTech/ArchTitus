@@ -42,12 +42,12 @@ check_arch() {
 }
 
 check_pacman() {
-	if [[ -f /var/lib/pacman/db.lck ]]; then
-		echo "ERROR! Pacman is blocked." 
+    if [[ -f /var/lib/pacman/db.lck ]]; then
+        echo "ERROR! Pacman is blocked."
         echo "If not running remove /var/lib/pacman/db.lck."
         exit 1
-	fi
-} 
+    fi
+}
 
 # Check for internet connection
 connection_test() {
@@ -155,7 +155,7 @@ elements_present() {
 
 # Invalid option message
 invalid_option() {
-    echo -ne "Please select a valid option: \n"
+    echo -ne "Your selected option is invalid, retry \n"
 }
 
 # Password helper function
@@ -208,12 +208,17 @@ install_pkg () {
 }
 
 refresh_pacman() {
-    pacman -Syy
+    pacman -Sy --noconfirm
+}
+
+something_failed() {
+    echo "Something is not right. Exiting."
+    exit 1
 }
 
 # Setup for logging
-LOG="${SCRIPT_DIR}/main.log"
-[[ -f \$LOG ]] && rm -f "\$LOG"
+# LOG="${SCRIPT_DIR}/main.log"
+# [[ -f \$LOG ]] && rm -f "\$LOG"
 
 logo () {
 echo -ne "
@@ -263,7 +268,7 @@ background_check() {
     check_arch
     check_pacman
     efi_check
-    # check_root
+    check_root
     set_ntp
     do_curl
     install_font
@@ -273,7 +278,7 @@ background_check() {
 # This function will handle file systems.
 set_filesystem() {
     title "Setup File System"
-    FILESYS=("btrfs" "ext2" "ext3" "ext4" "f2fs" "jfs" "nilfs2" "ntfs" "reiserfs" "vfat" "xfs")
+    FILESYS=("btrfs" "ext2" "ext3" "ext4" "f2fs" "jfs" "nilfs2" "ntfs" "vfat" "xfs")
     PS3="$PROMPT"
     select OPT in "${FILESYS[@]}"; do
         if elements_present "$OPT" "${FILESYS[@]}"; then
@@ -455,17 +460,31 @@ disk_selection() {
 
 user_info() {
     title "Add Your Information"
-    read -r -p "Please enter your username [default is archtitus]: " USERNAME
-    if [[ -z "$USERNAME" ]]; then
-        USERNAME="archtitus"
-    fi
-    set_option "USERNAME" "${USERNAME,,}" # convert to lower case as in issue #109
+    while true; do
+        read -r -p "Please enter your username [default is archtitus]: " USERNAME
+        if [[ -z "$USERNAME" ]]; then
+            set_option "USERNAME" "archtitus"
+        elif [[ "${USERNAME,,}" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]]; then
+            set_option "USERNAME" "${USERNAME,,}" # convert to lower case as in issue #109
+            break
+        else
+            invalid_option
+            continue
+        fi
+    done
     set_password "PASSWORD"
-    read -r -p "Please enter your hostname [default is ArchLinux]: " HOSTNAME
-    if [[ -z "$HOSTNAME" ]]; then
-        HOSTNAME="ArchLinux"
-    fi
-    set_option "HOSTNAME" "$HOSTNAME"
+    while true; do
+        read -r -p "Please enter your hostname [default is archlinux]: " HOSTNAME
+        if [[ -z "$HOSTNAME" ]]; then
+            set_option "HOSTNAME" "archlinux"
+        elif [[ "${HOSTNAME,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]; then
+            set_option "HOSTNAME" "${HOSTNAME,,}"
+            break
+        else
+            invalid_option
+            continue
+        fi
+    done
 }
 
 # Set locale
@@ -488,67 +507,19 @@ set_locale() {
 # Desktop selection
 set_desktop() {
     title "Select either desktop Environment or Window Manager"
-    SELECTION=("KDE" "Gnome" "XFCE" "Mate" "LXQT" "Minimal" "Awesome" "OpenBox" "i3" "i3-Gaps")
+    SELECTION=("Default (KDE)" "Gnome" "XFCE" "Mate" "LXQT" "Minimal" "Awesome" "OpenBox" "i3" "i3-Gaps" "Deepin" "Budgie")
     PS3="$PROMPT"
     select OPT in "${SELECTION[@]}"; do
         if elements_present "$OPT" "${SELECTION[@]}"; then
-            case "$REPLY" in
-            1)
-                # More packages can be added here
-                set_option "DE" "plasma"
-                set_option "DM" "sddm"
+            echo "${SELECTION[0]}"
+            if [[ "$OPT" == "Default (KDE)" ]]; then
+                set_option "DESKTOP" "default"
                 break
-                ;;
-            2)
-                set_option "DE" "gnome"
-                set_option "DM" "gdm"
+            else
+                set_option "DESKTOP" "${OPT,,}"
                 break
-                ;;
-            3)
-                set_option "DE" "xfce4"
-                set_option "DM" "lightdm"
-                break
-                ;;
-            4)
-                set_option "DE" "mate"
-                set_option "DM" "lightdm"
-                break
-                ;;
-            5)
-                set_option "DE" "lxqt"
-                set_option "DM" "lightdm"
-                break
-                ;;
-            6)
-                set_option "DE" 0
-                set_option "DM" 0
-                break
-                ;;
-            7)
-                set_option "DE" 0
-                set_option "WM" "awesome"
-                break
-                ;;
-            8) # openbox
-                set_option "DE" 0
-                set_option "WM" "openbox"
-                break
-                ;;
-            9) # i3
-                set_option "DE" 0
-                set_option "WM" "i3"
-                break
-                ;;
-            10) # i3-gaps
-                set_option "DE" 0
-                set_option "WM" "i3-gaps"
-                break
-                ;;
-            *)
-                echo "Wrong option. Try again"
-                break
-                ;;
-            esac
+
+            fi
         else
             invalid_option
             set_desktop
@@ -588,8 +559,7 @@ make_choice() {
                 ssd_drive
                 set_btrfs
                 set_option "FS" "btrfs"
-                set_option "DE" "plasma"
-                set_option "DM" "sddm"
+                set_option "DE" "default"
                 set_option "LAYOUT" 1
 
                 break
@@ -629,4 +599,5 @@ background_check
 clear
 logo
 make_choice
+# user_info
 # set_partion_layout

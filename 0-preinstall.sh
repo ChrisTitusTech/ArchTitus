@@ -16,11 +16,6 @@ make_boot() {
     fi
 }
 
-something_failed() {
-    echo "Something is not right. Exiting."
-    exit 1
-}
-
 do_btrfs() {
     mkfs.btrfs -L "$1" "$2" -f
     mount -t btrfs "$2" "$MOUNTPOINT"
@@ -41,10 +36,47 @@ do_btrfs() {
 }
 
 do_format() {
-    mkfs."$FS" "$1" \
-        "$([[ $FS == xfs || $FS == btrfs || $FS == reiserfs ]] && echo "-f")" \
-        "$([[ $FS == vfat ]] && echo "-F32")" \
-        "$([[ $FS == ext4 ]] && echo "-E discard -F")"
+    case "$FS" in
+    "xfs")
+        install_pkg xfsprogs
+        mkfs.xfs -f -L "$ROOT" "$1"
+        ;;
+    "btrfs")
+        install_pkg btrfs-progs
+        mkfs.btrfs -L "$ROOT" "$1" -f
+        ;;
+    "ext4")
+        mkfs.ext4 -E discard -F -L "$ROOT" "$1"
+        ;;
+    "vfat")
+        mkfs.vfat -F32 "$1"
+        ;;
+    "f2fs")
+        install_pkg f2fs-tools
+        mkfs.f2fs -l "$ROOT" -O extra_attr,inode_checksum,sb_checksum "$1"
+        ;;
+    "ext2")
+        mkfs.ext2 -L "$ROOT" "$1"
+        ;;
+    "ext3")
+        mkfs.ext3 -L "$ROOT" "$1"
+        ;;
+    "jfs")
+        install_pkg jfsutils
+        mkfs.jfs -L "$ROOT" "$1"
+        ;;
+    "nilfs2")
+        install_pkg nilfs-utils
+        mkfs.nilfs2 -L "$ROOT" "$1"
+        ;;
+    "ntfs")
+        install_pkg ntfs-3g
+        mkfs.ntfs -Q -L "$ROOT" "$1"
+        ;;
+    *)
+        something_failed
+        ;;
+    esac
 
 }
 
@@ -69,10 +101,10 @@ lvm_mount() {
 
         i=$((i + 1))
     done
-    mount /dev/"$LVM_VG"/"${LVM_NAMES[0]}" "$MOUNTPOINT"
+    mount -t "$FS" /dev/"$LVM_VG"/"${LVM_NAMES[0]}" "$MOUNTPOINT"
     for x in "${LVM_NAMES[@]:1}"; do
         mkdir "$MOUNTPOINT"/"$x"
-        mount /dev/"$LVM_VG"/"$x" "$MOUNTPOINT"/"$x"
+        mount -t "$FS" /dev/"$LVM_VG"/"$x" "$MOUNTPOINT"/"$x"
     done
 }
 
@@ -103,7 +135,7 @@ mount_boot() {
 
 logo
 title "Setting up mirrors for faster downloads"
-install_pkg pacman-contrib reflector rsync gptfdisk btrfs-progs
+install_pkg pacman-contrib reflector rsync gptfdisk
 
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 
@@ -115,7 +147,7 @@ fi
 reflector --age 48 --country "$ISO" -f 5 --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 mkdir "$MOUNTPOINT" &>/dev/null # Hiding error message if any
 
-title "Partitioning disk"
+title "File system setup"
 if [[ "$SDD" -eq 1 ]]; then
     PART1=${DISK}p1
     PART2=${DISK}p2
@@ -123,6 +155,7 @@ else
     PART1=${DISK}1
     PART2=${DISK}2
 fi
+_PART_UUID=$(blkid -s UUID -o value "$PART2")
 
 if [[ "$LAYOUT" -eq 1 ]]; then
     do_partition
@@ -140,6 +173,7 @@ elif [[ "$LVM" -eq 1 ]]; then
     do_lvm
     lvm_mount
     mount_boot
+    set_option "HOOKS" "(lvm2 filesystems)"
 
 elif [[ "$LUKS" -eq 1 ]]; then
     do_partition
@@ -147,12 +181,16 @@ elif [[ "$LUKS" -eq 1 ]]; then
     # enter luks password to cryptsetup and format root partition
     echo -n "$LUKS_PASSWORD" | cryptsetup -y -v luksFormat "$PART2" -
     # open luks container and ROOT will be place holder
+    # $LUKS_PATH "/dev/mapper/luks"
     echo -n "$LUKS_PASSWORD" | cryptsetup open "$PART2" luks -
     pvcreate "$LUKS_PATH"
     vgcreate "$LVM_VG" "$LUKS_PATH"
     do_lvm
     lvm_mount
     mount_boot
+    set_option "ENCRYP_PART" "$_PART_UUID"
+    # HOOKS=(base udev autodetect modconf block filesystems keyboard fsck) 
+    set_option "HOOKS" "(base udev autodetect keyboard keymap consolefont modconf block encrypt filesystems fsck)"
 
 elif [[ "$LAYOUT" -eq 0 ]]; then
     modprobe dm-mod
@@ -166,22 +204,22 @@ elif [[ "$LAYOUT" -eq 0 ]]; then
     fi
 
 else
-
     something_failed
 fi
 
-if ! grep -qs '/mnt' /proc/mounts; then
+if [[ "$(grep -E "$MOUNTPOINT" /proc/mounts -c)" -eq "0" ]]; then
     echo "Drive is not mounted can not continue"
     echo "Rebooting in 3 Seconds ..." && sleep 1
     echo "Rebooting in 2 Seconds ..." && sleep 1
     echo "Rebooting in 1 Second ..." && sleep 1
-    reboot now
+    # reboot now
+    exit 1
 fi
 
 title "Arch Install on Main Drive"
 # for test purposes
 pacstrap "$MOUNTPOINT" base linux linux-firmware vim --needed --noconfirm
-#pacstrap /mnt base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
+#pacstrap "$MOUNTPOINT" base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
 echo "keyserver hkp://keyserver.ubuntu.com" >>"$MOUNTPOINT"/etc/pacman.d/gnupg/gpg.conf
 
 genfstab -U "$MOUNTPOINT" >>"$MOUNTPOINT"/etc/fstab
@@ -189,11 +227,11 @@ genfstab -U "$MOUNTPOINT" >>"$MOUNTPOINT"/etc/fstab
 cp -R "${SCRIPT_DIR}" "$MOUNTPOINT"/root/ArchTitus
 cp /etc/pacman.d/mirrorlist "$MOUNTPOINT"/etc/pacman.d/mirrorlist
 
-title "Checking for low memory systems <8G "
 
 # TOTALMEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
-TOTALMEM=$(grep -i "memtotal" "/proc/meminfo" | grep -o '[[:digit:]]*')
+TOTALMEM="$(grep -i "memtotal" "/proc/meminfo" | grep -o '[[:digit:]]*')"
 if [[ $TOTALMEM -lt 8000000 ]]; then
+    title "Checking for low memory systems <8G "
     # Put swap into the actual system, not into RAM disk, otherwise there is no point in it, it'll cache RAM into RAM. So, /mnt/ everything.
     mkdir -p "$MOUNTPOINT"/opt/swap  # make a dir that we can apply NOCOW to to make it btrfs-friendly.
     chattr +C "$MOUNTPOINT"/opt/swap # apply NOCOW, btrfs needs that.

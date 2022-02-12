@@ -1,33 +1,31 @@
 #!/usr/bin/env bash
-echo -ne "
--------------------------------------------------------------------------
-   █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
-  ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
-  ███████║██████╔╝██║     ███████║   ██║   ██║   ██║   ██║   ██║███████╗
-  ██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
-  ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
-  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
--------------------------------------------------------------------------
-                    Automated Arch Linux Installer
-                        SCRIPTHOME: ArchTitus
--------------------------------------------------------------------------
 
-Installing AUR Softwares
-"
-# You can solve users running this script as root with this and then doing the same for the next for statement. However I will leave this up to you.
-source $HOME/ArchTitus/setup.conf
+# You can solve users running this script as root
+# with this and then doing the same for the next for statement.
+# However I will leave this up to you.
+# shellcheck disable=SC1091
+# shellcheck source=./setup.conf
 
-cd ~
+CONFIG_FILE=$(pwd)/setup.conf
+if [[ -f "$CONFIG_FILE" ]]; then
+    source "$CONFIG_FILE"
+else
+    echo "Missing file: setup.conf"
+    exit 1
+fi
+
+cd ~ || exit 1
 git clone "https://aur.archlinux.org/yay.git"
-cd ~/yay
+cd ~/yay || exit 1
 makepkg -si --noconfirm
-cd ~
-touch "~/.cache/zshhistory"
+cd ~ || exit 1
+
+touch "$HOME/.cache/zshhistory"
 git clone "https://github.com/ChrisTitusTech/zsh"
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-ln -s "~/zsh/.zshrc" ~/.zshrc
+ln -s "$HOME/zsh/.zshrc" ~/.zshrc
 
-yay -S --noconfirm --needed - < ~/ArchTitus/pkg-files/aur-pkgs.txt
+yay -S --noconfirm --needed - <~/ArchTitus/pkg-files/aur-pkgs.txt
 
 export PATH=$PATH:~/.local/bin
 cp -r ~/ArchTitus/dotfiles/* ~/.config/
@@ -36,9 +34,4 @@ konsave -i ~/ArchTitus/kde.knsv
 sleep 1
 konsave -a kde
 
-echo -ne "
--------------------------------------------------------------------------
-                    SYSTEM READY FOR 3-post-setup.sh
--------------------------------------------------------------------------
-"
-exit
+title SYSTEM READY FOR 3-post-setup.sh
