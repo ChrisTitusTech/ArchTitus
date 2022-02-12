@@ -195,12 +195,12 @@ title () {
 
 set_option() {
     # Check if option exists
-    if grep -Eq "^${1}.*" "$CONFIG_FILE"; then
+    if grep -Eq "^\${1}.*" "\$CONFIG_FILE"; then
         # delete option if exists
-        sed -i -e "/^${1}.*/d" "$CONFIG_FILE"
+        sed -i -e "/^\${1}.*/d" "\$CONFIG_FILE"
     fi
     # Else add option
-    echo "${1}=${2}" >>"$CONFIG_FILE"
+    echo "\${1}=\${2}" >>"\$CONFIG_FILE"
 }
 
 install_pkg () {
