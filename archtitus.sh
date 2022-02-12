@@ -17,7 +17,7 @@ echo -ne "
                 Scripts are in directory named ArchTitus
 "
 #!/bin/bash
-if [ -f /.dockerenv ]; then
+if [ -f /root/dockerenv ]; then
     echo "docker container found, i can't install"
     break
 else
@@ -27,6 +27,7 @@ else
     arch-chroot /mnt /root/ArchTitus/1-setup.sh
     arch-chroot /mnt /usr/bin/runuser -u $USERNAME -- /home/$USERNAME/ArchTitus/2-user.sh
     arch-chroot /mnt /root/ArchTitus/3-post-setup.sh
+
 echo -ne "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
