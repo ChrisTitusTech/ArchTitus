@@ -19,7 +19,6 @@ echo -ne "
 #!/bin/bash
 if [ -f /root/dockerenv ]; then
     echo "docker container found, i can't install"
-    break
 else
     bash startup.sh
     source $SCRIPT_DIR/setup.conf
