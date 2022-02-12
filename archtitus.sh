@@ -17,8 +17,8 @@ echo -ne "
                 Scripts are in directory named ArchTitus
 "
 #!/bin/bash
-if [ -f /root/dockerenv ]; then
-    echo "docker container found, i can't install"
+if awk -F/ '$2 == "docker"' /proc/self/cgroup | read; then
+    echo -ne "docker container found script can't install (at the moment)"
 else
     bash startup.sh
     source $SCRIPT_DIR/setup.conf
