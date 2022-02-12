@@ -155,7 +155,7 @@ else
     PART1=${DISK}1
     PART2=${DISK}2
 fi
-_PART_UUID=$(blkid -s UUID -o value "$PART2")
+
 
 if [[ "$LAYOUT" -eq 1 ]]; then
     do_partition
@@ -186,7 +186,7 @@ elif [[ "$LUKS" -eq 1 ]]; then
     do_lvm
     lvm_mount
     mount_boot
-    set_option "ENCRYP_PART" "$_PART_UUID"
+    # set_option "ENCRYP_PART" "$_PART_UUID"
     # HOOKS=(base udev autodetect modconf block filesystems keyboard fsck) 
     set_option "HOOKS" "(base udev autodetect keyboard keymap consolefont modconf block encrypt filesystems fsck)"
 
@@ -224,7 +224,6 @@ genfstab -U "$MOUNTPOINT" >>"$MOUNTPOINT"/etc/fstab
 
 cp -R "${SCRIPT_DIR}" "$MOUNTPOINT"/root/ArchTitus
 cp /etc/pacman.d/mirrorlist "$MOUNTPOINT"/etc/pacman.d/mirrorlist
-
 
 # TOTALMEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 TOTALMEM="$(grep -i "memtotal" "/proc/meminfo" | grep -o '[[:digit:]]*')"

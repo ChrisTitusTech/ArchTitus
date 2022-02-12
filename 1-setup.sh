@@ -12,32 +12,31 @@ fi
 
 title basic installations
 install_pkg networkmanager dhclient reflector \
-    rsync grub btrfs-progs arch-install-scripts \
+    rsync btrfs-progs arch-install-scripts \
     git pacman-contrib curl
 
-title Network Setup
+echo "Network Setup"
 systemctl enable --now NetworkManager
 
 install_xorg() {
     install_pkg "xorg xorg-server"
 }
 
+TOTALMEM="$(grep -i "memtotal" "/proc/meminfo" | grep -o '[[:digit:]]*')"
 CPU="$(grep -c ^processor /proc/cpuinfo)"
-echo -ne "
+if [[ $TOTALMEM -gt 8000000 ]]; then
+    echo -ne "
 -------------------------------------------------------------------------
                     You have \"$CPU\" cores. And
 			changing the makeflags for \"$CPU\" cores. As well as
 				changing the compression settings.
 -------------------------------------------------------------------------
 "
-
-TOTALMEM="$(grep -i "memtotal" "/proc/meminfo" | grep -o '[[:digit:]]*')"
-if [[ $TOTALMEM -gt 8000000 ]]; then
     sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$CPU\"/g" /etc/makepkg.conf
     sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $CPU -z -)/g" /etc/makepkg.conf
 fi
 
-title Setup Language and set locale
+echo "Setup Language and set locale"
 # sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 echo "$LOCALE" | sed -i "s/\"//g" >>/etc/locale.gen
 
@@ -59,7 +58,7 @@ sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 # pacman -Sy --noconfirm
 refresh_pacman
 
-title Installing desktop
+echo "Installing desktop"
 case "$DESKTOP" in
 "default")
     while IFS= read -r LINE; do
@@ -127,7 +126,7 @@ case "$DESKTOP" in
 
 esac
 
-title Installing Microcode
+echo "Installing Microcode"
 # determine processor type and install microcode
 PROC_TYPE="$(lscpu | grep "Vendor ID:" | awk '{print $3}')"
 
@@ -135,30 +134,97 @@ case "$PROC_TYPE" in
 "GenuineIntel")
     echo "Installing Intel microcode"
     install_pkg intel-ucode
+    IMG=intel-ucode.img
     ;;
 "AuthenticAMD")
     echo "Installing AMD microcode"
     install_pkg amd-ucode
+    IMG=amd-ucode.img
     ;;
 *)
     something_failed
     ;;
 esac
 
-title Installing Graphics Drivers
+echo "Installing Graphics Drivers"
 # Graphics Drivers find and install
 if [[ "$(lspci | grep -E '(NVIDIA|GeForce)' -c)" -gt "0" ]]; then
-        install_pkg "nvidia nvidia-utils libglvnd"
+    install_pkg "nvidia nvidia-utils libglvnd"
 elif [[ "$(lspci | grep -E '(Radeon|AMD)' -c)" -gt "0" ]]; then
     install_pkg "xf86-video-amdgpu mesa-libgl mesa-vdpau libvdpau-va-gl"
 elif [[ "$(lspci | grep -E '(Integrated Graphics Controller|Intel Corporation UHD)' -c)" -gt "0" ]]; then
     # install_pkg "libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa"
     install_pkg "xf86-video-intel vulkan-radeon mesa-libgl mesa-vdpau libvdpau-va-gl"
-else 
+else
     echo "No graphics card found!"
 fi
 
-title Adding User
+ENCRYP_UUID=$(blkid -s UUID -o value "$PART2")
+PART_UUID=$(blkid -s PARTUUID -o value "$PART2")
+
+case "$BOOTLOADER" in
+grub)
+    echo "Installing GRUB"
+    install_pkg grub os-prober
+    if [[ "$LUKS" -eq 1 ]]; then
+        echo "Installing GRUB for LUKS"
+        sed -i -e 's/GRUB_CMDLINE_LINUX="\(.\+\)"/GRUB_CMDLINE_LINUX="\1 cryptdevice=UUID='"${ENCRYP_UUID}"':luks"/g' -e 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cryptdevice=UUID'"${ENCRYP_UUID}"':luks"/g' /etc/default/grub
+    fi
+    if [[ "$UEFI" -eq 1 ]]; then
+        grub-install --target=x86_64-efi --efi-directory="$MOUNTPOINT"/boot --bootloader-id=GRUB --recheck
+    else
+        grub-install --target=i386-pc --recheck "$DISK"
+    fi
+    grub-mkconfig -o /boot/grub/grub.cfg
+    ;;
+systemd)
+    if [[ "$UEFI" -eq 1 ]]; then
+        echo "Installing systemd-boot"
+        bootctl --path=/boot install
+
+        if [[ $LUKS -eq 1 ]]; then
+            echo -e "title\tArchTitus\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\tcryptdevice=UUID=$ENCRYP_UUID:luks root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw" >/boot/loader/entries/arch.conf
+        elif [[ $LVM -eq 1 ]]; then
+            echo -e "title\tArchTitus\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\troot=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw" >/boot/loader/entries/arch.conf
+        else
+            echo -e "title\tArchTitus\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\troot=PARTUUID=$PART_UUID rw" >/boot/loader/entries/arch.conf
+        fi
+        echo -e "default  arch\ntimeout  5" >/boot/loader/loader.conf
+    else
+        echo "ERROR! Systemd-boot is not supported for BIOS systems"
+        exit 1
+    fi
+    ;;
+uefi)
+    if [[ "$UEFI" -eq 1 ]]; then
+        echo "Installing efistub"
+        if [[ "$LUKS" -eq 1 && "$FS" =~ "btrfs" ]]; then
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw rootflags=subvol=@ initrd=\\$IMG initrd=\initramfs-linux.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw rootflags=subvol=@ initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
+        elif [[ "$LUKS" -eq 1 ]]; then
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
+        elif [[ "$LVM" -eq 1 ]]; then
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
+        else
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "root=PARTUUID=$PART_UUID rw initrd=\\$IMG initrd=\initramfs-linux.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "root=PARTUUID=$PART_UUID rw initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
+        fi
+    else
+        echo "ERROR! efistub is not supported for BIOS systems"
+        exit 1
+    fi
+    ;;
+none)
+    echo "Skipping bootloader installation"
+    ;;
+*)
+    something_failed
+    ;;
+esac
+
+echo "Adding User"
 if [ "$(id -u)" = "0" ]; then
     if [[ "$LAYOUT" -eq 1 ]]; then
         groupadd libvirt
@@ -182,7 +248,7 @@ elif [[ "$LUKS" -eq 1 ]]; then
     sed -i "s/^HOOK.*/HOOKS=(${HOOKS[*]})/" /etc/mkinitcpio.conf
 fi
 
-if [[ -f "/etc/mkinitcpio.conf" ]];then
+if [[ -f "/etc/mkinitcpio.conf" ]]; then
     # making mkinitcpio with linux kernel
     echo "Building initramfs"
     mkinitcpio -p linux

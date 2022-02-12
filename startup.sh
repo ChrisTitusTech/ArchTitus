@@ -126,7 +126,7 @@ elements_present() {
 }
 
 invalid_option() {
-    echo -ne "Your selected option is invalid, retry \n"
+    echo -ne "ERROR! Your selected option is invalid, retry \n"
 }
 
 set_password() {
@@ -137,7 +137,7 @@ set_password() {
     if [[ "$PASSWORD1" == "$PASSWORD2" ]]; then
         set_option "$1" "$PASSWORD1"
     else
-        echo -ne "Passwords do not match \n"
+        echo -ne "ERROR! Passwords do not match \n"
         set_password
     fi
 }
@@ -162,12 +162,9 @@ title () {
 }
 
 set_option() {
-    # Check if option exists
     if grep -Eq "^\${1}.*" "\$CONFIG_FILE"; then
-        # delete option if exists
         sed -i -e "/^\${1}.*/d" "\$CONFIG_FILE"
     fi
-    # Else add option
     echo "\${1}=\${2}" >>"\$CONFIG_FILE"
 }
 
@@ -180,7 +177,7 @@ refresh_pacman() {
 }
 
 something_failed() {
-    echo "Something is not right. Exiting."
+    echo "ERROR! Something is not right. Exiting."
     exit 1
 }
 
@@ -479,6 +476,24 @@ set_desktop() {
 
 }
 
+set_bootloader() {
+    title "Select your bootloader"
+    SELECTION=("GRUB" "Systemd" "UEFI" "None")
+    echo "Systemd and UEFI are only available on a UEFI system"
+    echo "None will skip a bootloader and you will not be able to boot"
+    PS3="$PROMPT"
+    select OPT in "${SELECTION[@]}"; do
+        if elements_present "$OPT" "${SELECTION[@]}"; then
+            set_option "BOOTLOADER" "${OPT,,}"
+            break
+        else
+            invalid_option
+            set_bootloader
+            break
+        fi
+    done
+}
+
 make_choice() {
     title "Your system choice"
     CHOICE=("Default Install" "Custom Install")
@@ -525,6 +540,7 @@ make_choice() {
                 ssd_drive
                 # Advance options
                 set_partion_layout
+                set_bootloader
                 set_filesystem
                 set_desktop
                 break

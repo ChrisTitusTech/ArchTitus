@@ -2,11 +2,11 @@
 # shellcheck disable=SC1091
 # shellcheck source=./setup.conf
 
-# Find the name of the folder the scripts are in
 pacman -Sy --noconfirm
 pacman -S --noconfirm --needed terminus-font
 setfont ter-v22b
 clear
+# Find the name of the folder the scripts are in
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 CONFIG_FILE="$SCRIPT_DIR"/setup.conf
