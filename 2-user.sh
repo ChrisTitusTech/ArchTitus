@@ -5,8 +5,9 @@
 # However I will leave this up to you.
 # shellcheck disable=SC1091
 # shellcheck source=./setup.conf
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
-CONFIG_FILE=$(pwd)/setup.conf
+CONFIG_FILE="$SCRIPT_DIR"/setup.conf
 if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
 else

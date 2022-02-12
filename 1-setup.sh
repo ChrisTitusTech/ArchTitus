@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC1091
 # shellcheck source=./setup.conf
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
-CONFIG_FILE=$(pwd)/setup.conf
+CONFIG_FILE="$SCRIPT_DIR"/setup.conf
 if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
 else
@@ -159,7 +160,7 @@ else
     echo "No graphics card found!"
 fi
 
-ENCRYP_UUID=$(blkid -s UUID -o value "$PART2")
+ENCRYPT_UUID=$(blkid -s UUID -o value "$PART2")
 PART_UUID=$(blkid -s PARTUUID -o value "$PART2")
 
 case "$BOOTLOADER" in
@@ -168,7 +169,7 @@ grub)
     install_pkg grub os-prober
     if [[ "$LUKS" -eq 1 ]]; then
         echo "Installing GRUB for LUKS"
-        sed -i -e 's/GRUB_CMDLINE_LINUX="\(.\+\)"/GRUB_CMDLINE_LINUX="\1 cryptdevice=UUID='"${ENCRYP_UUID}"':luks"/g' -e 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cryptdevice=UUID'"${ENCRYP_UUID}"':luks"/g' /etc/default/grub
+        sed -i -e 's/GRUB_CMDLINE_LINUX="\(.\+\)"/GRUB_CMDLINE_LINUX="\1 cryptdevice=UUID='"${ENCRYPT_UUID}"':luks"/g' -e 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cryptdevice=UUID'"${ENCRYPT_UUID}"':luks"/g' /etc/default/grub
     fi
     if [[ "$UEFI" -eq 1 ]]; then
         grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
@@ -182,7 +183,7 @@ systemd)
         echo "Installing systemd-boot"
         bootctl --path=/boot install
         if [[ $LUKS -eq 1 ]]; then
-            echo -e "title\tArchTitus\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\tcryptdevice=UUID=$ENCRYP_UUID:luks root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw" >/boot/loader/entries/arch.conf
+            echo -e "title\tArchTitus\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\tcryptdevice=UUID=$ENCRYPT_UUID:luks root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw" >/boot/loader/entries/arch.conf
         elif [[ $LVM -eq 1 ]]; then
             echo -e "title\tArchTitus\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\troot=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw" >/boot/loader/entries/arch.conf
         else

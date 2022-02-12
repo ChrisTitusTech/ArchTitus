@@ -222,7 +222,6 @@ background_check() {
         echo -ne "ERROR! There seems to be no internet connection.\n"
         exit 1
     fi
-    set_option "SCRIPT_DIR" "$SCRIPT_DIR"
     check_arch
     check_pacman
     efi_check
