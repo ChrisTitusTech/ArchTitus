@@ -34,4 +34,4 @@ konsave -i ~/ArchTitus/kde.knsv
 sleep 1
 konsave -a kde
 
-title SYSTEM READY FOR 3-post-setup.sh
+title "System ready for 3-post-setup.sh"

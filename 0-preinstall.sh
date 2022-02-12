@@ -20,7 +20,7 @@ do_btrfs() {
     mkfs.btrfs -L "$1" "$2" -f
     mount -t btrfs "$2" "$MOUNTPOINT"
 
-    title "Creating subvolumes and directories"
+    echo "Creating subvolumes and directories"
     for x in "${SUBVOLUMES[@]}"; do
         btrfs subvolume create "$MOUNTPOINT"/"${x}"
     done
@@ -110,22 +110,21 @@ lvm_mount() {
 
 do_partition() {
     if [[ "$UEFI" -eq 1 ]]; then
-        wipefs -a "$DISK"
+        wipefs -a "$DISK"                                                    # wipe any file system
         sgdisk -Z "$DISK"                                                    # zap all on disk
         sgdisk -a 2048 -o "$DISK"                                            # new gpt disk 2048 alignment
-        sgdisk -n 1::+300M --typecode=1:ef00 --change-name=1:"$BOOT" "$DISK" # partition 2 (UEFI Boot Partition)
-        sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK"    # partition 3 (Root), default start, remaining
+        sgdisk -n 1::+300M --typecode=1:ef00 --change-name=1:"$BOOT" "$DISK" # partition 1 (UEFI Boot Partition)
+        sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK"    # partition 2 (Root), default start, remaining
     else
         wipefs -a "$DISK"
-        sgdisk -Z "$DISK" # zap all on disk
-        sgdisk -a 2048 -o "$DISK"
-        sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:"BIOSBOOT" "$DISK" # partition 1 (BIOS Boot Partition)
-        sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK"
+        sgdisk -Z "$DISK"                                                    
+        sgdisk -a 2048 -o "$DISK"                                            
+        sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:"BIOSBOOT" "$DISK"
+        sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK" 
 
     fi
 }
 
-# mount boot partition
 mount_boot() {
     if [[ "$UEFI" -eq 1 ]]; then
         mkdir "$MOUNTPOINT"/boot
@@ -133,10 +132,9 @@ mount_boot() {
     fi
 }
 
-# format a partition from given list of filesystems
-
 logo
-title "Setting up mirrors for faster downloads"
+title "Preinstall setup"
+echo "Setting up mirrors for faster downloads"
 install_pkg pacman-contrib reflector rsync gptfdisk
 
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
@@ -149,7 +147,7 @@ fi
 reflector --age 48 --country "$ISO" -f 5 --latest 20 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
 mkdir "$MOUNTPOINT" &>/dev/null # Hiding error message if any
 
-title "File system setup"
+echo "File system setup"
 if [[ "$SDD" -eq 1 ]]; then
     PART1=${DISK}p1
     PART2=${DISK}p2
@@ -180,9 +178,7 @@ elif [[ "$LVM" -eq 1 ]]; then
 elif [[ "$LUKS" -eq 1 ]]; then
     do_partition
     make_boot
-    # enter luks password to cryptsetup and format root partition
     echo -n "$LUKS_PASSWORD" | cryptsetup -y -v luksFormat "$PART2" -
-    # open luks container and ROOT will be place holder
     # $LUKS_PATH "/dev/mapper/luks"
     echo -n "$LUKS_PASSWORD" | cryptsetup open "$PART2" luks -
     pvcreate "$LUKS_PATH"
@@ -218,7 +214,7 @@ if [[ "$(grep -E "$MOUNTPOINT" /proc/mounts -c)" -eq "0" ]]; then
     exit 1
 fi
 
-title "Arch Install on Main Drive"
+echo "Arch Install on Main Drive"
 # for test purposes
 pacstrap "$MOUNTPOINT" base linux linux-firmware vim --needed --noconfirm
 #pacstrap "$MOUNTPOINT" base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
@@ -233,7 +229,7 @@ cp /etc/pacman.d/mirrorlist "$MOUNTPOINT"/etc/pacman.d/mirrorlist
 # TOTALMEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 TOTALMEM="$(grep -i "memtotal" "/proc/meminfo" | grep -o '[[:digit:]]*')"
 if [[ $TOTALMEM -lt 8000000 ]]; then
-    title "Checking for low memory systems <8G "
+    echo "Checking for low memory systems <8G "
     # Put swap into the actual system, not into RAM disk, otherwise there is no point in it, it'll cache RAM into RAM. So, /mnt/ everything.
     mkdir -p "$MOUNTPOINT"/opt/swap  # make a dir that we can apply NOCOW to to make it btrfs-friendly.
     chattr +C "$MOUNTPOINT"/opt/swap # apply NOCOW, btrfs needs that.
@@ -246,4 +242,4 @@ if [[ $TOTALMEM -lt 8000000 ]]; then
     echo "/opt/swap/swapfile	none	swap	sw	0	0" >>"$MOUNTPOINT"/etc/fstab # Add swap to fstab, so it KEEPS working after installation.
 fi
 
-title "SYSTEM READY FOR 1-setup.sh"
+title "System ready for 1-setup.sh"

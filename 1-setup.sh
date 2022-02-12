@@ -45,9 +45,6 @@ locale-gen
 timedatectl --no-ask-password set-timezone "$TIMEZONE"
 timedatectl --no-ask-password set-ntp 1
 localectl --no-ask-password set-locale LANG="$LOCALE" LC_TIME="$LOCALE"
-
-# Set keymaps
-# echo "KEYMAP=$KEYMAP" >>/etc/vconsole.conf
 localectl --no-ask-password set-keymap --no-convert "$KEYMAP"
 
 # Add sudo no password rights
@@ -65,7 +62,6 @@ refresh_pacman
 title Installing desktop
 case "$DESKTOP" in
 "default")
-    # cat /root/ArchTitus/pkg-files/pacman-pkgs.txt | while read line
     while IFS= read -r LINE; do
         echo "INSTALLING: $LINE"
         install_pkg "$LINE"
@@ -163,14 +159,16 @@ else
 fi
 
 title Adding User
-if [ "$(whoami)" = "root" ]; then
-    useradd -m -G wheel -s /bin/bash "$USERNAME"
-
-    # use chpasswd to enter $USERNAME:$password
+if [ "$(id -u)" = "0" ]; then
+    if [[ "$LAYOUT" -eq 1 ]]; then
+        groupadd libvirt
+        useradd -m -G wheel,libvirt -s /bin/bash "$USERNAME"
+    else
+        useradd -m -G wheel -s /bin/bash "$USERNAME"
+    fi
     echo "$USERNAME:$PASSWORD" | chpasswd
     cp -R /root/ArchTitus /home/"$USERNAME"/
     chown -R "$USERNAME": /home/"$USERNAME"/ArchTitus
-    # enter $nameofmachine to /etc/hostname
     echo "$HOSTNAME" >>/etc/hostname
 else
     echo "You are already a user proceed with aur installs"
@@ -190,4 +188,4 @@ if [[ -f "/etc/mkinitcpio.conf" ]];then
     mkinitcpio -p linux
 fi
 
-title SYSTEM READY FOR 2-user.sh
+title "System ready for 2-user.sh"

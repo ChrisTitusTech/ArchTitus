@@ -9,34 +9,27 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 # Set up a config file
 CONFIG_FILE="$SCRIPT_DIR"/setup.conf
 
-# Check if file exists and remove it if it does
 [[ -f "$CONFIG_FILE" ]] && rm -f "$CONFIG_FILE" >/dev/null 2>&1
 
-# Set options in setup.conf
 set_option() {
-    # Check if option exists
     if grep -Eq "^${1}.*" "$CONFIG_FILE"; then
-        # delete option if exists
         sed -i -e "/^${1}.*/d" "$CONFIG_FILE"
     fi
-    # Else add option
     echo "${1}=${2}" >>"$CONFIG_FILE"
 }
 
 # Adding global functions and variables to use in this script
 
-# Check for root user
 check_root() {
     if [[ "$(id -u)" != "0" ]]; then
-        echo -ne "ERROR! This script has to be run under the 'root' user!"
+        echo -ne "ERROR! This script must be running under the 'root' user!"
         exit 1
     fi
 }
 
-# Check if distro is arch
 check_arch() {
     if [[ ! -e /etc/arch-release ]]; then
-        echo -ne "ERROR! This script has to be run under Arch Linux!"
+        echo -ne "ERROR! This script must be run in Arch Linux!"
         exit 1
     fi
 }
@@ -49,44 +42,31 @@ check_pacman() {
     fi
 }
 
-# Check for internet connection
 connection_test() {
     ping -q -w 1 -c 1 "$(ip r | grep default | awk 'NR==1 {print $3}')" &>/dev/null && return 1 || return 0
 }
 
-# Check coutry for mirrorlist
 do_curl() {
     _ISO=$(curl --fail https://ifconfig.co/country-iso)
     set_option "ISO" "$_ISO"
 }
 
-# Install fonts
-install_font() {
-    pacman -S --noconfirm --needed terminus-font
-}
-
-# timedatectl set-ntp true
 set_ntp() {
     timedatectl set-ntp true
 }
 
-# Check for UEFI
 efi_check() {
     if [[ -d "/sys/firmware/efi/" ]]; then
         if (mount | grep /sys/firmware/efi/efivars); then
             (mount -t efivarfs efivarfs /sys/firmware/efi/efivars) >/dev/null 2>&1
         fi
-        # UEFI detected
         set_option "UEFI" 1
     else
-        # No UEFI detected
         set_option "UEFI" 0
     fi
 }
 
-# if btrfs is selected
 set_btrfs() {
-    # Used -a to get more than one argument
     echo "Please enter your btrfs subvolumes separated by space"
     echo "usualy they start with @."
     echo "[like @home, default are @home, @var, @tmp, @.snapshots]"
@@ -95,25 +75,19 @@ set_btrfs() {
     if [[ -z "${ARR[*]}" ]]; then
         set_option "SUBVOLUMES" "(@ @home @var @tmp @.snapshots)"
     else
-        # An array is a list of values.
         NAMES=(@)
         for i in "${ARR[@]}"; do
-            # Check for user input for @
             if [[ $i =~ [@] ]]; then
-                # push values to array
                 NAMES+=("$i")
             else
                 NAMES+=(@"${i}")
             fi
         done
-        # Check for duplicates
         IFS=" " read -r -a SUBS <<<"$(tr ' ' '\n' <<<"${NAMES[@]}" | awk '!x[$0]++' | tr '\n' ' ')"
-        # Set to config file
         set_option "SUBVOLUMES" "${SUBS[*]}"
     fi
 }
 
-# If lvm is selected
 set_lvm() {
     read -r -p "Name your lvm volume group [like MyVolGroup, default is MyVolGroup]: " _VG
     if [[ -z "$_VG" ]]; then
@@ -131,7 +105,6 @@ set_lvm() {
         _PART_NUM=1
         _LVM_NAMES+=("root")
         LVM_SIZES+=("100%FREE")
-        # Stop loop if only 1 partition
         i=2
     fi
     while [[ $i -le "$_PART_NUM" ]]; do
@@ -148,19 +121,15 @@ set_lvm() {
     set_option "LVM_SIZES" "(${LVM_SIZES[*]})"
 }
 
-# Check if an element exists
 elements_present() {
     for e in "${@:2}"; do [[ "$e" == "$1" ]] && break; done
 }
 
-# Invalid option message
 invalid_option() {
     echo -ne "Your selected option is invalid, retry \n"
 }
 
-# Password helper function
 set_password() {
-    # Read password without echoing (-s)
     read -rs -p "Please enter password: " PASSWORD1
     echo -ne "\n"
     read -rs -p "Please re-enter password: " PASSWORD2
@@ -173,7 +142,6 @@ set_password() {
     fi
 }
 
-# Make a title
 title() {
     echo -ne "\n"
     echo -ne "------------------------------------------------------------------------\n"
@@ -216,10 +184,6 @@ something_failed() {
     exit 1
 }
 
-# Setup for logging
-# LOG="${SCRIPT_DIR}/main.log"
-# [[ -f \$LOG ]] && rm -f "\$LOG"
-
 logo () {
 echo -ne "
 ------------------------------------------------------------------------
@@ -240,10 +204,8 @@ MOUNTPOINT=/mnt
 EOF
 }
 
-# Ask user for option
 PROMPT="Please enter your option: "
 
-# This will be shown on every set as user is progressing
 logo() {
     echo -ne "
 ------------------------------------------------------------------------
@@ -257,7 +219,6 @@ logo() {
 "
 }
 
-# Backround checks
 background_check() {
     write_to_config
     if connection_test; then
@@ -271,11 +232,8 @@ background_check() {
     check_root
     set_ntp
     do_curl
-    install_font
-    setfont ter-v22b
 }
 
-# This function will handle file systems.
 set_filesystem() {
     title "Setup File System"
     FILESYS=("btrfs" "ext2" "ext3" "ext4" "f2fs" "jfs" "nilfs2" "ntfs" "vfat" "xfs")
@@ -292,7 +250,6 @@ set_filesystem() {
     done
 }
 
-# Set partioning layouts
 set_partion_layout() {
     title "Setup Partioning Layout"
     LAYOUTS=("Default" "LVM" "LVM+LUKS" "Maintain Current")
@@ -306,7 +263,6 @@ set_partion_layout() {
                 ;;
             2)
                 set_option "LVM" 1
-                # just weired bug with set_option
                 set_lvm
                 break
                 ;;
@@ -401,7 +357,6 @@ set_timezone() {
     esac
 }
 
-# These are default key maps as presented in official arch repo archinstall
 set_keymap() {
     title "Setup Keymap"
     KEYMAPS=("by" "ca" "cf" "cz" "de" "dk" "es" "et" "fa" "fi" "fr" "gr" "hu" "il" "it" "lt" "lv" "mk" "nl" "no" "pl" "ro" "ru" "sg" "ua" "uk" "us")
@@ -418,7 +373,6 @@ set_keymap() {
     done
 }
 
-# Confirm if ssd is present
 ssd_drive() {
     title "SSD Drive Confirmation"
     read -r -p "Is this system using an SSD? [like yes/no]: " _SSD
@@ -438,15 +392,12 @@ ssd_drive() {
     esac
 }
 
-# Selection for disk type
 disk_selection() {
-    # show disks present on system
     title "Disk Selection"
     DISKLIST="$(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2" - "$3}')" # show disks with /dev/ prefix and size
     PS3="$PROMPT"
     select _DISK in "${DISKLIST[@]}"; do
         if elements_present "$_DISK" "${DISKLIST[@]}"; then
-            # remove size from string
             DISK=$(echo "$_DISK" | awk '{print $1}')
             set_option "DISK" "$DISK"
             break
@@ -464,6 +415,7 @@ user_info() {
         read -r -p "Please enter your username [default is archtitus]: " USERNAME
         if [[ -z "$USERNAME" ]]; then
             set_option "USERNAME" "archtitus"
+            break
         elif [[ "${USERNAME,,}" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]]; then
             set_option "USERNAME" "${USERNAME,,}" # convert to lower case as in issue #109
             break
@@ -477,6 +429,7 @@ user_info() {
         read -r -p "Please enter your hostname [default is archlinux]: " HOSTNAME
         if [[ -z "$HOSTNAME" ]]; then
             set_option "HOSTNAME" "archlinux"
+            break
         elif [[ "${HOSTNAME,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]; then
             set_option "HOSTNAME" "${HOSTNAME,,}"
             break
@@ -487,7 +440,6 @@ user_info() {
     done
 }
 
-# Set locale
 set_locale() {
     title "Setup Locale"
     LOCALES=($(grep UTF-8 /etc/locale.gen | sed 's/\..*$//' | sed '/@/d' | awk '{print $1}' | uniq | sed 's/#//g'))
@@ -504,7 +456,6 @@ set_locale() {
     done
 }
 
-# Desktop selection
 set_desktop() {
     title "Select either desktop Environment or Window Manager"
     SELECTION=("Default (KDE)" "Gnome" "XFCE" "Mate" "LXQT" "Minimal" "Awesome" "OpenBox" "i3" "i3-Gaps" "Deepin" "Budgie")
@@ -528,7 +479,6 @@ set_desktop() {
 
 }
 
-# Make choice for installation
 make_choice() {
     title "Your system choice"
     CHOICE=("Default Install" "Custom Install")
@@ -547,7 +497,6 @@ make_choice() {
             1)
                 clear
                 logo
-                # title "Please select presetup \n\t\t\tsettings for your system"
                 user_info
                 disk_selection
                 clear
