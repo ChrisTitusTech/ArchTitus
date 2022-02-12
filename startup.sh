@@ -511,7 +511,6 @@ set_desktop() {
     PS3="$PROMPT"
     select OPT in "${SELECTION[@]}"; do
         if elements_present "$OPT" "${SELECTION[@]}"; then
-            echo "${SELECTION[0]}"
             if [[ "$OPT" == "Default (KDE)" ]]; then
                 set_option "DESKTOP" "default"
                 break
