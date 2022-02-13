@@ -218,7 +218,7 @@ fi
 
 echo "Arch Install on Main Drive"
 # for test purposes
-pacstrap "$MOUNTPOINT" base linux linux-firmware vim --needed --noconfirm
+pacstrap "$MOUNTPOINT" base linux vim --needed --noconfirm
 #pacstrap "$MOUNTPOINT" base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
 echo "keyserver hkp://keyserver.ubuntu.com" >>"$MOUNTPOINT"/etc/pacman.d/gnupg/gpg.conf
 

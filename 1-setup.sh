@@ -172,9 +172,9 @@ grub)
         sed -i -e 's/GRUB_CMDLINE_LINUX="\(.\+\)"/GRUB_CMDLINE_LINUX="\1 cryptdevice=UUID='"${ENCRYPT_UUID}"':luks"/g' -e 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cryptdevice=UUID'"${ENCRYPT_UUID}"':luks"/g' /etc/default/grub
     fi
     if [[ "$UEFI" -eq 1 ]]; then
-        grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB --recheck
+        grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=ArchTitus
     else
-        grub-install --target=i386-pc --recheck "$DISK"
+        grub-install --target=i386-pc "$DISK"
     fi
     grub-mkconfig -o /boot/grub/grub.cfg
     ;;
@@ -183,9 +183,9 @@ systemd)
         echo "Installing systemd-boot"
         bootctl --path=/boot install
         if [[ $LUKS -eq 1 ]]; then
-            echo -e "title\tArchTitus\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\tcryptdevice=UUID=$ENCRYPT_UUID:luks root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw" >/boot/loader/entries/arch.conf
+            echo -e "title\tArchTitus\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\tcryptdevice=UUID=$ENCRYPT_UUID:luks root=/dev/$LVM_VG/${LVM_NAMES[0]} rw" >/boot/loader/entries/arch.conf
         elif [[ $LVM -eq 1 ]]; then
-            echo -e "title\tArchTitus\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\troot=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw" >/boot/loader/entries/arch.conf
+            echo -e "title\tArchTitus\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\troot=/dev/$LVM_VG/${LVM_NAMES[0]} rw" >/boot/loader/entries/arch.conf
         else
             echo -e "title\tArchTitus\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\troot=PARTUUID=$PART_UUID rw" >/boot/loader/entries/arch.conf
         fi
@@ -200,14 +200,14 @@ uefi)
         echo "Installing efistub"
         install_pkg efibootmgr
         if [[ "$LUKS" -eq 1 && "$FS" =~ "btrfs" ]]; then
-            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw rootflags=subvol=@ initrd=\\$IMG initrd=\initramfs-linux.img"
-            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw rootflags=subvol=@ initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=/dev/$LVM_VG/${LVM_NAMES[0]} rw rootflags=subvol=@ initrd=\\$IMG initrd=\initramfs-linux.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=/dev/$LVM_VG/${LVM_NAMES[0]} rw rootflags=subvol=@ initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
         elif [[ "$LUKS" -eq 1 ]]; then
-            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux.img"
-            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=/dev/$LVM_VG/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=/dev/$LVM_VG/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
         elif [[ "$LVM" -eq 1 ]]; then
-            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux.img"
-            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "root=\/dev\/$LVM_VG\/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "root=/dev/$LVM_VG/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "root=/dev/$LVM_VG/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
         else
             efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "root=PARTUUID=$PART_UUID rw initrd=\\$IMG initrd=\initramfs-linux.img"
             efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "root=PARTUUID=$PART_UUID rw initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
