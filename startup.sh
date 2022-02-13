@@ -563,10 +563,10 @@ make_choice() {
         fi
     done
 }
-# background_check
-write_to_config
-# clear
-# logo
-# make_choice
+background_check
+# write_to_config
+clear
+logo
+make_choice
 # user_info
 # set_partion_layout
