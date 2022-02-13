@@ -248,28 +248,28 @@ set_filesystem() {
 
 set_partion_layout() {
     title "Setup Partioning Layout"
-    LAYOUTS=("Default" "LVM" "LVM+LUKS" "Maintain Current")
+    LAYOUTS=("LVM" "LVM+LUKS" "Maintain Current")
     PS3="$PROMPT"
     select OPT in "${LAYOUTS[@]}"; do
         if elements_present "$OPT" "${LAYOUTS[@]}"; then
             case "$REPLY" in
+            # 1)
+            #     set_option "LAYOUT" 1
+            #     break
+            #     ;;
             1)
-                set_option "LAYOUT" 1
-                break
-                ;;
-            2)
                 set_option "LVM" 1
                 set_lvm
                 break
                 ;;
-            3)
+            2)
                 set_lvm
                 set_option "LUKS" 1
                 set_option "LUKS_PATH" "/dev/mapper/luks"
                 set_password "LUKS_PASSWORD"
                 break
                 ;;
-            4)
+            3)
                 echo -ne "Maintaining current settings"
                 CHOICE=($(lsblk | grep 'part' | awk '{print "/dev/" substr($1,3)}'))
                 if [[ -d "/sys/firmware/efi/" ]]; then
@@ -477,14 +477,19 @@ set_desktop() {
 
 set_bootloader() {
     title "Select your bootloader"
-    SELECTION=("GRUB" "Systemd" "UEFI" "None")
+    SELECTION=("Default (GRUB)" "Systemd" "UEFI" "None")
     echo "Systemd and UEFI are only available on a UEFI system"
     echo "None will skip a bootloader and you will not be able to boot"
     PS3="$PROMPT"
     select OPT in "${SELECTION[@]}"; do
         if elements_present "$OPT" "${SELECTION[@]}"; then
-            set_option "BOOTLOADER" "${OPT,,}"
-            break
+            if [[ "$OPT" == "Default (GRUB)" ]]; then
+                set_option "BOOTLOADER" "grub"
+                break
+            else
+                set_option "BOOTLOADER" "${OPT,,}"
+                break
+            fi
         else
             invalid_option
             set_bootloader
@@ -520,10 +525,10 @@ make_choice() {
                 set_keymap
                 ssd_drive
                 set_btrfs
+                set_option "LAYOUT" 1
                 set_option "BOOTLOADER" "grub"
                 set_option "FS" "btrfs"
-                set_option "DE" "default"
-                set_option "LAYOUT" 1
+                set_option "DESKTOP" "default"
 
                 break
                 ;;
@@ -558,10 +563,10 @@ make_choice() {
         fi
     done
 }
-background_check
-# write_to_config
-clear
-logo
-make_choice
+# background_check
+write_to_config
+# clear
+# logo
+# make_choice
 # user_info
 # set_partion_layout
