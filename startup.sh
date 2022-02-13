@@ -98,16 +98,20 @@ set_lvm() {
     echo "And will be mounted at /mnt/ and other partitions will be mounted"
     echo "at /mnt/partition_name by making a directory /mnt/partition_name"
 
-    i=1
+    i=0
     _LVM_NAMES=()
     LVM_SIZES=()
-    if [[ -z "$_PART_NUM" ]]; then
+    if [[ -z "$_PART_NUM" || "$_PART_NUM" -eq 1 ]]; then
         _PART_NUM=1
         _LVM_NAMES+=("root")
-        LVM_SIZES+=("100%FREE")
+        # LVM_SIZES+=("100%FREE")
         i=2
     fi
     while [[ $i -le "$_PART_NUM" ]]; do
+        if [[ "$_PART_NUM" -eq 1 ]]; then
+            read -r -p "Enter last partition name [like home]: " _LVM_NAME
+            _LVM_NAMES+=("$_LVM_NAME")
+        fi
         read -r -p "Enter $i partition name [like root]: " _LVM_NAME
         _LVM_NAMES+=("$_LVM_NAME")
         read -r -p "Enter $i partition size [like 25G, 200M]: " _LVM_SIZE
