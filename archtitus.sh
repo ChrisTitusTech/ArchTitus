@@ -16,13 +16,17 @@ echo -ne "
 -------------------------------------------------------------------------
                 Scripts are in directory named ArchTitus
 "
+#!/bin/bash
+if awk -F/ '$2 == "docker"' /proc/self/cgroup | read; then
+    echo -ne "docker container found script can't install (at the moment)"
+else
     bash startup.sh
     source $SCRIPT_DIR/setup.conf
     bash 0-preinstall.sh
     arch-chroot /mnt /root/ArchTitus/1-setup.sh
     arch-chroot /mnt /usr/bin/runuser -u $USERNAME -- /home/$USERNAME/ArchTitus/2-user.sh
     arch-chroot /mnt /root/ArchTitus/3-post-setup.sh
-
+fi
 echo -ne "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
