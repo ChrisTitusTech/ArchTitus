@@ -1,0 +1,3 @@
+gnome
+--END OF MINIMAL INSTALL--
+gnome-extras
