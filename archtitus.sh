@@ -28,6 +28,7 @@ logo() {
 }
 
 do_reboot () {
+    cp "$LOG" "$MOUNTPOINT"/var/log/archtitus.log
     umount -R "$MOUNTPOINT"/boot
     umount -R "$MOUNTPOINT"
     reboot
