@@ -82,6 +82,7 @@ do_format() {
 }
 
 do_lvm() {
+    install_pkg lvm2
     i=0
     while [[ "$i" -le "${#LVM_PART_NUM[@]}" ]]; do
         if [[ "${#LVM_PART_NUM[@]}" -eq 1 ]]; then
@@ -93,7 +94,7 @@ do_lvm() {
     done
 }
 
-lvm_mount() {
+mount_lvm() {
     vgchange -ay &>/dev/null
     i=0
     while [[ "$i" -le "${#LVM_PART_NUM[@]}" ]]; do
@@ -108,20 +109,19 @@ lvm_mount() {
         mount -t "$FS" /dev/"$LVM_VG"/"$x" "$MOUNTPOINT"/"$x"
     done
 }
-
+prep_disk() {
+    wipefs -a -f "$DISK"      # wipe any file system
+    sgdisk -Z "$DISK"         # zap all on disk
+    sgdisk -a 2048 -o "$DISK" # new gpt disk 2048 alignment
+}
 do_partition() {
+    prep_disk
     if [[ "$UEFI" -eq 1 ]]; then
-        wipefs -a "$DISK"                                                    # wipe any file system
-        sgdisk -Z "$DISK"                                                    # zap all on disk
-        sgdisk -a 2048 -o "$DISK"                                            # new gpt disk 2048 alignment
         sgdisk -n 1::+300M --typecode=1:ef00 --change-name=1:"$BOOT" "$DISK" # partition 1 (UEFI Boot Partition)
         sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK"    # partition 2 (Root), default start, remaining
     else
-        wipefs -a "$DISK"
-        sgdisk -Z "$DISK"                                                    
-        sgdisk -a 2048 -o "$DISK"                                            
         sgdisk -n 1::+1M --typecode=1:ef02 --change-name=1:"BIOSBOOT" "$DISK"
-        sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK" 
+        sgdisk -n 2::-0 --typecode=2:8300 --change-name=2:"$ROOT" "$DISK"
 
     fi
 }
@@ -173,7 +173,7 @@ elif [[ "$LVM" -eq 1 ]]; then
     pvcreate "$PART2"
     vgcreate "$LVM_VG" "$PART2"
     do_lvm
-    lvm_mount
+    mount_lvm
     mount_boot
     set_option "HOOKS" "(lvm2 filesystems)"
 
@@ -186,10 +186,10 @@ elif [[ "$LUKS" -eq 1 ]]; then
     pvcreate "$LUKS_PATH"
     vgcreate "$LVM_VG" "$LUKS_PATH"
     do_lvm
-    lvm_mount
+    mount_lvm
     mount_boot
     # set_option "ENCRYP_PART" "$_PART_UUID"
-    # HOOKS=(base udev autodetect modconf block filesystems keyboard fsck) 
+    # HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)
     set_option "HOOKS" "(base udev autodetect keyboard keymap consolefont modconf block encrypt filesystems fsck)"
 
 elif [[ "$LAYOUT" -eq 0 ]]; then
@@ -240,7 +240,7 @@ if [[ $TOTALMEM -lt 8000000 ]]; then
     mkswap "$MOUNTPOINT"/opt/swap/swapfile
     swapon "$MOUNTPOINT"/opt/swap/swapfile
     # The line below is written to /mnt/ but doesn't contain /mnt/, since it's just / for the system itself.
-    echo "/opt/swap/swapfile	none	swap	sw	0	0" >>"$MOUNTPOINT"/etc/fstab # Add swap to fstab, so it KEEPS working after installation.
+    echo -e "/opt/swap/swapfile\tnone     \tswap     \tsw\t0 0" >>"$MOUNTPOINT"/etc/fstab # Add swap to fstab, so it KEEPS working after installation.
 fi
 
 title "System ready for 1-setup.sh"
