@@ -55,6 +55,7 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 systemctl enable cups.service
+systemctl enable cronie.service
 ntpd -qg
 systemctl enable ntpd.service
 systemctl disable dhcpcd.service
@@ -67,9 +68,14 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 # Remove no password sudo rights
+<<<<<<< HEAD
+=======
+sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
+>>>>>>> 44fb72cfdf009a9815f39848bc8aa7d8f7c8321b
 sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
 # Add sudo rights
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
+sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
 rm -r /root/ArchTitus
 rm -r /home/"$USERNAME"/ArchTitus
