@@ -58,7 +58,6 @@ sequence() {
         echo "ERROR! Missing file: setup.conf"
         exit 1
     fi
-    source "$SCRIPT_DIR"/setup.conf
     bash 0-preinstall.sh
     arch-chroot /mnt /root/ArchTitus/1-setup.sh
     arch-chroot /mnt /usr/bin/runuser -u "$USERNAME" -- /home/"$USERNAME"/ArchTitus/2-user.sh
