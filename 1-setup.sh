@@ -48,6 +48,10 @@ localectl --no-ask-password set-locale LANG="$LOCALE" LC_TIME="$LOCALE"
 localectl --no-ask-password set-keymap --no-convert "$KEYMAP"
 
 # Add sudo no password rights
+<<<<<<< HEAD
+=======
+sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
+>>>>>>> 44fb72cfdf009a9815f39848bc8aa7d8f7c8321b
 sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
 
 #Add parallel downloading

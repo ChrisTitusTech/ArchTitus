@@ -3,7 +3,6 @@ brave-bin
 dxvk-bin
 github-desktop-bin
 lightly-git
-lightlyshaders-git
 mangohud
 mangohud-common
 nerd-fonts-fira-code
