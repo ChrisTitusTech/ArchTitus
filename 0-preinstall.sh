@@ -202,7 +202,7 @@ elif [[ "$LUKS" -eq 1 ]]; then
     mount_boot
     # set_option "ENCRYP_PART" "$_PART_UUID"
     # HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)
-    set_option "HOOKS" "(base udev autodetect keyboard keymap consolefont modconf block encrypt filesystems fsck)"
+    set_option "HOOKS" "(base udev autodetect keyboard keymap consolefont modconf block lvm2 encrypt filesystems fsck)"
 
 elif [[ "$LAYOUT" -eq 0 ]]; then
     modprobe dm-mod

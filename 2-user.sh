@@ -15,51 +15,70 @@ else
     exit 1
 fi
 
+install_aur() {
+    "$AURHELPER" -S --noconfirm --needed "$@"
+}
+
 cd ~ || exit 1
 case "$AURHELPER" in
 "yay")
-    install_pkg "git go"
+    install_pkg "go"
     git clone "https://aur.archlinux.org/yay.git"
     ;;
 "trizen")
-    install_pkg "git perl"
+    install_pkg "perl"
     git clone "https://aur.archlinux.org/trizen.git"
     ;;
 "aurman")
-    install_pkg "git"
     git clone "https://aur.archlinux.org/aurman.git"
     ;;
 "aura")
-    install_pkg "git stack"
+    install_pkg "stack"
     git clone "https://aur.archlinux.org/aura.git"
     ;;
 "pikaur")
-    install_pkg "git"
     git clone "https://aur.archlinux.org/pikaur.git"
     ;;
 *)
     something_failed
     ;;
 esac
+
 cd "$AURHELPER" || exit 1
 makepkg -si --noconfirm
 cd ~ || exit 1
 
-
-"$AURHELPER" -S --noconfirm --needed - <~/ArchTitus/pkg-files/aur-pkgs.txt
+while IFS= read -r LINE; do
+        echo "INSTALLING: $LINE"
+        install_aur "$LINE"
+done <~/ArchTitus/pkg-files/aur-pkgs.txt
 
 if [[ "$LAYOUT" -eq 1 ]]; then
     touch "$HOME/.cache/zshhistory"
     git clone "https://github.com/ChrisTitusTech/zsh"
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-    ln -s "$HOME/zsh/.zshrc" ~/.zshrc
+    git clone --depth=1 "https://github.com/romkatv/powerlevel10k.git" "$HOME"/powerlevel10k
+    ln -s "$HOME/zsh/.zshrc" "$HOME"/.zshrc
+
+    pip install konsave
+    konsave -i "$HOME"/ArchTitus/kde.knsv
+    sleep 1
+    konsave -a kde
+    cp -r "$HOME"/ArchTitus/dotfiles/* "$HOME"/.config/
 fi
 
+case "$DESKTOP" in
+"lxqt")
+    install_aur "sddm-nordic-theme-git"
+    ;;
+"awesome")
+    install_aur "rofi picom i3lock-fancy xclip ttf-roboto polkit-gnome materia-theme lxappearance flameshot pnmixer network-manager-applet xfce4-power-manager qt5-styleplugins papirus-icon-theme"
+    git clone "https://github.com/ChrisTitusTech/titus-awesome" "$HOME"/.config/awesome
+    mkdir -p "$HOME"/.config/rofi
+    cp "$HOME"/.config/awesome/theme/config.rasi "$HOME"/.config/rofi/config.rasi
+    sed -i "/@import/c\@import $HOME/.config/awesome/theme/sidebar.rasi" "$HOME"/.config/rofi/config.rasi
+    ;;
+esac
+
 export PATH=$PATH:~/.local/bin
-cp -r ~/ArchTitus/dotfiles/* ~/.config/
-pip install konsave
-konsave -i ~/ArchTitus/kde.knsv
-sleep 1
-konsave -a kde
 
 title "System ready for 3-post-setup.sh"
