@@ -25,7 +25,29 @@ logo() {
 ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 "
-<<<<<<< HEAD
+}
+
+do_reboot () {
+    umount -R "$MOUNTPOINT"/boot
+    umount -R "$MOUNTPOINT"
+    reboot
+}
+
+end() {
+    logo
+    for (( i = 15; i >= 1; i-- )); do
+        read -r -s -n 1 -t 1 -p "Rebooting in $i seconds... Press Esc key to abort or press R key to reboot now."$'\n' KEY#
+        CODE="$?"
+        if [ "$CODE" != "0" ]; then
+            continue
+        fi
+        if [[ "$KEY" == $'\e' ]]; then
+            break
+        elif [[ "$KEY" == "r" || "$KEY" == "R" ]]; then
+            do_reboot
+            break
+        fi
+    done
 }
 
 sequence() {
@@ -36,37 +58,12 @@ sequence() {
         echo "ERROR! Missing file: setup.conf"
         exit 1
     fi
-=======
-#!/bin/bash
-if awk -F/ '$2 == "docker"' /proc/self/cgroup | read; then
-    echo -ne "docker container found script can't install (at the moment)"
-else
-    bash startup.sh
-    source $SCRIPT_DIR/setup.conf
->>>>>>> 44fb72cfdf009a9815f39848bc8aa7d8f7c8321b
+    source "$SCRIPT_DIR"/setup.conf
     bash 0-preinstall.sh
     arch-chroot /mnt /root/ArchTitus/1-setup.sh
     arch-chroot /mnt /usr/bin/runuser -u "$USERNAME" -- /home/"$USERNAME"/ArchTitus/2-user.sh
     arch-chroot /mnt /root/ArchTitus/3-post-setup.sh
-<<<<<<< HEAD
-    logo
-    echo -ne "
-=======
-fi
-echo -ne "
--------------------------------------------------------------------------
-   █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
-  ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
-  ███████║██████╔╝██║     ███████║   ██║   ██║   ██║   ██║   ██║███████╗
-  ██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
-  ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
-  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
->>>>>>> 44fb72cfdf009a9815f39848bc8aa7d8f7c8321b
--------------------------------------------------------------------------
-                    Automated Arch Linux Installer
--------------------------------------------------------------------------
-                Done - Please Eject Install Media and Reboot
-"
+
 }
 logo
 echo -ne "
@@ -77,3 +74,4 @@ echo -ne "
 "
 bash startup.sh
 sequence |& tee "$LOG"
+end

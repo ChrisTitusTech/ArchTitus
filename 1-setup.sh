@@ -7,17 +7,14 @@ CONFIG_FILE="$SCRIPT_DIR"/setup.conf
 if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
 else
-    echo "Missing file: setup.conf"
+    echo "ERROR! Missing file: setup.conf"
     exit 1
 fi
 
 title basic installations
 install_pkg networkmanager dhclient reflector \
-    rsync btrfs-progs arch-install-scripts \
+    rsync arch-install-scripts \
     git pacman-contrib curl
-
-echo "Network Setup"
-systemctl enable --now NetworkManager
 
 install_xorg() {
     install_pkg "xorg xorg-server"
@@ -48,10 +45,6 @@ localectl --no-ask-password set-locale LANG="$LOCALE" LC_TIME="$LOCALE"
 localectl --no-ask-password set-keymap --no-convert "$KEYMAP"
 
 # Add sudo no password rights
-<<<<<<< HEAD
-=======
-sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
->>>>>>> 44fb72cfdf009a9815f39848bc8aa7d8f7c8321b
 sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
 
 #Add parallel downloading
@@ -70,6 +63,7 @@ case "$DESKTOP" in
         echo "INSTALLING: $LINE"
         install_pkg "$LINE"
     done </root/ArchTitus/pkg-files/pacman-pkgs.txt
+    systemctl enable sddm.service
     ;;
 "gnome")
     install_xorg

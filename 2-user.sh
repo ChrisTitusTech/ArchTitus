@@ -11,22 +11,49 @@ CONFIG_FILE="$SCRIPT_DIR"/setup.conf
 if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
 else
-    echo "Missing file: setup.conf"
+    echo "ERROR! Missing file: setup.conf"
     exit 1
 fi
 
 cd ~ || exit 1
-git clone "https://aur.archlinux.org/yay.git"
-cd ~/yay || exit 1
+case "$AURHELPER" in
+"yay")
+    install_pkg "git go"
+    git clone "https://aur.archlinux.org/yay.git"
+    ;;
+"trizen")
+    install_pkg "git perl"
+    git clone "https://aur.archlinux.org/trizen.git"
+    ;;
+"aurman")
+    install_pkg "git"
+    git clone "https://aur.archlinux.org/aurman.git"
+    ;;
+"aura")
+    install_pkg "git stack"
+    git clone "https://aur.archlinux.org/aura.git"
+    ;;
+"pikaur")
+    install_pkg "git"
+    git clone "https://aur.archlinux.org/pikaur.git"
+    ;;
+*)
+    something_failed
+    ;;
+esac
+cd "$AURHELPER" || exit 1
 makepkg -si --noconfirm
 cd ~ || exit 1
 
-touch "$HOME/.cache/zshhistory"
-git clone "https://github.com/ChrisTitusTech/zsh"
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-ln -s "$HOME/zsh/.zshrc" ~/.zshrc
 
-yay -S --noconfirm --needed - <~/ArchTitus/pkg-files/aur-pkgs.txt
+"$AURHELPER" -S --noconfirm --needed - <~/ArchTitus/pkg-files/aur-pkgs.txt
+
+if [[ "$LAYOUT" -eq 1 ]]; then
+    touch "$HOME/.cache/zshhistory"
+    git clone "https://github.com/ChrisTitusTech/zsh"
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+    ln -s "$HOME/zsh/.zshrc" ~/.zshrc
+fi
 
 export PATH=$PATH:~/.local/bin
 cp -r ~/ArchTitus/dotfiles/* ~/.config/

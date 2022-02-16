@@ -7,7 +7,7 @@ CONFIG_FILE="$SCRIPT_DIR"/setup.conf
 if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
 else
-    echo "Missing file: setup.conf"
+    echo "ERROR! Missing file: setup.conf"
     exit 1
 fi
 
@@ -36,14 +36,19 @@ do_btrfs() {
     done
 }
 
+# list of packages to install
+PACKAGES=()
+
 do_format() {
     case "$FS" in
     "xfs")
         install_pkg xfsprogs
+        PACKAGES+=("xfsprogs")
         mkfs.xfs -f -L "$ROOT" "$1"
         ;;
     "btrfs")
         install_pkg btrfs-progs
+        PACKAGES+=("btrfs-progs")
         mkfs.btrfs -L "$ROOT" "$1" -f
         ;;
     "ext4")
@@ -54,6 +59,7 @@ do_format() {
         ;;
     "f2fs")
         install_pkg f2fs-tools
+        PACKAGES+=("f2fs-tools")
         mkfs.f2fs -l "$ROOT" -O extra_attr,inode_checksum,sb_checksum "$1"
         ;;
     "ext2")
@@ -64,14 +70,17 @@ do_format() {
         ;;
     "jfs")
         install_pkg jfsutils
+        PACKAGES+=("jfsutils")
         mkfs.jfs -L "$ROOT" "$1"
         ;;
     "nilfs2")
         install_pkg nilfs-utils
+        PACKAGES+=("nilfs-utils")
         mkfs.nilfs2 -L "$ROOT" "$1"
         ;;
     "ntfs")
         install_pkg ntfs-3g
+        PACKAGES+=("ntfs-3g")
         mkfs.ntfs -Q -L "$ROOT" "$1"
         ;;
     *)
@@ -82,7 +91,6 @@ do_format() {
 }
 
 do_lvm() {
-    install_pkg lvm2
     i=0
     while [[ "$i" -le "${#LVM_PART_NUM[@]}" ]]; do
         if [[ "${#LVM_PART_NUM[@]}" -eq 1 ]]; then
@@ -109,11 +117,13 @@ mount_lvm() {
         mount -t "$FS" /dev/"$LVM_VG"/"$x" "$MOUNTPOINT"/"$x"
     done
 }
+
 prep_disk() {
     wipefs -a -f "$DISK"      # wipe any file system
     sgdisk -Z "$DISK"         # zap all on disk
     sgdisk -a 2048 -o "$DISK" # new gpt disk 2048 alignment
 }
+
 do_partition() {
     prep_disk
     if [[ "$UEFI" -eq 1 ]]; then
@@ -166,6 +176,7 @@ if [[ "$LAYOUT" -eq 1 ]]; then
     mount_boot
 
 elif [[ "$LVM" -eq 1 ]]; then
+    PACKAGES+=("lvm2")
     do_partition
     sgdisk --typecode=2:8e00 "$DISK"
     partprobe "$DISK"
@@ -178,6 +189,7 @@ elif [[ "$LVM" -eq 1 ]]; then
     set_option "HOOKS" "(lvm2 filesystems)"
 
 elif [[ "$LUKS" -eq 1 ]]; then
+    PACKAGES+=("cryptsetup" "lvm2")
     do_partition
     make_boot
     echo -n "$LUKS_PASSWORD" | cryptsetup -y -v luksFormat "$PART2" -
@@ -218,13 +230,13 @@ fi
 
 echo "Arch Install on Main Drive"
 # for test purposes
-pacstrap "$MOUNTPOINT" base linux vim --needed --noconfirm
-#pacstrap "$MOUNTPOINT" base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
+# pacstrap "$MOUNTPOINT" base linux vim --needed --noconfirm
+pacstrap "$MOUNTPOINT" base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt "${PACKAGES[@]}" --noconfirm --needed
 echo "keyserver hkp://keyserver.ubuntu.com" >>"$MOUNTPOINT"/etc/pacman.d/gnupg/gpg.conf
 
 genfstab -U "$MOUNTPOINT" >>"$MOUNTPOINT"/etc/fstab
 
-cp -R "${SCRIPT_DIR}" "$MOUNTPOINT"/root/ArchTitus
+cp -R "$SCRIPT_DIR" "$MOUNTPOINT"/root/ArchTitus
 cp /etc/pacman.d/mirrorlist "$MOUNTPOINT"/etc/pacman.d/mirrorlist
 
 # TOTALMEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')

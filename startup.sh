@@ -22,14 +22,24 @@ set_option() {
 
 check_root() {
     if [[ "$(id -u)" != "0" ]]; then
-        echo -ne "ERROR! This script must be running under the 'root' user!"
+        echo -ne "ERROR! This script must be running under the 'root' user!\n"
+        exit 1
+    fi
+}
+
+check_docker() {
+    if awk -F/ '$2 == "docker"' /proc/self/cgroup | read -r; then
+        echo -ne "ERROR! Docker container not supported (at the moment)\n"
+        exit 1
+    elif [[ -f /.dockerenv ]]; then
+        echo -ne "ERROR! Docker container not supported (at the moment)\n"
         exit 1
     fi
 }
 
 check_arch() {
     if [[ ! -e /etc/arch-release ]]; then
-        echo -ne "ERROR! This script must be run in Arch Linux!"
+        echo -ne "ERROR! This script must be run in Arch Linux!\n"
         exit 1
     fi
 }
@@ -37,7 +47,7 @@ check_arch() {
 check_pacman() {
     if [[ -f /var/lib/pacman/db.lck ]]; then
         echo "ERROR! Pacman is blocked."
-        echo "If not running remove /var/lib/pacman/db.lck."
+        echo -ne "If not running remove /var/lib/pacman/db.lck.\n"
         exit 1
     fi
 }
@@ -181,7 +191,7 @@ refresh_pacman() {
 }
 
 something_failed() {
-    echo "ERROR! Something is not right. Exiting."
+    echo "ERROR! Something is not right. Exiting.\n"
     exit 1
 }
 
@@ -228,6 +238,7 @@ background_check() {
     fi
     check_arch
     check_pacman
+    check_docker
     efi_check
     check_root
     set_ntp
@@ -479,6 +490,22 @@ set_desktop() {
 
 }
 
+set_aur_helper() {
+    title "Select your preferred AUR helper"
+    SELECTION=("yay" "trizen" "aurman" "aura" "pikaur")
+    PS3="$PROMPT"
+    select OPT in "${SELECTION[@]}"; do
+        if elements_present "$OPT" "${SELECTION[@]}"; then
+            set_option "AURHELPER" "$OPT"
+            break
+        else
+            invalid_option
+            set_aur_helper
+            break
+        fi
+    done
+}
+
 set_bootloader() {
     title "Select your bootloader"
     SELECTION=("Default (GRUB)" "Systemd" "UEFI" "None")
@@ -532,6 +559,7 @@ make_choice() {
                 set_option "LAYOUT" 1
                 set_option "BOOTLOADER" "grub"
                 set_option "FS" "btrfs"
+                set_option "AURHELPER" "yay"
                 set_option "DESKTOP" "default"
 
                 break
@@ -548,6 +576,7 @@ make_choice() {
                 set_keymap
                 ssd_drive
                 # Advance options
+                set_aur_helper
                 set_partion_layout
                 set_bootloader
                 set_filesystem
