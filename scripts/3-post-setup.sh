@@ -107,13 +107,13 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 
-SNAPPER_CONF="${HOME}/ArchTitus/configs/etc/snapper/configs/root"
-SNAPPER_CONF_D="${HOME}/ArchTitus/configs/etc/conf.d/snapper"
+SNAPPER_CONF="$HOME/ArchTitus/configs/etc/snapper/configs/root"
+mkdir -p /etc/snapper/configs/
+cp -rfv ${SNAPPER_CONF} /etc/snapper/configs/
 
-mkdir -p /home/$USERNAME/etc/snapper/configs/
-mkdir -p /home/$USERNAME/etc/conf.d/
-cp --verbose -af ${SNAPPER_CONF} /home/$USERNAME/etc/snapper/configs/
-cp --verbose -af ${SNAPPER_CONF_D} /home/$USERNAME/etc/conf.d/
+SNAPPER_CONF_D="$HOME/ArchTitus/configs/etc/conf.d/snapper"
+mkdir -p /etc/conf.d/
+cp -rfv ${SNAPPER_CONF_D} /etc/conf.d/
 
 fi
 
@@ -129,9 +129,9 @@ sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: A
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
-cp --verbose -a ${HOME}/ArchTitus/*.log /home/$USERNAME/
+cp -rfv $HOME/ArchTitus/*.log /home/$USERNAME/
 
-rm -r /root/ArchTitus
+rm -r $HOME/ArchTitus
 rm -r /home/$USERNAME/ArchTitus
 
 # Replace in the same state
