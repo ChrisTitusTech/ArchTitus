@@ -7,7 +7,7 @@
 #  ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
 #  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 #-------------------------------------------------------------------------
-SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 echo -ne "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
@@ -22,7 +22,7 @@ echo -ne "
 
 Setting up mirrors for optimal download
 "
-source setup.conf
+source $CONFIGS_DIR/setup.conf
 iso=$(curl -4 ifconfig.co/country-iso)
 timedatectl set-ntp true
 pacman -S --noconfirm --needed pacman-contrib terminus-font
@@ -122,7 +122,7 @@ elif [[ "${FS}" == "luks" ]]; then
     mount -t btrfs ${partition3} /mnt
     subvolumesetup
 # store uuid of encrypted partition for grub
-    echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value ${partition3}) >> setup.conf
+    echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value ${partition3}) >> $CONFIG_DIR/setup.conf
 fi
 
 # mount target

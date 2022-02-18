@@ -15,7 +15,7 @@ echo -ne "
 Installing AUR Softwares
 "
 # You can solve users running this script as root with this and then doing the same for the next for statement. However I will leave this up to you.
-source $HOME/ArchTitus/setup.conf
+source $HOME/ArchTitus/configs/setup.conf
 
   cd ~
   touch "~/.cache/zshhistory"
@@ -58,9 +58,9 @@ export PATH=$PATH:~/.local/bin
 # Theming DE if user chose FULL installation
 if [[ $INSTALL_TYPE == "FULL" ]]; then
   if [[ $DESKTOP_ENV == "kde" ]]; then
-    cp -r ~/ArchTitus/dotfiles/* ~/.config/
+    cp -r ~/ArchTitus/configs/.config/* ~/.config/
     pip install konsave
-    konsave -i ~/ArchTitus/kde.knsv
+    konsave -i ~/ArchTitus/configs/kde.knsv
     sleep 1
     konsave -a kde
   elif [[ $DESKTOP_ENV == "openbox" ]]; then

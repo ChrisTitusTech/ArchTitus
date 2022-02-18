@@ -15,8 +15,9 @@ echo -ne "
 Final Setup and Configurations
 GRUB EFI Bootloader Install & Check
 "
-source /root/ArchTitus/setup.conf
+source /root/ArchTitus/configs/setup.conf
 genfstab -U -p / >> /etc/fstab
+cat /etc/fstab
 if [[ -d "/sys/firmware/efi" ]]; then
     grub-install --efi-directory=/boot ${DISK}
 fi
@@ -32,7 +33,7 @@ echo -e "Creating the theme directory..."
 mkdir -p "${THEME_DIR}/${THEME_NAME}"
 echo -e "Copying the theme..."
 cd ${HOME}/ArchTitus
-cp -a ${THEME_NAME}/* ${THEME_DIR}/${THEME_NAME}
+cp -a configs${THEME_DIR}/${THEME_NAME}/* ${THEME_DIR}/${THEME_NAME}
 echo -e "Backing up Grub config..."
 cp -an /etc/default/grub /etc/default/grub.bak
 echo -e "Setting the theme as the default..."
