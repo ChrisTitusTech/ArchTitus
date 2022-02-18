@@ -20,7 +20,7 @@ echo -ne "
                 Scripts are in directory named ArchTitus
 "
     ( bash $SCRIPT_DIR/scripts/startup.sh )|& tee startup.log
-      source $SCRIPT_DIR/configs/setup.conf
+      source $CONFIGS_DIR/setup.conf
     ( bash $SCRIPT_DIR/scripts/0-preinstall.sh )|& tee 0-preinstall.log
     ( arch-chroot /mnt /root/ArchTitus/scripts/1-setup.sh )|& tee 1-setup.log
     if [[ ! $DESKTOP_ENV == server ]]; then

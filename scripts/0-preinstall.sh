@@ -122,7 +122,7 @@ elif [[ "${FS}" == "luks" ]]; then
     mount -t btrfs ${partition3} /mnt
     subvolumesetup
 # store uuid of encrypted partition for grub
-    echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value ${partition3}) >> $CONFIG_DIR/setup.conf
+    echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value ${partition3}) >> $CONFIGS_DIR/setup.conf
 fi
 
 # mount target

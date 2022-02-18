@@ -15,9 +15,13 @@ echo -ne "
 Final Setup and Configurations
 GRUB EFI Bootloader Install & Check
 "
-source /root/ArchTitus/configs/setup.conf
+source ${HOME}/ArchTitus/configs/setup.conf
 genfstab -U -p / >> /etc/fstab
+echo " 
+  Generated /etc/fstab:
+"
 cat /etc/fstab
+
 if [[ -d "/sys/firmware/efi" ]]; then
     grub-install --efi-directory=/boot ${DISK}
 fi
@@ -83,12 +87,18 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 systemctl enable cups.service
+echo "  Cups enabled"
 ntpd -qg
 systemctl enable ntpd.service
+echo "  NTP enabled"
 systemctl disable dhcpcd.service
+echo "  DHCP disabled"
 systemctl stop dhcpcd.service
+echo "  DHCP stopped"
 systemctl enable NetworkManager.service
+echo "  NetworkManager enabled"
 systemctl enable bluetooth
+echo "  Bluetooth enabled"
 
 if [[ "${FS}" == "luks" || "${FS}" == "btrfs" ]]; then
 echo -ne "
@@ -97,11 +107,13 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 
-SNAPPER_CONF="/root/ArchTitus/configs/etc/snapper/configs/root"
-SNAPPER_CONF_D="/root/ArchTitus/configs/etc/conf.d/snapper"
+SNAPPER_CONF="${HOME}/ArchTitus/configs/etc/snapper/configs/root"
+SNAPPER_CONF_D="${HOME}/ArchTitus/configs/etc/conf.d/snapper"
 
-cp -a ${SNAPPER_CONF} /home/$USERNAME/etc/snapper/configs/
-cp -a ${SNAPPER_CONF_D} /home/$USERNAME/etc/conf.d/
+mkdir -p /home/$USERNAME/etc/snapper/configs/
+mkdir -p /home/$USERNAME/etc/conf.d/
+cp --verbose -af ${SNAPPER_CONF} /home/$USERNAME/etc/snapper/configs/
+cp --verbose -af ${SNAPPER_CONF_D} /home/$USERNAME/etc/conf.d/
 
 fi
 
@@ -116,6 +128,8 @@ sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: A
 # Add sudo rights
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
+
+cp --verbose -a ${HOME}/ArchTitus/*.log /home/$USERNAME/
 
 rm -r /root/ArchTitus
 rm -r /home/$USERNAME/ArchTitus
