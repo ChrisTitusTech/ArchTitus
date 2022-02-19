@@ -12,14 +12,14 @@ if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
 else
     echo "ERROR! Missing file: setup.conf"
-    exit 1
+    exit 0
 fi
 
 install_aur() {
     "$AURHELPER" -S --noconfirm --needed "$@"
 }
 
-cd ~ || exit 1
+cd ~ || exit 0
 case "$AURHELPER" in
 "yay")
     install_pkg "go"
@@ -44,9 +44,9 @@ case "$AURHELPER" in
     ;;
 esac
 
-cd "$AURHELPER" || exit 1
+cd "$AURHELPER" || exit 0
 makepkg -si --noconfirm
-cd ~ || exit 1
+cd ~ || exit 0
 
 while IFS= read -r LINE; do
         echo "INSTALLING: $LINE"

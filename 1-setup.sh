@@ -8,7 +8,7 @@ if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
 else
     echo "ERROR! Missing file: setup.conf"
-    exit 1
+    exit 0
 fi
 
 echo "basic installations"
@@ -190,7 +190,7 @@ systemd)
         echo -e "default  arch\ntimeout\t5" >/boot/loader/loader.conf
     else
         echo "ERROR! Systemd-boot is not supported for BIOS systems"
-        exit 1
+        exit 0
     fi
     ;;
 uefi)
@@ -209,7 +209,7 @@ uefi)
         fi
     else
         echo "ERROR! efistub is not supported for BIOS systems"
-        exit 1
+        exit 0
     fi
     ;;
 none)
@@ -221,7 +221,7 @@ none)
 esac
 
 echo "Adding User and hostname"
-if [ "$(id -u)" = "0" ]; then
+if [ "$(id -u)" -eq "0" ]; then
     if [[ "$LAYOUT" -eq 1 ]]; then
         groupadd libvirt
         useradd -m -G wheel,libvirt -s /bin/bash "$USERNAME"

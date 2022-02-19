@@ -8,7 +8,7 @@ if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
 else
     echo "ERROR! Missing file: setup.conf"
-    exit 1
+    exit 0
 fi
 
 if [[ "$LAYOUT" -eq 1 || "$BOOTLOADER" =~ "grub" ]]; then
@@ -18,7 +18,7 @@ if [[ "$LAYOUT" -eq 1 || "$BOOTLOADER" =~ "grub" ]]; then
     echo -e "Creating the theme directory..."
     mkdir -p "${THEME_DIR}/${THEME_NAME}"
     echo -e "Copying the theme..."
-    cd "$HOME"/ArchTitus || exit 1
+    cd "$HOME"/ArchTitus || exit 0
     cp -a ${THEME_NAME}/* ${THEME_DIR}/${THEME_NAME}
     echo -e "Backing up Grub config..."
     cp -an /etc/default/grub /etc/default/grub.bak
@@ -60,4 +60,4 @@ rm -r /root/ArchTitus
 rm -r /home/"$USERNAME"/ArchTitus
 
 # Replace in the same state
-cd "$(pwd)" || exit 1
+cd "$(pwd)" || exit 0

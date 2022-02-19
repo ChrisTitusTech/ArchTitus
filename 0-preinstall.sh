@@ -8,7 +8,7 @@ if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
 else
     echo "ERROR! Missing file: setup.conf"
-    exit 1
+    exit 0
 fi
 
 make_boot() {
@@ -225,7 +225,7 @@ if [[ "$(grep -E "$MOUNTPOINT" /proc/mounts -c)" -eq "0" ]]; then
     echo "Rebooting in 2 Seconds ..." && sleep 1
     echo "Rebooting in 1 Second ..." && sleep 1
     # reboot now
-    exit 1
+    exit 0
 fi
 
 echo "Arch Install on Main Drive"
