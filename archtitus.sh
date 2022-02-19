@@ -45,10 +45,15 @@ end() {
         if [[ "$KEY" == $'\e' ]]; then
             break
         elif [[ "$KEY" == "r" || "$KEY" == "R" ]]; then
-            do_reboot
+            REBOOT=1
             break
         fi
     done
+    if [[ "$REBOOT" -eq 1 ]]; then
+        do_reboot
+    else
+        echo "Aborted"
+    fi
 }
 
 sequence() {

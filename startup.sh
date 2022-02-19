@@ -23,24 +23,24 @@ set_option() {
 check_root() {
     if [[ "$(id -u)" != "0" ]]; then
         echo -ne "ERROR! This script must be running under the 'root' user!\n"
-        exit 1
+        exit 0
     fi
 }
 
 check_docker() {
     if awk -F/ '$2 == "docker"' /proc/self/cgroup | read -r; then
         echo -ne "ERROR! Docker container not supported (at the moment)\n"
-        exit 1
+        exit 0
     elif [[ -f /.dockerenv ]]; then
         echo -ne "ERROR! Docker container not supported (at the moment)\n"
-        exit 1
+        exit 0
     fi
 }
 
 check_arch() {
     if [[ ! -e /etc/arch-release ]]; then
         echo -ne "ERROR! This script must be run in Arch Linux!\n"
-        exit 1
+        exit 0
     fi
 }
 
@@ -48,7 +48,7 @@ check_pacman() {
     if [[ -f /var/lib/pacman/db.lck ]]; then
         echo "ERROR! Pacman is blocked."
         echo -ne "If not running remove /var/lib/pacman/db.lck.\n"
-        exit 1
+        exit 0
     fi
 }
 
@@ -192,7 +192,7 @@ refresh_pacman() {
 
 something_failed() {
     echo "ERROR! Something is not right. Exiting.\n"
-    exit 1
+    exit 0
 }
 
 logo () {
@@ -231,16 +231,16 @@ logo() {
 }
 
 background_check() {
-    write_to_config
-    if connection_test; then
-        echo -ne "ERROR! There seems to be no internet connection.\n"
-        exit 1
-    fi
+    check_root
+    check_docker
     check_arch
     check_pacman
-    check_docker
+    write_to_config
     efi_check
-    check_root
+    if connection_test; then
+        echo -ne "ERROR! There seems to be no internet connection.\n"
+        exit 0
+    fi
     set_ntp
     do_curl
 }

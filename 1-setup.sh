@@ -11,7 +11,7 @@ else
     exit 1
 fi
 
-title basic installations
+echo "basic installations"
 install_pkg networkmanager dhclient reflector \
     rsync arch-install-scripts \
     git pacman-contrib curl
@@ -127,7 +127,7 @@ esac
 
 echo "Installing Microcode"
 # determine processor type and install microcode
-PROC_TYPE="$(lscpu | grep "Vendor ID:" | awk '{print $3}')"
+PROC_TYPE="$(lscpu | grep "Vendor ID:" | awk '{print $3}' | head -1)"
 
 case "$PROC_TYPE" in
 "GenuineIntel")
