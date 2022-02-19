@@ -69,10 +69,10 @@ fi
 
 case "$DESKTOP" in
 "lxqt")
-    install_aur "sddm-nordic-theme-git"
+    install_aur sddm-nordic-theme-git
     ;;
 "awesome")
-    install_aur "rofi picom i3lock-fancy xclip ttf-roboto polkit-gnome materia-theme lxappearance flameshot pnmixer network-manager-applet xfce4-power-manager qt5-styleplugins papirus-icon-theme"
+    install_aur rofi picom i3lock-fancy xclip ttf-roboto polkit-gnome materia-theme lxappearance flameshot pnmixer network-manager-applet xfce4-power-manager qt5-styleplugins papirus-icon-theme
     git clone "https://github.com/ChrisTitusTech/titus-awesome" "$HOME"/.config/awesome
     mkdir -p "$HOME"/.config/rofi
     cp "$HOME"/.config/awesome/theme/config.rasi "$HOME"/.config/rofi/config.rasi
