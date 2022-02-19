@@ -48,12 +48,13 @@ cd "$AURHELPER" || exit 0
 makepkg -si --noconfirm
 cd ~ || exit 0
 
-while IFS= read -r LINE; do
-        echo "INSTALLING: $LINE"
-        install_aur "$LINE"
-done <~/ArchTitus/pkg-files/aur-pkgs.txt
 
 if [[ "$LAYOUT" -eq 1 ]]; then
+    while IFS= read -r LINE; do
+            echo "INSTALLING: $LINE"
+            install_aur "$LINE"
+    done <~/ArchTitus/pkg-files/aur-pkgs.txt
+    
     touch "$HOME/.cache/zshhistory"
     git clone "https://github.com/ChrisTitusTech/zsh"
     git clone --depth=1 "https://github.com/romkatv/powerlevel10k.git" "$HOME"/powerlevel10k
