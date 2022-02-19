@@ -56,7 +56,7 @@ sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 # pacman -Sy --noconfirm
 refresh_pacman
 
-echo "Installing desktop"
+echo "Installing $DESKTOP"
 case "$DESKTOP" in
 "default")
     while IFS= read -r LINE; do
@@ -187,7 +187,7 @@ systemd)
         else
             echo -e "title\tArchTitus\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\ninitrd\t/$IMG\noptions\troot=PARTUUID=$PART_UUID rw" >/boot/loader/entries/arch.conf
         fi
-        echo -e "default  arch\ntimeout  5" >/boot/loader/loader.conf
+        echo -e "default  arch\ntimeout\t5" >/boot/loader/loader.conf
     else
         echo "ERROR! Systemd-boot is not supported for BIOS systems"
         exit 1
@@ -220,7 +220,7 @@ none)
     ;;
 esac
 
-echo "Adding User"
+echo "Adding User and hostname"
 if [ "$(id -u)" = "0" ]; then
     if [[ "$LAYOUT" -eq 1 ]]; then
         groupadd libvirt
@@ -238,10 +238,16 @@ fi
 
 # Making sure to edit mkinitcpio conf if luks is selected
 # add encrypt in mkinitcpio.conf before filesystems in hooks
+
 if [[ "$LVM" -eq 1 ]]; then
+    echo "LVM hooks added"
     sed -i "/^HOOK/s/filesystems/${HOOKS[*]}/" /etc/mkinitcpio.conf
 elif [[ "$LUKS" -eq 1 ]]; then
+    echo "LUKS hooks added"
     sed -i "s/^HOOK.*/HOOKS=(${HOOKS[*]})/" /etc/mkinitcpio.conf
+elif [[ "$LAYOUT" -eq 1 ]]; then
+    echo "Btrfs module added"
+    sed -i '/^MODULES=/s/(/(btrfs/' /etc/mkinitcpio.conf
 fi
 
 if [[ -f "/etc/mkinitcpio.conf" ]]; then

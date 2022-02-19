@@ -63,6 +63,13 @@ sequence() {
     arch-chroot /mnt /root/ArchTitus/1-setup.sh
     arch-chroot /mnt /usr/bin/runuser -u "$USERNAME" -- /home/"$USERNAME"/ArchTitus/2-user.sh
     arch-chroot /mnt /root/ArchTitus/3-post-setup.sh
+    logo
+    echo -ne "
+------------------------------------------------------------------------
+                    Automated Arch Linux Installer
+-------------------------------------------------------------------------
+                Done - Please Eject Install Media and Reboot
+"
 
 }
 logo
