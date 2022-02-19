@@ -93,7 +93,7 @@ do_format() {
 do_lvm() {
     i=0
     while [[ "$i" -le "${#LVM_PART_NUM[@]}" ]]; do
-        if [[ "${#LVM_PART_NUM[@]}" -eq 1 ]]; then
+        if [[ "${#LVM_PART_NUM[@]}" -eq "1" ]]; then
             lvcreate --extents 100%FREE "$LVM_VG" --name "${LVM_NAMES[$i]}"
         else
             lvcreate --size "${LVM_SIZES[$i]}" "$LVM_VG" --name "${LVM_NAMES[$i]}"
@@ -137,7 +137,7 @@ do_partition() {
 }
 
 mount_boot() {
-    if [[ "$UEFI" -eq 1 ]]; then
+    if [[ "$UEFI" -eq "1" ]]; then
         mkdir "$MOUNTPOINT"/boot
         mount -t vfat -L EFIBOOT "$MOUNTPOINT"/boot/
     fi
@@ -159,7 +159,7 @@ reflector --age 48 --country "$ISO" -f 5 --latest 20 --protocol https --sort rat
 mkdir "$MOUNTPOINT" &>/dev/null # Hiding error message if any
 
 echo "File system setup"
-if [[ "$SDD" -eq 1 ]]; then
+if [[ "$SDD" -eq "1" ]]; then
     PART1=${DISK}p1
     PART2=${DISK}p2
 else
@@ -169,13 +169,13 @@ fi
 
 set_option "PART2" "$PART2"
 
-if [[ "$LAYOUT" -eq 1 ]]; then
+if [[ "$LAYOUT" -eq "1" ]]; then
     do_partition
     make_boot
     do_btrfs "$ROOT" "$PART2"
     mount_boot
 
-elif [[ "$LVM" -eq 1 ]]; then
+elif [[ "$LVM" -eq "1" ]]; then
     PACKAGES+=("lvm2")
     do_partition
     sgdisk --typecode=2:8e00 "$DISK"
@@ -188,7 +188,7 @@ elif [[ "$LVM" -eq 1 ]]; then
     mount_boot
     set_option "HOOKS" "(lvm2 filesystems)"
 
-elif [[ "$LUKS" -eq 1 ]]; then
+elif [[ "$LUKS" -eq "1" ]]; then
     PACKAGES+=("cryptsetup" "lvm2")
     do_partition
     make_boot
@@ -204,7 +204,7 @@ elif [[ "$LUKS" -eq 1 ]]; then
     # HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)
     set_option "HOOKS" "(base udev autodetect keyboard keymap consolefont modconf block lvm2 encrypt filesystems fsck)"
 
-elif [[ "$LAYOUT" -eq 0 ]]; then
+elif [[ "$LAYOUT" -eq "0" ]]; then
     modprobe dm-mod
     vgscan &>/dev/null
     vgchange -ay &>/dev/null
