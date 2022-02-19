@@ -32,6 +32,8 @@ code
 cronie
 cups
 dialog
+dmidecode
+dnsmasq
 dtc
 efibootmgr
 egl-wayland
