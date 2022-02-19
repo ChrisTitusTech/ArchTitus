@@ -29,6 +29,12 @@ logo() {
 
 do_reboot () {
     cp "$LOG" "$MOUNTPOINT"/var/log/archtitus.log
+    if [[ "$LVM" -eq 1 || "$LUKS" -eq 1 ]]; then
+        i=0
+        while [[ "$i" -le "${#LVM_NAMES[@]}" ]]; do
+            umount -l /dev/"$LVM_VG"/"${LVM_NAMES[$i]}"
+        done
+    fi
     umount -R "$MOUNTPOINT"/boot
     umount -R "$MOUNTPOINT"
     reboot
@@ -43,16 +49,18 @@ end() {
             continue
         fi
         if [[ "$KEY" == $'\e' ]]; then
+            REBOOT=0
             break
         elif [[ "$KEY" == "r" || "$KEY" == "R" ]]; then
             REBOOT=1
             break
         fi
+        REBOOT=1
     done
     if [[ "$REBOOT" -eq 1 ]]; then
         do_reboot
     else
-        echo "Aborted"
+        echo "Reboot is aborted "
     fi
 }
 

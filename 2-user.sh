@@ -19,7 +19,7 @@ install_aur() {
     "$AURHELPER" -S --noconfirm --needed "$@"
 }
 
-cd ~ || exit 0
+cd "$HOME" || exit 0
 case "$AURHELPER" in
 "yay")
     install_pkg "go"
@@ -46,7 +46,7 @@ esac
 
 cd "$AURHELPER" || exit 0
 makepkg -si --noconfirm
-cd ~ || exit 0
+cd "$HOME" || exit 0
 
 
 if [[ "$LAYOUT" -eq 1 ]]; then
@@ -54,7 +54,7 @@ if [[ "$LAYOUT" -eq 1 ]]; then
             echo "INSTALLING: $LINE"
             install_aur "$LINE"
     done <~/ArchTitus/pkg-files/aur-pkgs.txt
-    
+
     touch "$HOME/.cache/zshhistory"
     git clone "https://github.com/ChrisTitusTech/zsh"
     git clone --depth=1 "https://github.com/romkatv/powerlevel10k.git" "$HOME"/powerlevel10k
@@ -80,6 +80,6 @@ case "$DESKTOP" in
     ;;
 esac
 
-export PATH=$PATH:~/.local/bin
+export PATH=$PATH:$HOME/.local/bin
 
 title "System ready for 3-post-setup.sh"

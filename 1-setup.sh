@@ -198,14 +198,14 @@ uefi)
         echo "Installing efistub"
         install_pkg efibootmgr
         if [[ "$LUKS" -eq 1 ]]; then
-            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=/dev/$LVM_VG/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux.img"
             efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=/dev/$LVM_VG/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "cryptdevice=PARTUUID=$PART_UUID:luks:allow-discards root=/dev/$LVM_VG/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux.img"
         elif [[ "$LVM" -eq 1 ]]; then
-            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "root=/dev/$LVM_VG/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux.img"
             efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "root=/dev/$LVM_VG/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "root=/dev/$LVM_VG/${LVM_NAMES[0]} rw initrd=\\$IMG initrd=\initramfs-linux.img"
         else
-            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "root=PARTUUID=$PART_UUID rw initrd=\\$IMG initrd=\initramfs-linux.img"
             efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus-Fallback" --loader "/vmlinuz-linux" --unicode "root=PARTUUID=$PART_UUID rw initrd=\\$IMG initrd=\initramfs-linux-fallback.img"
+            efibootmgr --disk "$DISK" --part 1 --create --label "ArchTitus" --loader "/vmlinuz-linux" --unicode "root=PARTUUID=$PART_UUID rw initrd=\\$IMG initrd=\initramfs-linux.img"
         fi
     else
         echo "ERROR! efistub is not supported for BIOS systems"
