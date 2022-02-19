@@ -108,10 +108,10 @@ set_lvm() {
     echo "And will be mounted at /mnt/ and other partitions will be mounted"
     echo "at /mnt/partition_name by making a directory /mnt/partition_name"
 
-    i=0
+    i=1
     _LVM_NAMES=()
     LVM_SIZES=()
-    if [[ -z "$_PART_NUM" || "$_PART_NUM" -eq 1 ]]; then
+    if [[ -z "$_PART_NUM" ]]; then
         _PART_NUM=1
         _LVM_NAMES+=("root")
         # LVM_SIZES+=("100%FREE")
