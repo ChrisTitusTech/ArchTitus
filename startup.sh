@@ -116,7 +116,7 @@ set_lvm() {
         i=2
     fi
     while [[ $i -le "$_PART_NUM" ]]; do
-        if [[ "$_PART_NUM" -eq 1 ]]; then
+        if [[ "$_PART_NUM" -eq "1" ]]; then
             read -r -p "Enter last partition name [like home]: " _LVM_NAME
             _LVM_NAMES+=("$_LVM_NAME")
         fi

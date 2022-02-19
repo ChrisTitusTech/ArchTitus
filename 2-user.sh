@@ -48,11 +48,10 @@ cd "$AURHELPER" || exit 0
 makepkg -si --noconfirm
 cd "$HOME" || exit 0
 
-
 if [[ "$LAYOUT" -eq 1 ]]; then
     while IFS= read -r LINE; do
-            echo "INSTALLING: $LINE"
-            install_aur "$LINE"
+        echo "INSTALLING: $LINE"
+        install_aur "$LINE"
     done <~/ArchTitus/pkg-files/aur-pkgs.txt
 
     pip install konsave
