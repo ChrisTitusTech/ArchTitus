@@ -14,7 +14,7 @@ fi
 echo "basic installations"
 install_pkg networkmanager dhclient reflector \
     rsync arch-install-scripts \
-    git pacman-contrib curl
+    git pacman-contrib curl efibootmgr
 
 install_xorg() {
     install_pkg xorg xorg-server xorg-xinit
@@ -167,7 +167,7 @@ grub)
     install_pkg grub os-prober
     if [[ "$LUKS" -eq 1 ]]; then
         echo "Installing GRUB for LUKS"
-        sed -i -e 's/GRUB_CMDLINE_LINUX="\(.\+\)"/GRUB_CMDLINE_LINUX="\1 cryptdevice=UUID='"${ENCRYPT_UUID}"':luks"/g' -e 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cryptdevice=UUID'"${ENCRYPT_UUID}"':luks"/g' /etc/default/grub
+        sed -i -e 's/GRUB_CMDLINE_LINUX="\(.\+\)"/GRUB_CMDLINE_LINUX="\1 cryptdevice=UUID='"${ENCRYPT_UUID}"':luks"/g' -e 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cryptdevice=UUID='"${ENCRYPT_UUID}"':luks"/g' /etc/default/grub
     fi
     if [[ "$UEFI" -eq 1 ]]; then
         grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=ArchTitus

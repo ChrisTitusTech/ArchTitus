@@ -27,8 +27,11 @@ logo() {
 "
 }
 
-do_reboot () {
+copy_logs() {
     cp "$LOG" "$MOUNTPOINT"/var/log/archtitus.log
+}
+
+do_reboot () {
     if [[ "$LVM" -eq 1 || "$LUKS" -eq 1 ]]; then
         i=0
         while [[ "$i" -le "${#LVM_NAMES[@]}" ]]; do
@@ -42,6 +45,7 @@ do_reboot () {
 
 end() {
     REBOOT="true"
+    copy_logs
     for (( i = 15; i >= 1; i-- )); do
         read -r -s -n 1 -t 1 -p "Rebooting in $i seconds... Press Esc key to abort or press R key to reboot now."$'\n' KEY
         CODE="$?"
