@@ -17,7 +17,7 @@ install_pkg networkmanager dhclient reflector \
     git pacman-contrib curl
 
 install_xorg() {
-    install_pkg "xorg xorg-server"
+    install_pkg xorg xorg-server xorg-xinit
 }
 
 TOTALMEM="$(grep -i "memtotal" "/proc/meminfo" | grep -o '[[:digit:]]*')"
@@ -67,32 +67,32 @@ case "$DESKTOP" in
     ;;
 "gnome")
     install_xorg
-    install_pkg "gnome gnome-extra gnome-software gnome-initial-setup gnome-tweak-tool gnome-power-manager"
+    install_pkg gnome gnome-extra gnome-software gnome-initial-setup gnome-tweak-tool gnome-power-manager
     systemctl enable gdm.service
     ;;
 "xfce")
     install_xorg
-    install_pkg "xfce4 xfce4-goodies lightdm lightdm-gtk-greeter pavucontrol pulseaudio"
+    install_pkg xfce4 xfce4-goodies lightdm lightdm-gtk-greeter pavucontrol pulseaudio
     systemctl enable lightdm.service
     ;;
 "mate")
     install_xorg
-    install_pkg "mate mate-extra lightdm lightdm-gtk-greeter"
+    install_pkg mate mate-extra lightdm lightdm-gtk-greeter
     systemctl enable lightdm.service
     ;;
 "lxqt")
     install_xorg
-    install_pkg "lxqt breeze-icons sddm"
+    install_pkg lxqt breeze-icons sddm
     systemctl enable sddm.service
     ;;
 "openbox")
     install_xorg
-    install_pkg "openbox obconf xterm lightdm lightdm-gtk-greeter"
+    install_pkg openbox obconf xterm lightdm lightdm-gtk-greeter
     systemctl enable lightdm.service
     ;;
 "awesome")
     install_xorg
-    install_pkg "awesome vicious xterm lightdm lightdm-gtk-greeter"
+    install_pkg awesome vicious xterm lightdm lightdm-gtk-greeter
     systemctl enable lightdm.service
     ;;
 "minimal")
@@ -100,23 +100,23 @@ case "$DESKTOP" in
     ;;
 "i3")
     install_xorg
-    install_pkg "i3-wm i3blocks i3lock i3status dmenu rxvt-unicode lightdm lightdm-gtk-greeter"
+    install_pkg i3-wm i3blocks i3lock i3status dmenu rxvt-unicode lightdm lightdm-gtk-greeter
     systemctl enable lightdm.service
     ;;
 "i3-gaps")
     install_xorg
-    install_pkg "i3-gaps i3blocks i3lock i3status dmenu rxvt-unicode lightdm lightdm-gtk-greeter"
+    install_pkg i3-gaps i3blocks i3lock i3status dmenu rxvt-unicode lightdm lightdm-gtk-greeter
     systemctl enable lightdm.service
     ;;
 "deepin")
     install_xorg
-    install_pkg "deepin deepin-extra deepin-kwin"
+    install_pkg deepin deepin-extra deepin-kwin
     sed -i 's/^#greeter-session=.*/greeter-session=lightdm-deepin-greeter/' /etc/lightdm/lightdm.conf
     systemctl enable lightdm.service
     ;;
 "budgie")
     install_xorg
-    install_pkg "budgie-desktop budgie-desktop-view budgie-screensaver gnome-control-center network-manager-applet gnome"
+    install_pkg budgie-desktop budgie-desktop-view budgie-screensaver gnome-control-center network-manager-applet gnome
     systemctl enable gdm.service
     ;;
 *)
