@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # shellcheck disable=SC1091
 # shellcheck source=./setup.conf
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
@@ -11,6 +12,8 @@ else
     exit 0
 fi
 
+logo
+title "Post Install and cleaning"
 if [[ "$LAYOUT" -eq 1 || "$BOOTLOADER" =~ "grub" ]]; then
     echo -e "Installing CyberRe Grub theme..."
     THEME_DIR="/boot/grub/themes"

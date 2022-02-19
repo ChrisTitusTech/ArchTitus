@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # shellcheck disable=SC1091,SC2001
 # shellcheck source=./setup.conf
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"

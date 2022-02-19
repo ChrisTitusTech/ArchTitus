@@ -10,7 +10,7 @@ else
     echo "ERROR! Missing file: setup.conf"
     exit 0
 fi
-
+logo
 echo "basic installations"
 install_pkg networkmanager dhclient reflector \
     rsync arch-install-scripts \

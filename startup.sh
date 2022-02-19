@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# This script will ask users about their prefrences
-# like disk, file system, timezone, keyboard layout,
-# user name, password, etc.
+
 # shellcheck disable=SC2207,SC2120
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"

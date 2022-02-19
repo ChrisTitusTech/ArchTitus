@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# You can solve users running this script as root
-# with this and then doing the same for the next for statement.
-# However I will leave this up to you.
 # shellcheck disable=SC1091
 # shellcheck source=./setup.conf
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
@@ -18,6 +15,9 @@ fi
 install_aur() {
     "$AURHELPER" -S --noconfirm --needed "$@"
 }
+
+logo
+title "Installing AUR helper"
 
 cd "$HOME" || exit 0
 case "$AURHELPER" in
