@@ -41,7 +41,7 @@ do_reboot () {
 }
 
 end() {
-    logo
+    REBOOT="true"
     for (( i = 15; i >= 1; i-- )); do
         read -r -s -n 1 -t 1 -p "Rebooting in $i seconds... Press Esc key to abort or press R key to reboot now."$'\n' KEY
         CODE="$?"
@@ -49,15 +49,14 @@ end() {
             continue
         fi
         if [[ "$KEY" == $'\e' ]]; then
-            REBOOT=0
+            REBOOT="false"
             break
         elif [[ "$KEY" == "r" || "$KEY" == "R" ]]; then
-            REBOOT=1
+            REBOOT="true"
             break
         fi
-        REBOOT=1
     done
-    if [[ "$REBOOT" -eq 1 ]]; then
+    if [[ "$REBOOT" == "true" ]]; then
         do_reboot
     else
         echo "Reboot is aborted "

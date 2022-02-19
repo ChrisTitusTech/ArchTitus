@@ -22,18 +22,18 @@ install_aur() {
 cd "$HOME" || exit 0
 case "$AURHELPER" in
 "yay")
-    install_pkg "go"
+    # install_pkg "go" permission error
     git clone "https://aur.archlinux.org/yay.git"
     ;;
 "trizen")
-    install_pkg "perl"
+    # install_pkg "perl"
     git clone "https://aur.archlinux.org/trizen.git"
     ;;
 "aurman")
     git clone "https://aur.archlinux.org/aurman.git"
     ;;
 "aura")
-    install_pkg "stack"
+    # install_pkg "stack"
     git clone "https://aur.archlinux.org/aura.git"
     ;;
 "pikaur")
@@ -55,17 +55,17 @@ if [[ "$LAYOUT" -eq 1 ]]; then
             install_aur "$LINE"
     done <~/ArchTitus/pkg-files/aur-pkgs.txt
 
-    touch "$HOME/.cache/zshhistory"
-    git clone "https://github.com/ChrisTitusTech/zsh"
-    git clone --depth=1 "https://github.com/romkatv/powerlevel10k.git" "$HOME"/powerlevel10k
-    ln -s "$HOME/zsh/.zshrc" "$HOME"/.zshrc
-
     pip install konsave
     konsave -i "$HOME"/ArchTitus/kde.knsv
     sleep 1
     konsave -a kde
     cp -r "$HOME"/ArchTitus/dotfiles/* "$HOME"/.config/
 fi
+
+touch "$HOME/.cache/zshhistory"
+git clone "https://github.com/ChrisTitusTech/zsh"
+git clone --depth=1 "https://github.com/romkatv/powerlevel10k.git" "$HOME"/powerlevel10k
+ln -s "$HOME/zsh/.zshrc" "$HOME"/.zshrc
 
 case "$DESKTOP" in
 "lxqt")
