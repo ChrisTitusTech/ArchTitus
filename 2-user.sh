@@ -39,6 +39,9 @@ case "$AURHELPER" in
 "pikaur")
     git clone "https://aur.archlinux.org/pikaur.git"
     ;;
+none)
+    echo "No AUR helper is selected. Skipping..."
+    ;;
 *)
     something_failed
     ;;

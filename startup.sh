@@ -490,7 +490,7 @@ set_desktop() {
 
 set_aur_helper() {
     title "Select your preferred AUR helper"
-    SELECTION=("yay" "trizen" "aurman" "aura" "pikaur")
+    SELECTION=("yay" "trizen" "aurman" "aura" "pikaur" "none")
     PS3="$PROMPT"
     select OPT in "${SELECTION[@]}"; do
         if elements_present "$OPT" "${SELECTION[@]}"; then
