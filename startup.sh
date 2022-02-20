@@ -503,6 +503,23 @@ set_aur_helper() {
     done
 }
 
+set_grub_theme() {
+    title "Choose your preferred GRUB theme"
+    SELECTION=("CyberRe" "Cyberpunk" "Shodan" "Vimix" "fallout" "None")
+    PS3="$PROMPT"
+    select OPT in "${SELECTION[@]}"; do
+        if elements_present "$OPT" "${SELECTION[@]}"; then
+            set_option "GRUBTHEME" "${OPT}"
+            set_option "THEMEDIR" "/boot/grub/themes"
+            break
+        else
+            invalid_option
+            set_grub_theme
+            break
+        fi
+    done
+}
+
 set_bootloader() {
     title "Select your bootloader"
     SELECTION=("Default (GRUB)" "Systemd" "UEFI" "None")
@@ -513,6 +530,7 @@ set_bootloader() {
         if elements_present "$OPT" "${SELECTION[@]}"; then
             if [[ "$OPT" == "Default (GRUB)" ]]; then
                 set_option "BOOTLOADER" "grub"
+                set_grub_theme
                 break
             else
                 set_option "BOOTLOADER" "${OPT,,}"
