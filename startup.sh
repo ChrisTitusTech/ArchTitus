@@ -573,6 +573,7 @@ make_choice() {
                 set_btrfs
                 set_option "LAYOUT" 1
                 set_option "BOOTLOADER" "grub"
+                set_option "GRUBTHEME" "CyberRe"
                 set_option "FS" "btrfs"
                 set_option "AURHELPER" "yay"
                 set_option "DESKTOP" "default"
