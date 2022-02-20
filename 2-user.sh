@@ -39,17 +39,20 @@ case "$AURHELPER" in
 "pikaur")
     git clone "https://aur.archlinux.org/pikaur.git"
     ;;
-none)
+"none")
     echo "No AUR helper is selected. Skipping..."
     ;;
 *)
     something_failed
     ;;
 esac
-
-cd "$AURHELPER" || exit 0
-makepkg -si --noconfirm
-cd "$HOME" || exit 0
+if [[ "$AURHELPER" =~ "none" ]]; then
+    echo "Continue no directory"
+else
+    cd "$AURHELPER" || exit 0
+    makepkg -si --noconfirm
+    cd "$HOME" || exit 0
+fi
 
 if [[ "$LAYOUT" -eq 1 ]]; then
     while IFS= read -r LINE; do

@@ -206,7 +206,6 @@ echo -ne "
 "
 }
 
-# TODO ask user for mount points i.e. boot may be home etc
 BOOT=EFIBOOT
 ROOT=ROOT
 MOUNTPOINT=/mnt

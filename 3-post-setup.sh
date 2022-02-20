@@ -47,8 +47,8 @@ systemctl enable cups.service
 systemctl enable cronie.service
 ntpd -qg
 systemctl enable ntpd.service
-systemctl disable dhcpcd.service
 systemctl stop dhcpcd.service
+systemctl disable dhcpcd.service
 systemctl enable NetworkManager.service
 systemctl enable bluetooth
 
