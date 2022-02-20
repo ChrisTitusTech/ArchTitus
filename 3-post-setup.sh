@@ -37,7 +37,7 @@ install_grub_theme() {
 
 logo
 title "Post Install and cleaning"
-if [[ "$LAYOUT" -eq 1 || "$BOOTLOADER" =~ "grub" ]]; then
+if [[ "$BOOTLOADER" =~ "grub" ]]; then
     install_grub_theme
 fi
 
