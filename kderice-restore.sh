@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 export PATH=$PATH:~/.local/bin
-cp -r $HOME/$SCRIPTHOME/dotfiles/* $HOME/.config/
+cp -r "$HOME"/"$SCRIPTHOME"/dotfiles/* "$HOME"/.config/
 pip install konsave
-konsave -i $HOME/$SCRIPTHOME/kde.knsv
+konsave -i "$HOME"/"$SCRIPTHOME"/kde.knsv
 sleep 1
 konsave -a kde

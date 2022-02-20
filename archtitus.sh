@@ -29,10 +29,12 @@ logo() {
 }
 
 copy_logs() {
+    echo "Copying logs $MOUNTPOINT/var/log/"
     cp "$LOG" "$MOUNTPOINT"/var/log/archtitus.log
 }
 
 do_reboot() {
+    echo "unmounting $MOUNTPOINT"
     if [[ "$LVM" -eq "1" || "$LUKS" -eq "1" ]]; then
         i=0
         while [[ "$i" -le "${#LVM_NAMES[@]}" ]]; do
@@ -41,6 +43,7 @@ do_reboot() {
     fi
     umount -R "$MOUNTPOINT"/boot
     umount -R "$MOUNTPOINT"
+    echo "Rebooting..."
     reboot
 }
 
