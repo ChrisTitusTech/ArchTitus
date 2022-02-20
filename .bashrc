@@ -1,7 +1,7 @@
+#!/bin/sh
+# shellcheck disable=SC1091,SC3046,SC2086,SC3043,SC3060,SC3057,SC2034,SC3028,SC2004,SC2153,SC3004,SC3047,SC2016,SC3003
 source /etc/profile
 export PATH=$PATH:~/.local/bin
-
-#!/bin/sh
 
 ##	+-----------------------------------+-----------------------------------+
 ##	|                                                                       |
