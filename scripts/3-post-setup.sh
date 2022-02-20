@@ -129,10 +129,8 @@ sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: A
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
-cp -rfv $HOME/ArchTitus/*.log /home/$USERNAME/
-
-rm -r $HOME/ArchTitus
-rm -r /home/$USERNAME/ArchTitus
+rm -rv $HOME/ArchTitus
+rm -rv /home/$USERNAME/ArchTitus
 
 # Replace in the same state
 cd $pwd
