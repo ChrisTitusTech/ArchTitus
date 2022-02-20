@@ -94,7 +94,8 @@ do_format() {
 do_lvm() {
     i=0
     while [[ "$i" -lt "$LVM_PART_NUM" ]]; do
-        if [[ "$p" -eq "1" ]]; then
+
+        if [[ "$p" -eq "1" || "$LVM_PART_NUM" -eq "1" ]]; then
             lvcreate --extents 100%FREE "$LVM_VG" --name "${LVM_NAMES[$i]}"
         else
             lvcreate --size "${LVM_SIZES[$i]}" "$LVM_VG" --name "${LVM_NAMES[$i]}"
