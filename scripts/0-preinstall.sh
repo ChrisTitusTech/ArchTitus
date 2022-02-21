@@ -127,8 +127,7 @@ elif [[ "${FS}" == "luks" ]]; then
 fi
 
 # mount target
-mkdir /mnt/boot
-mkdir /mnt/boot/efi
+mkdir -p /mnt/boot/efi
 mount -t vfat -L EFIBOOT /mnt/boot/
 
 if ! grep -qs '/mnt' /proc/mounts; then
@@ -169,7 +168,7 @@ echo -ne "
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 if [[  $TOTAL_MEM -lt 8000000 ]]; then
     # Put swap into the actual system, not into RAM disk, otherwise there is no point in it, it'll cache RAM into RAM. So, /mnt/ everything.
-    mkdir /mnt/opt/swap # make a dir that we can apply NOCOW to to make it btrfs-friendly.
+    mkdir -p /mnt/opt/swap # make a dir that we can apply NOCOW to to make it btrfs-friendly.
     chattr +C /mnt/opt/swap # apply NOCOW, btrfs needs that.
     dd if=/dev/zero of=/mnt/opt/swap/swapfile bs=1M count=2048 status=progress
     chmod 600 /mnt/opt/swap/swapfile # set permissions.
