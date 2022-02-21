@@ -147,6 +147,12 @@ pacstrap /mnt base base-devel linux linux-firmware vim nano sudo archlinux-keyri
 echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
 cp -R ${SCRIPT_DIR} /mnt/root/ArchTitus
 cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist
+
+genfstab -L /mnt >> /mnt/etc/fstab
+echo " 
+  Generated /etc/fstab:
+"
+cat /mnt/etc/fstab
 echo -ne "
 -------------------------------------------------------------------------
                     GRUB BIOS Bootloader Install & Check
