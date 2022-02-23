@@ -1,0 +1,4 @@
+cinnamon
+metacity 
+gnome-shell 
+--END OF MINIMAL INSTALL--

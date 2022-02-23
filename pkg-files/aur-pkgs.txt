@@ -1,8 +1,11 @@
+--END OF MINIMAL INSTALL--
 autojump
 brave-bin
+bridge-utils
 dxvk-bin
 github-desktop-bin
 lightly-git
+lightlyshaders-git
 mangohud
 mangohud-common
 nerd-fonts-fira-code
@@ -14,4 +17,5 @@ ocs-url
 sddm-nordic-theme-git
 snapper-gui-git
 ttf-meslo
+vde2
 zoom
