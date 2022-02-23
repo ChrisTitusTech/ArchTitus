@@ -78,6 +78,16 @@ fi
 
 echo -ne "
 -------------------------------------------------------------------------
+               Enabling (and Theming) Plymouth Boot Splash
+-------------------------------------------------------------------------
+"
+PLYMOUTH_THEMES="$HOME/ArchTitus/configs/usr/share/plymouth/themes"
+mkdir -p /usr/share/plymouth/themes
+cp -rf ${PLYMOUTH_THEMES}/arch-glow /usr/share/plymouth/themes
+plymouth-set-default-theme -R arch-glow
+
+echo -ne "
+-------------------------------------------------------------------------
                     Enabling Essential Services
 -------------------------------------------------------------------------
 "
