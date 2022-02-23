@@ -1,0 +1,6 @@
+## Path: System/Snapper
+
+## Type:        string
+## Default:     ""
+# List of snapper configurations.
+SNAPPER_CONFIGS="root"

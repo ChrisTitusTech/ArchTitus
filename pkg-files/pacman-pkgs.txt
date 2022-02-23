@@ -8,7 +8,6 @@ xorg-xinit
 xterm
 binutils
 dosfstools
-iptables-nft
 linux-headers
 noto-fonts-emoji
 usbutils
@@ -33,6 +32,8 @@ code
 cronie
 cups
 dialog
+dmidecode
+dnsmasq
 dtc
 efibootmgr
 egl-wayland
@@ -81,7 +82,7 @@ python-psutil
 python-pyqt5
 python-pip
 qemu
-snap-pack
+snap-pac
 snapper
 steam
 swtpm

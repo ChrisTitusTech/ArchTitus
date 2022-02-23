@@ -3,9 +3,8 @@
 # like disk, file system, timezone, keyboard layout,
 # user name, password, etc.
 
-SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 # set up a config file
-CONFIG_FILE=$SCRIPT_DIR/setup.conf
+CONFIG_FILE=$CONFIGS_DIR/setup.conf
 if [ ! -f $CONFIG_FILE ]; then # check if file exists
     touch -f $CONFIG_FILE # create file if not exists
 fi
@@ -200,7 +199,7 @@ keymap () {
 echo -ne "
 Please select key board layout from this list"
 # These are default key maps as presented in official arch repo archinstall
-options=(by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru sg ua uk us)
+options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru sg ua uk)
 
 select_option $? 4 "${options[@]}"
 keymap=${options[$?]}

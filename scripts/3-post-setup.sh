@@ -15,8 +15,8 @@ echo -ne "
 Final Setup and Configurations
 GRUB EFI Bootloader Install & Check
 "
-source /root/ArchTitus/setup.conf
-genfstab -U -p / >> /etc/fstab
+source ${HOME}/ArchTitus/configs/setup.conf
+
 if [[ -d "/sys/firmware/efi" ]]; then
     grub-install --efi-directory=/boot ${DISK}
 fi
@@ -32,7 +32,7 @@ echo -e "Creating the theme directory..."
 mkdir -p "${THEME_DIR}/${THEME_NAME}"
 echo -e "Copying the theme..."
 cd ${HOME}/ArchTitus
-cp -a ${THEME_NAME}/* ${THEME_DIR}/${THEME_NAME}
+cp -a configs${THEME_DIR}/${THEME_NAME}/* ${THEME_DIR}/${THEME_NAME}
 echo -e "Backing up Grub config..."
 cp -an /etc/default/grub /etc/default/grub.bak
 echo -e "Setting the theme as the default..."
@@ -82,12 +82,36 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 systemctl enable cups.service
+echo "  Cups enabled"
 ntpd -qg
 systemctl enable ntpd.service
+echo "  NTP enabled"
 systemctl disable dhcpcd.service
+echo "  DHCP disabled"
 systemctl stop dhcpcd.service
+echo "  DHCP stopped"
 systemctl enable NetworkManager.service
+echo "  NetworkManager enabled"
 systemctl enable bluetooth
+echo "  Bluetooth enabled"
+
+if [[ "${FS}" == "luks" || "${FS}" == "btrfs" ]]; then
+echo -ne "
+-------------------------------------------------------------------------
+                    Creating Snapper Config
+-------------------------------------------------------------------------
+"
+
+SNAPPER_CONF="$HOME/ArchTitus/configs/etc/snapper/configs/root"
+mkdir -p /etc/snapper/configs/
+cp -rfv ${SNAPPER_CONF} /etc/snapper/configs/
+
+SNAPPER_CONF_D="$HOME/ArchTitus/configs/etc/conf.d/snapper"
+mkdir -p /etc/conf.d/
+cp -rfv ${SNAPPER_CONF_D} /etc/conf.d/
+
+fi
+
 echo -ne "
 -------------------------------------------------------------------------
                     Cleaning
@@ -95,10 +119,12 @@ echo -ne "
 "
 # Remove no password sudo rights
 sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
+sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
 # Add sudo rights
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
+sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
-rm -r /root/ArchTitus
+rm -r $HOME/ArchTitus
 rm -r /home/$USERNAME/ArchTitus
 
 # Replace in the same state
