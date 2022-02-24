@@ -208,6 +208,56 @@ echo -ne "Your key boards layout: ${keymap} \n"
 set_option KEYMAP $keymap
 }
 
+locale() {
+declare -a locales
+
+ i=1 #Index counter for adding to array
+ j=1 #Option menu value generator
+
+ while read line
+ do     
+   #  array[ $i ]=$j
+   #  (( j++ ))
+    locales[ ($i + 1) ]=$line
+    (( i=($i+2) ))
+
+ done < <((grep UTF-8 /etc/locale.gen | sed 's/\..*$//' | sed '/@/d' | awk '{print $1}' | uniq | sed 's/#//g')) #consume file path provided as argument
+
+ #Define parameters for menu
+ terminal=$(tty) #Gather current terminal session for appropriate redirection
+ height=20
+ width=76
+ choice_height=16
+ back_title="ArchTitus"
+ title="Locale Selection"
+ menu="Choose a locale:"
+
+ #Build the menu with variables & dynamic content
+ while true; do
+  choice=$(dialog --clear \
+                  --colors \
+                  --no-items \
+                  --backtitle "$back_title" \
+                  --title "$title" \
+                  --menu "$menu" \
+                  $height $width $choice_height \
+                  "${locales[@]}" \
+                  2>&1 >$terminal)
+
+  if [ -z "$choice" ]
+  then
+        echo "Nothing selected. Required to continue."
+  else
+        echo "Selected $choice";
+        set_option LOCALE "\"${choice}.UTF-8 UTF-8\""
+        set_option LANG "\"${choice}.UTF-8\""
+        set_option LANGUAGE "\"${choice}\""
+        set_option LC_TIME "\"${choice}.UTF-8\""
+        break
+  fi
+ done
+}
+
 drivessd () {
 echo -ne "
 Is this an ssd? yes/no:
@@ -297,10 +347,23 @@ installtype () {
   set_option INSTALL_TYPE $install_type
 }
 
+prep() {
+  echo -ne "
+  Preparing your system for installation
+  "
+  pacman -Sy --noconfirm --needed dialog
+}
+
 # More features in future
 # language (){}
 
 # Starting functions
+clear
+logo
+prep
+clear
+logo
+locale
 clear
 logo
 userinfo

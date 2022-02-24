@@ -1,0 +1,53 @@
+aspect = 0
+separate_widget = ""
+tab_len = 0
+visit_items = OFF
+use_shadow = OFF
+use_colors = ON
+
+screen_color = (BLUE,BLACK,OFF)
+shadow_color = (BLACK,BLACK,OFF)
+dialog_color = (BLUE,BLACK,OFF)
+title_color = (WHITE,BLACK,OFF)
+border_color = (BLUE,BLACK,OFF)
+border2_color = border_color
+
+button_active_color = (BLACK,BLUE,OFF)
+button_inactive_color = (WHITE,BLACK,OFF)
+button_key_active_color = (BLACK,BLUE,OFF)
+button_key_inactive_color = (RED,BLACK,OFF)
+button_label_active_color = (BLACK,BLUE,OFF)
+button_label_inactive_color = (WHITE,BLACK,OFF)
+
+inputbox_color = (WHITE,BLACK,OFF)
+inputbox_border_color = (BLACK,BLACK,OFF)
+
+searchbox_color = (WHITE,BLACK,OFF)
+searchbox_title_color = (BLUE,BLACK,OFF)
+searchbox_border_color = (WHITE,BLACK,OFF)
+
+position_indicator_color = (WHITE,BLACK,OFF)
+
+menubox_color = (BLACK,BLACK,OFF)
+menubox_border_color = (BLACK,BLACK,OFF)
+menubox_border2_color = menubox_border_color
+
+item_color = (WHITE,BLACK,OFF)
+item_selected_color = (BLACK,BLUE,OFF)
+
+tag_color = (WHITE,BLACK,OFF)
+tag_selected_color = (BLACK,BLUE,OFF)
+tag_key_color = (WHITE,BLACK,OFF)
+tag_key_selected_color = (BLACK,BLUE,OFF)
+
+check_color = (WHITE,BLACK,OFF)
+check_selected_color = (BLACK,BLUE,OFF)
+
+uarrow_color = (WHITE,BLACK,OFF)
+darrow_color = (WHITE,BLACK,OFF)
+
+itemhelp_color = (BLACK,WHITE,OFF)
+
+form_active_text_color = (BLACK,BLUE,OFF)
+form_text_color = (WHITE,BLACK,OFF)
+form_item_readonly_color = (BLACK,WHITE,OFF)
