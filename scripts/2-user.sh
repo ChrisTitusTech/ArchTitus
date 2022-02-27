@@ -31,7 +31,7 @@ do
     continue
   fi
   echo "INSTALLING: ${line}"
-  sudo pacman -S --noconfirm --needed ${line}
+  sudo pacman -S --noconfirm --needed --color=always ${line}
 done
 
 
