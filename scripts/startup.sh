@@ -309,6 +309,7 @@ grubTheme () {
     set_option GRUB_THEME $grub_theme
   else
     set_option GRUB_THEME none
+  fi
 }
 
 # === Let the user choose AUR helper from predefined list ===
