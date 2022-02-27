@@ -305,11 +305,12 @@ grubTheme () {
     set_option GRUB_THEME $grub_theme
 }
 
+# === show all the grub options ===
 grubOptions () {
   clear
   logo
   grubInstall
-  if ["$grub_install" == "yes"]; then
+  if ["$grub_install" = "yes"]; then
     grubTheme
   else
     set_option GRUB_THEME none
