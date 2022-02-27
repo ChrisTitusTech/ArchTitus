@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
+
 # This script will ask users about their prefrences 
 # like disk, file system, timezone, keyboard layout,
 # user name, password, etc.
 
-# set up a config file
+# === set up a config file ===
 CONFIG_FILE=$CONFIGS_DIR/setup.conf
 if [ ! -f $CONFIG_FILE ]; then # check if file exists
     touch -f $CONFIG_FILE # create file if not exists
 fi
 
-# set options in setup.conf
+# === set options in setup.conf ===
 set_option() {
     if grep -Eq "^${1}.*" $CONFIG_FILE; then # check if option exists
         sed -i -e "/^${1}.*/d" $CONFIG_FILE # delete option if exists
     fi
     echo "${1}=${2}" >>$CONFIG_FILE # add option
 }
-# Renders a text based list of options that can be selected by the
-# user using up, down and enter keys and returns the chosen option.
-#
+
+# === Renders a text based list of options that can be selected by the  ===
+# === user using up, down and enter keys and returns the chosen option. ===
 #   Arguments   : list of options, maximum of 256
 #                 "opt1" "opt2" ...
 #   Return value: selected index (0 for opt1, 1 for opt2 ...)
@@ -125,8 +126,9 @@ select_option() {
 
     return $(( $active_col + $active_row * $colmax ))
 }
+
+# === This will be shown on every set as user is progressing ===
 logo () {
-# This will be shown on every set as user is progressing
 echo -ne "
 -------------------------------------------------------------------------
  █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
@@ -140,9 +142,12 @@ echo -ne "
 ------------------------------------------------------------------------
 "
 }
+
+# === This function will handle file systems. At this movement we are handling only ===
+# === btrfs and ext4. Others will be added in future.                               ===
 filesystem () {
-# This function will handle file systems. At this movement we are handling only
-# btrfs and ext4. Others will be added in future.
+clear
+logo
 echo -ne "
 Please Select your file system for both boot and root
 "
@@ -173,8 +178,11 @@ done
 *) echo "Wrong option please select again"; filesystem;;
 esac
 }
+
+# === Added this from arch wiki https://wiki.archlinux.org/title/System_time ===
 timezone () {
-# Added this from arch wiki https://wiki.archlinux.org/title/System_time
+clear
+logo
 time_zone="$(curl --fail https://ipapi.co/timezone)"
 echo -ne "
 System detected your timezone to be '$time_zone' \n"
@@ -195,7 +203,11 @@ case ${options[$?]} in
     *) echo "Wrong option. Try again";timezone;;
 esac
 }
+
+# === To select the keymap
 keymap () {
+clear
+logo
 echo -ne "
 Please select key board layout from this list"
 # These are default key maps as presented in official arch repo archinstall
@@ -208,6 +220,7 @@ echo -ne "Your key boards layout: ${keymap} \n"
 set_option KEYMAP $keymap
 }
 
+# === Select if the drive is an ssd or not===
 drivessd () {
 echo -ne "
 Is this an ssd? yes/no:
@@ -225,8 +238,10 @@ case ${options[$?]} in
 esac
 }
 
-# selection for disk type
+# === selection for disk type ===
 diskpart () {
+clear
+logo
 echo -ne "
 ------------------------------------------------------------------------
     THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK
@@ -248,15 +263,18 @@ echo -e "\n${disk%|*} selected \n"
 
 drivessd
 }
+
+# === select userinfo ===
 userinfo () {
+clear
+logo
 read -p "Please enter your username: " username
 set_option USERNAME ${username,,} # convert to lower case as in issue #109 
 while true; do
-  echo -ne "Please enter your password: \n"
-  read -s password # read password without echo
-
-  echo -ne "Please repeat your password: \n"
-  read -s password2 # read password without echo
+  read -s -p "Please enter your password: " password # read password without echo
+  echo ""
+  read -s -p "Please repeat your password: " password2 # read password without echo
+  echo ""
 
   if [ "$password" = "$password2" ]; then
     set_option PASSWORD $password
@@ -269,8 +287,21 @@ read -rep "Please enter your hostname: " nameofmachine
 set_option NAME_OF_MACHINE $nameofmachine
 }
 
+# === select grub theme ===
+grubTheme () {
+  clear
+  logo
+  echo -ne "Select your grub theme:\n"
+  options=(cyberRE none)
+  select_option $? 4 "${options[@]}"
+  grub_theme=${options[$?]}
+  set_option GRUB_THEME $grub_theme
+}
+
+# === Let the user choose AUR helper from predefined list ===
 aurhelper () {
-  # Let the user choose AUR helper from predefined list
+  clear
+  logo
   echo -ne "Please enter your desired AUR helper:\n"
   options=(paru yay picaur aura trizen pacaur none)
   select_option $? 4 "${options[@]}"
@@ -278,8 +309,10 @@ aurhelper () {
   set_option AUR_HELPER $aur_helper
 }
 
+# === Let the user choose Desktop Enviroment from predefined list ===
 desktopenv () {
-  # Let the user choose Desktop Enviroment from predefined list
+  clear
+  logo
   echo -ne "Please select your desired Desktop Enviroment:\n"
   options=(gnome kde cinnamon xfce mate budgie lxde deepin openbox server)
   select_option $? 4 "${options[@]}"
@@ -287,7 +320,10 @@ desktopenv () {
   set_option DESKTOP_ENV $desktop_env
 }
 
+# === select installation type ===
 installtype () {
+  clear
+  logo
   echo -ne "Please select type of installation:\n\n
   Full install: Installs full featured desktop enviroment, with added apps and themes needed for everyday use\n
   Minimal Install: Installs only apps few selected apps to get you started\n"
@@ -297,36 +333,24 @@ installtype () {
   set_option INSTALL_TYPE $install_type
 }
 
-# More features in future
+# === More features in future ===
 # language (){}
 
-# Starting functions
-clear
-logo
+# === setup basic options for server installation ===
 userinfo
-clear
-logo
+grub_theme
+aurhelper
 desktopenv
-# Set fixed options that installation uses if user choses server installation
+
 set_option INSTALL_TYPE MINIMAL
-set_option AUR_HELPER NONE
+
+# === configure extra options for DE installation ===
 if [[ ! $desktop_env == server ]]; then
-  clear
-  logo
-  aurhelper
-  clear
-  logo
   installtype
 fi
-clear
-logo
+
+# === more basic options ===
 diskpart
-clear
-logo
 filesystem
-clear
-logo
 timezone
-clear
-logo
 keymap
