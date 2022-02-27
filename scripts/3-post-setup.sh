@@ -33,8 +33,8 @@ fi
 # set kernel parameter for adding splash screen
 sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& splash /' /etc/default/grub
 
-echo -e "Installing CyberRe Grub theme..."
 if [ "$GRUB_THEME" == "cyberRE"]; then
+  echo -e "Installing CyberRe Grub theme..."
   THEME_DIR="/boot/grub/themes"
   THEME_NAME=CyberRe
   echo -e "Creating the theme directory..."
@@ -49,9 +49,11 @@ if [ "$GRUB_THEME" == "cyberRE"]; then
   echo "GRUB_THEME=\"${THEME_DIR}/${THEME_NAME}/theme.txt\"" >> /etc/default/grub
 fi
 
+if [ "$GRUB_INSTALL" == "yes"]; then
 echo -e "Updating grub..."
 grub-mkconfig -o /boot/grub/grub.cfg
 echo -e "All set!"
+fi
 
 echo -ne "
 -------------------------------------------------------------------------

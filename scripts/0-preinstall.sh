@@ -155,6 +155,7 @@ echo "
   Generated /etc/fstab:
 "
 cat /mnt/etc/fstab
+if [${GRUB_INSTALL} == "yes"]; then
 echo -ne "
 -------------------------------------------------------------------------
                     GRUB BIOS Bootloader Install & Check
@@ -164,6 +165,7 @@ if [[ ! -d "/sys/firmware/efi" ]]; then
     grub-install --boot-directory=/mnt/boot ${DISK}
 else
     pacstrap /mnt efibootmgr --noconfirm --needed
+fi
 fi
 echo -ne "
 -------------------------------------------------------------------------

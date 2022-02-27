@@ -287,15 +287,28 @@ read -rep "Please enter your hostname: " nameofmachine
 set_option NAME_OF_MACHINE $nameofmachine
 }
 
+# === install grub or not ===
+grubInstall () {
+  echo -ne "Install grub?:\n"
+  options=(yes no)
+  select_option $? 4 "${options[@]}"
+  grub_install=${options[$?]}
+  set_option GRUB_INSTALL $grub_install
+}
+
 # === select grub theme ===
 grubTheme () {
   clear
   logo
-  echo -ne "Select your grub theme:\n"
-  options=(cyberRE none)
-  select_option $? 4 "${options[@]}"
-  grub_theme=${options[$?]}
-  set_option GRUB_THEME $grub_theme
+  grub_install
+  if ["$GRUB_INSTALL" == "yes"]; then
+    echo -ne "Select your grub theme:\n"
+    options=(cyberRE none)
+    select_option $? 4 "${options[@]}"
+    grub_theme=${options[$?]}
+    set_option GRUB_THEME $grub_theme
+  else
+    set_option GRUB_THEME none
 }
 
 # === Let the user choose AUR helper from predefined list ===
