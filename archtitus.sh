@@ -28,7 +28,8 @@ if [[ ! $DESKTOP_ENV == server ]]; then
   ( arch-chroot /mnt /usr/bin/runuser -u $USERNAME -- /home/$USERNAME/ArchTitus/scripts/2-user.sh )|& tee logs/2-user.log
 fi
 ( arch-chroot /mnt $HOME/ArchTitus/scripts/3-post-setup.sh )|& tee logs/3-post-setup.log
-cp -v *.log /mnt/home/$USERNAME
+mkdir /mnt/home/$USERNAME/installLogs
+cp -v logs/*.log /mnt/home/$USERNAME/installLogs
 
 echo -ne "
 -------------------------------------------------------------------------
