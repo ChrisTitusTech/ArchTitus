@@ -298,15 +298,19 @@ grubInstall () {
 
 # === select grub theme ===
 grubTheme () {
-  clear
-  logo
-  grub_install
-  if ["$GRUB_INSTALL" == "yes"]; then
     echo -ne "Select your grub theme:\n"
     options=(cyberRE none)
     select_option $? 4 "${options[@]}"
     grub_theme=${options[$?]}
     set_option GRUB_THEME $grub_theme
+}
+
+grubOptions () {
+  clear
+  logo
+  grubInstall
+  if ["$grub_install" == "yes"]; then
+    grubTheme
   else
     set_option GRUB_THEME none
   fi
@@ -352,7 +356,7 @@ installtype () {
 
 # === setup basic options for server installation ===
 userinfo
-grubTheme
+grubOptions
 aurhelper
 desktopenv
 
