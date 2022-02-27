@@ -352,7 +352,7 @@ installtype () {
 
 # === setup basic options for server installation ===
 userinfo
-grub_theme
+grubTheme
 aurhelper
 desktopenv
 
