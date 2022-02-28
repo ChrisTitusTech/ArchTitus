@@ -16,6 +16,28 @@ set_option() {
     fi
     echo "${1}=${2}" >>$CONFIG_FILE # add option
 }
+
+root_check() {
+    if [[ "$(id -u)" != "0" ]]; then
+        echo -ne "ERROR! This script must be run under the 'root' user!\n"
+        exit 0
+    fi
+}
+
+docker_check() {
+    if awk -F/ '$2 == "docker"' /proc/self/cgroup | read -r; then
+        echo -ne "ERROR! Docker container is not supported (at the moment)\n"
+        exit 0
+    elif [[ -f /.dockerenv ]]; then
+        echo -ne "ERROR! Docker container is not supported (at the moment)\n"
+        exit 0
+    fi
+}
+
+background_checks() {
+    root_check
+    docker_check
+}
 # Renders a text based list of options that can be selected by the
 # user using up, down and enter keys and returns the chosen option.
 #
