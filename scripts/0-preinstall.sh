@@ -78,7 +78,7 @@ do_btrfs() {
         btrfs subvolume create "$MOUNTPOINT"/"${x}" >/dev/null 2>&1
     done
 
-    umount /mnt
+    umount "$MOUNTPOINT"
     mount -o "$MOUNT_OPTIONS",subvol=@ "$2" "$MOUNTPOINT"
 
     for z in "${SUBVOLUMES[@]:1}"; do
