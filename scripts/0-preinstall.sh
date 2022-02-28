@@ -69,32 +69,23 @@ echo -ne "
                     Creating Filesystems
 -------------------------------------------------------------------------
 "
-createsubvolumes () {
-    btrfs subvolume create /mnt/@
-    btrfs subvolume create /mnt/@home
-    btrfs subvolume create /mnt/@var
-    btrfs subvolume create /mnt/@tmp
-    btrfs subvolume create /mnt/@.snapshots
-}
+do_btrfs() {
+    mkfs.btrfs -L "$1" "$2" -f
+    mount -t btrfs "$2" "$MOUNTPOINT"
 
-mountallsubvol () {
-    mount -o ${MOUNT_OPTIONS},subvol=@home ${partition3} /mnt/home
-    mount -o ${MOUNT_OPTIONS},subvol=@tmp ${partition3} /mnt/tmp
-    mount -o ${MOUNT_OPTIONS},subvol=@var ${partition3} /mnt/var
-    mount -o ${MOUNT_OPTIONS},subvol=@.snapshots ${partition3} /mnt/.snapshots
-}
+    echo "Creating subvolumes and directories"
+    for x in "${SUBVOLUMES[@]}"; do
+        btrfs subvolume create "$MOUNTPOINT"/"${x}" >/dev/null 2>&1
+    done
 
-subvolumesetup () {
-# create nonroot subvolumes
-    createsubvolumes     
-# unmount root to remount with subvolume 
     umount /mnt
-# mount @ subvolume
-    mount -o ${MOUNT_OPTIONS},subvol=@ ${partition3} /mnt
-# make directories home, .snapshots, var, tmp
-    mkdir -p /mnt/{home,var,tmp,.snapshots}
-# mount subvolumes
-    mountallsubvol
+    mount -o "$MOUNT_OPTIONS",subvol=@ "$2" "$MOUNTPOINT"
+
+    for z in "${SUBVOLUMES[@]:1}"; do
+        w="${z[*]//@/}"
+        mkdir /mnt/"${w}"
+        mount -o "$MOUNT_OPTIONS",subvol="${z}" "$2" "$MOUNTPOINT"/"${w}"
+    done
 }
 
 if [[ "${DISK}" =~ "nvme" ]]; then
@@ -107,9 +98,7 @@ fi
 
 if [[ "${FS}" == "btrfs" ]]; then
     mkfs.vfat -F32 -n "EFIBOOT" ${partition2}
-    mkfs.btrfs -L ROOT ${partition3} -f
-    mount -t btrfs ${partition3} /mnt
-    subvolumesetup
+    do_btrfs "ROOT" "${partition3}"
 elif [[ "${FS}" == "ext4" ]]; then
     mkfs.vfat -F32 -n "EFIBOOT" ${partition2}
     mkfs.ext4 -L ROOT ${partition3}

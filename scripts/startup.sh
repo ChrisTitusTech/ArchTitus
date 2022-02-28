@@ -22,6 +22,30 @@ set_option() {
 #   Arguments   : list of options, maximum of 256
 #                 "opt1" "opt2" ...
 #   Return value: selected index (0 for opt1, 1 for opt2 ...)
+
+set_btrfs() {
+    echo "Please enter your btrfs subvolumes separated by space"
+    echo "usualy they start with @."
+    echo "like @home, [defaults are @home, @var, @tmp, @.snapshots]"
+    echo " "
+    read -r -p "press enter to use default: " -a ARR
+    if [[ -z "${ARR[*]}" ]]; then
+        set_option "SUBVOLUMES" "(@ @home @var @tmp @.snapshots)"
+    else
+        NAMES=(@)
+        for i in "${ARR[@]}"; do
+            if [[ $i =~ [@] ]]; then
+                NAMES+=("$i")
+            else
+                NAMES+=(@"${i}")
+            fi
+        done
+        IFS=" " read -r -a SUBS <<<"$(tr ' ' '\n' <<<"${NAMES[@]}" | awk '!x[$0]++' | tr '\n' ' ')"
+        set_option "SUBVOLUMES" "${SUBS[*]}"
+        set_option "MOUNTPOINT" "/mnt"
+    fi
+}
+
 select_option() {
 
     # little helpers for terminal print control and key input
@@ -150,7 +174,10 @@ options=("btrfs" "ext4" "luks" "exit")
 select_option $? 1 "${options[@]}"
 
 case $? in
-0) set_option FS btrfs;;
+0)
+  set_btrfs
+  set_option FS btrfs
+  ;;
 1) set_option FS ext4;;
 2) 
 while true; do
