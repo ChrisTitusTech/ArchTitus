@@ -89,21 +89,24 @@ echo -ne "
                     Enabling Essential Services
 -------------------------------------------------------------------------
 "
-systemctl enable cups.service
-echo "  Cups enabled"
-ntpd -qg
-systemctl enable ntpd.service
-echo "  NTP enabled"
-systemctl disable dhcpcd.service
-echo "  DHCP disabled"
-systemctl stop dhcpcd.service
-echo "  DHCP stopped"
+# services part of the base installation
 systemctl enable NetworkManager.service
 echo "  NetworkManager enabled"
-systemctl enable bluetooth
-echo "  Bluetooth enabled"
 
 if [[ ${INSTALL_TYPE} == "FULL" ]]; then
+
+  # services part of full installation
+  systemctl enable cups.service
+  echo "  Cups enabled"
+  ntpd -qg
+  systemctl enable ntpd.service
+  echo "  NTP enabled"
+  systemctl disable dhcpcd.service
+  echo "  DHCP disabled"
+  systemctl stop dhcpcd.service
+  echo "  DHCP stopped"
+  systemctl enable bluetooth
+  echo "  Bluetooth enabled"
 
   if [[ "${FS}" == "luks" || "${FS}" == "btrfs" ]]; then
   echo -ne "
@@ -140,7 +143,7 @@ if [[ ${INSTALL_TYPE} == "FULL" ]]; then
   fi
   plymouth-set-default-theme -R arch-glow # sets the theme and runs mkinitcpio
   echo 'Plymouth theme installed'
-  
+
 fi
 
 echo -ne "
