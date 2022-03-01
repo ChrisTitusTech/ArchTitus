@@ -122,15 +122,15 @@ fi
 
 echo -ne "
 -------------------------------------------------------------------------
-               Enabling (and Theming) Plymouth Boot Splash
+              Enabling (and Theming) Plymouth Boot Splash
 -------------------------------------------------------------------------
 "
 PLYMOUTH_THEMES_DIR="$HOME/ArchTitus/configs/usr/share/plymouth/themes"
 PLYMOUTH_THEME="arch-glow" # can grab from config later if we allow selection
-mkdir -p /usr/share/plymouth/themes
+mkdir -p "/usr/share/plymouth/themes"
 echo 'Installing Plymouth theme...'
-cp -rf ${PLYMOUTH_THEMES_DIR}/${PLYMOUTH_THEME} /usr/share/plymouth/themes
-if  [[ $FS == "luks"]]; then
+cp -rf "${PLYMOUTH_THEMES_DIR}/${PLYMOUTH_THEME}" "/usr/share/plymouth/themes"
+if  [[ "${FS}" == "luks" ]]; then
   sed -i 's/HOOKS=(base udev*/& plymouth/' /etc/mkinitcpio.conf # add plymouth after base udev
   sed -i 's/HOOKS=(base udev \(.*block\) /&plymouth-/' /etc/mkinitcpio.conf # create plymouth-encrypt after block hook
 else
@@ -144,13 +144,14 @@ echo -ne "
                     Cleaning
 -------------------------------------------------------------------------
 "
+
+echo "Cleaning up sudoers file"
 # Remove no password sudo rights
-sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# %wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
 sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
 # Add sudo rights
-sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
+echo "Cleaning up installation files"
 rm -r $HOME/ArchTitus
 rm -r /home/$USERNAME/ArchTitus
 
