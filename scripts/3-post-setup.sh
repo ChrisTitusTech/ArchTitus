@@ -102,6 +102,8 @@ systemctl enable NetworkManager.service
 echo "  NetworkManager enabled"
 systemctl enable bluetooth
 echo "  Bluetooth enabled"
+systemctl enable fstrim.timer
+echo "  Periodic Trim enabled"
 
 if [[ "${FS}" == "luks" || "${FS}" == "btrfs" ]]; then
 echo -ne "
