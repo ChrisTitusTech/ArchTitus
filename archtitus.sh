@@ -1,4 +1,5 @@
 #!/bin/bash
+#github-action genshdoc
 
 # Find the name of the folder the scripts are in
 set -a

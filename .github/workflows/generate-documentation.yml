@@ -1,0 +1,27 @@
+name: Generate Documentation
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Github Action genshdoc
+      id: action-genshdoc
+      uses: vargiuscuola/genshdoc@master
+    - name: genshdoc result
+      run: echo "The result of genshdoc Action was ${{ steps.action-genshdoc.outputs.result }}"
+    - name: Commit files
+      run: |
+        echo ${{ github.ref }}
+        git add .
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git commit -m "CI: Automated build push" -a | exit 0
+    - name: Push changes
+      if: github.ref == 'refs/heads/main'
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}

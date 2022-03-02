@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#github-action genshdoc
 # This script will ask users about their prefrences 
 # like disk, file system, timezone, keyboard layout,
 # user name, password, etc.
