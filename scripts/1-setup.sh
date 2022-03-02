@@ -65,7 +65,7 @@ sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 
 #Enable multilib
 sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
-pacman -Sy --noconfirm --needed
+pacman -Sy --noconfirm --needed --color=always
 
 echo -ne "
 -------------------------------------------------------------------------
