@@ -1,0 +1,9 @@
+on: [pull_request]
+name: Dependabot-Issue
+
+jobs:
+  dependabot-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dependabot issue for PRs
+        uses: goatandsheep/dependabot-issue-action@v1.0.1
