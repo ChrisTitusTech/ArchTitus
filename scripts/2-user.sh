@@ -17,11 +17,11 @@ Installing AUR Softwares
 source $HOME/ArchTitus/configs/setup.conf
 
   cd ~
-  mkdir "/home/$USERNAME/.cache"
-  touch "/home/$USERNAME/.cache/zshhistory"
+  mkdir "$HOME/.cache"
+  touch "$HOME/.cache/zshhistory"
   git clone "https://github.com/ChrisTitusTech/zsh"
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
-  ln -s "~/zsh/.zshrc" ~/.zshrc
+  ln -s "$HOME/zsh/.zshrc" ~/.zshrc
 
 sed -n '/'$INSTALL_TYPE'/q;p' ~/ArchTitus/pkg-files/${DESKTOP_ENV}.txt | while read line
 do
