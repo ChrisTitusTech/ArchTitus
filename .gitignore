@@ -3,8 +3,4 @@ installlog.txt
 archnikus.code-workspace
 configs/setup.conf
 # keep logs out
-startup.log
-0-preinstall.log
-1-setup.log
-2-user.log
-3-post-setup.log
+configs/*.log
