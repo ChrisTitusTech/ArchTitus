@@ -109,11 +109,7 @@ elif [[ "${FS}" == "luks" ]]; then
     echo -n "${LUKS_PASSWORD}" | cryptsetup -y -v luksFormat ${partition3} -
 # open luks container and ROOT will be place holder 
     echo -n "${LUKS_PASSWORD}" | cryptsetup open ${partition3} ROOT -
-# now format that container
-    mkfs.btrfs -L ROOT ${partition3}
-# create subvolumes for btrfs
-    mount -t btrfs ${partition3} /mnt
-    subvolumesetup
+    do_btrfs "ROOT" "${partition3}"
 # store uuid of encrypted partition for grub
     echo ENCRYPTED_PARTITION_UUID=$(blkid -s UUID -o value ${partition3}) >> $CONFIGS_DIR/setup.conf
 fi
