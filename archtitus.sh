@@ -19,15 +19,17 @@ echo -ne "
 -------------------------------------------------------------------------
                 Scripts are in directory named ArchTitus
 "
-    ( bash $SCRIPT_DIR/scripts/startup.sh )|& tee startup.log
-      source $CONFIGS_DIR/setup.conf
-    ( bash $SCRIPT_DIR/scripts/0-preinstall.sh )|& tee 0-preinstall.log
-    ( arch-chroot /mnt $HOME/ArchTitus/scripts/1-setup.sh )|& tee 1-setup.log
-    if [[ ! $DESKTOP_ENV == server ]]; then
-      ( arch-chroot /mnt /usr/bin/runuser -u $USERNAME -- /home/$USERNAME/ArchTitus/scripts/2-user.sh )|& tee 2-user.log
-    fi
-    ( arch-chroot /mnt $HOME/ArchTitus/scripts/3-post-setup.sh )|& tee 3-post-setup.log
-    cp -v *.log /mnt/home/$USERNAME
+mkdir $SCRIPT_DIR/logs
+( bash $SCRIPT_DIR/scripts/startup.sh )|& tee $SCRIPT_DIR/logs/startup.log
+source $CONFIGS_DIR/setup.conf
+( bash $SCRIPT_DIR/scripts/0-preinstall.sh )|& tee $SCRIPT_DIR/logs/0-preinstall.log
+( arch-chroot /mnt $HOME/ArchTitus/scripts/1-setup.sh )|& $SCRIPT_DIR/logs/tee 1-setup.log
+if [[ ! $DESKTOP_ENV == server ]]; then
+  ( arch-chroot /mnt /usr/bin/runuser -u $USERNAME -- /home/$USERNAME/ArchTitus/scripts/2-user.sh )|& tee $SCRIPT_DIR/logs/2-user.log
+fi
+( arch-chroot /mnt $HOME/ArchTitus/scripts/3-post-setup.sh )|& tee $SCRIPT_DIR/logs/3-post-setup.log
+mkdir /mnt/home/$USERNAME/installLogs
+cp -v $SCRIPT_DIR/logs/*.log /mnt/home/$USERNAME/installLogs
 
 echo -ne "
 -------------------------------------------------------------------------
