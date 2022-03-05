@@ -154,7 +154,7 @@ echo "
   Generated /etc/fstab:
 "
 cat /mnt/etc/fstab
-if [${GRUB_INSTALL} == "yes"]; then
+if [${GRUB_INSTALL} == "Yes"]; then
 echo -ne "
 -------------------------------------------------------------------------
                     GRUB BIOS Bootloader Install & Check
