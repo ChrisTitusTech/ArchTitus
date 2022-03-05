@@ -298,7 +298,7 @@ grubInstall () {
 # === select grub theme ===
 grubTheme () {
     echo -ne "Select your grub theme:\n"
-    options=(cyberRE none)
+    options=("cyberRE" "none")
     select_option $? 4 "${options[@]}"
     grub_theme=${options[$?]}
     set_option GRUB_THEME $grub_theme
