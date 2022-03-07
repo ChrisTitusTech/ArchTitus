@@ -140,6 +140,25 @@ echo -ne "
 ------------------------------------------------------------------------
 "
 }
+swapfile() {
+  local TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
+  if [[ $TOTAL_MEM -lt 8000000 ]]; then
+    set_option SWAPFILE true
+  else
+    echo -ne "Add swap?
+    " 
+    options=("Yes" "No")
+    select_option $? 1 "${options[@]}"
+
+    case ${options[$?]} in
+        y|Y|yes|Yes|YES)
+        set_option SWAPFILE true;;
+        n|N|no|NO|No)
+        set_option SWAPFILE false;;
+        *) echo "Wrong option. Try again"; swapfile;;
+    esac
+  fi
+}
 filesystem () {
 # This function will handle file systems. At this movement we are handling only
 # btrfs and ext4. Others will be added in future.
@@ -321,6 +340,9 @@ fi
 clear
 logo
 diskpart
+clear
+logo
+swapfile
 clear
 logo
 filesystem
