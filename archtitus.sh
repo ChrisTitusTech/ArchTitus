@@ -1,4 +1,5 @@
 #!/bin/bash
+#github-action genshdoc
 # shellcheck disable=SC1090,SC1091
 
 # Find the name of the folder the scripts are in
