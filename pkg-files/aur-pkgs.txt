@@ -8,6 +8,7 @@ lightly-git
 lightlyshaders-git
 mangohud
 mangohud-common
+mkinitcpio-firmware
 nerd-fonts-fira-code
 nordic-darker-standard-buttons-theme
 nordic-darker-theme
