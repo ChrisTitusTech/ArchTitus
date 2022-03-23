@@ -51,6 +51,7 @@ grub-customizer
 gst-libav
 gst-plugins-good
 gst-plugins-ugly
+gst-plugin-pipewire
 haveged
 htop
 jdk-openjdk
@@ -60,6 +61,8 @@ libtool
 lsof
 lutris
 lzop
+lib32-pipewire
+lib32-pipewire-jack
 m4
 make
 neofetch
@@ -74,9 +77,8 @@ patch
 picom
 pkgconf
 powerline-fonts
-pulseaudio
-pulseaudio-alsa
-pulseaudio-bluetooth
+pipewire
+pipewire-alsa
 python-notify2
 python-psutil
 python-pyqt5
@@ -101,6 +103,7 @@ which
 wine-gecko
 wine-mono
 winetricks
+wireplumber
 zip
 zsh
 zsh-syntax-highlighting
