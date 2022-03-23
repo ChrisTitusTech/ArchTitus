@@ -71,7 +71,6 @@ os-prober
 p7zip
 papirus-icon-theme
 patch
-picom
 pkgconf
 powerline-fonts
 pulseaudio
