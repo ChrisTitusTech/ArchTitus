@@ -18,8 +18,12 @@ GRUB EFI Bootloader Install & Check
 "
 source ${HOME}/ArchTitus/configs/setup.conf
 
+
 if [[ -d "/sys/firmware/efi" ]]; then
-    grub-install --efi-directory=/boot ${DISK}
+  if [[ $INSTALL_IN = "PART" ]]; then
+    grub-install --efi-directory=/boot/EFI ${PART}
+  elif [[ $INSTALL_IN = "DISK" ]]; then
+    grub-install --efi-directory=/boot/EFI ${DISK}
 fi
 
 echo -ne "
