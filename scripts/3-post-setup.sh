@@ -21,9 +21,9 @@ source ${HOME}/ArchTitus/configs/setup.conf
 
 if [[ -d "/sys/firmware/efi" ]]; then
   if [[ $INSTALL_IN = "PART" ]]; then
-    grub-install --efi-directory=/boot/EFI ${PART}
+    grub-install --efi-directory=/boot/efi ${PART}
   elif [[ $INSTALL_IN = "DISK" ]]; then
-    grub-install --efi-directory=/boot/EFI ${DISK}
+    grub-install --efi-directory=/boot/efi ${DISK}
 fi
 
 echo -ne "
