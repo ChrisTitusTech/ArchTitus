@@ -115,7 +115,7 @@ if [[ $INSTALL_IN = "PART" ]]; then # Checking if install to partition
         # mount EFI partition
         mkdir -p /mnt/boot/efi
         mount -t vfat ${EFIpartition} /mnt/boot/efi
-    elif [[ $(sudo sudo fdisk -l | grep -i '^Disklabel type') = "Disklabel type: gpt" ]]; then # Checking for GPT Disk Label on a Legacy BIOS (non UEFI) System
+    elif [[ $(fdisk -l | grep -i '^Disklabel type') = "Disklabel type: gpt" ]]; then # Checking for GPT Disk Label on a Legacy BIOS (non UEFI) System
         formatandmount
     fi
 fi
