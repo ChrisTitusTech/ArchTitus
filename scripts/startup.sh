@@ -276,19 +276,24 @@ case $? in
     you select the right partition that donot contain any useful files.
 ------------------------------------------------------------------------
 
-
 "
 
   fdisk -l
 
+  echo -e "\nWhich disk do you want to select the partition from?"
+  options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
+
+  select_option $? 1 "${options[@]}"
+  disk=${options[$?]%|*}
+  set_option DISK ${disk%|*}
+
   echo -e "\n"
   echo "Select the Partition to Install on (This will be the root partition mounted on \"\\\"): "
-  options=($(lsblk -n --output TYPE,KNAME,SIZE,MOUNTPOINT | awk '$1=="part"{print "/dev/"$2"|"$3"__________"$4}'))
+  options=($(lsblk -n --output TYPE,KNAME,SIZE,MOUNTPOINT ${disk%|*} | awk '$1=="part"{print "/dev/"$2"|"$3"__________"$4}'))
   
   select_option $? 1 "${options[@]}"
   part=${options[$?]%|*}
   set_option INSTALL_IN "PART"
-  set_option DISK ""
   set_option PART ${part%|*}
 
   echo -e "\n${part%|*} selected as root partition. Is that OK?"
@@ -365,7 +370,7 @@ case $? in
     *) set_option FORMATEFI "no" ;;
     esac
 
-  elif [[ $(fdisk -l | grep -i 'Disklabel type') = "Disklabel type: gpt" ]]; then # Checking for GPT Disk Label on a Legacy BIOS (non UEFI) System
+  elif [[ $(fdisk -l ${disk%|*} | grep -i 'Disklabel type') = "Disklabel type: gpt" ]]; then # Checking for GPT Disk Label on a Legacy BIOS (non UEFI) System
     clear
     echo -en "
     ------------------------------------------------------------------------
