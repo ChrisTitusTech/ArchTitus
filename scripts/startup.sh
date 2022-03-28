@@ -365,7 +365,7 @@ case $? in
     *) set_option FORMATEFI "no" ;;
     esac
 
-  elif [[ $(sudo sudo fdisk -l | grep -i '^Disklabel type') = "Disklabel type: gpt" ]]; then # Checking for GPT Disk Label on a Legacy BIOS (non UEFI) System
+  elif [[ $(fdisk -l | grep -i 'Disklabel type') = "Disklabel type: gpt" ]]; then # Checking for GPT Disk Label on a Legacy BIOS (non UEFI) System
     clear
     echo -en "
     ------------------------------------------------------------------------
