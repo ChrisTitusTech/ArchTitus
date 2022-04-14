@@ -86,7 +86,7 @@ if [[ ! $DESKTOP_ENV == server ]]; then
       continue
     fi
     echo "INSTALLING: ${line}"
-    sudo pacman -S --noconfirm --needed ${line}
+    pacman -S --noconfirm --needed ${line}
   done
 fi
 echo -ne "
