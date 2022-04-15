@@ -1,3 +1,4 @@
+base-devel
 mesa
 xorg
 xorg-server
@@ -5,7 +6,7 @@ xorg-apps
 xorg-drivers
 xorg-xkill
 xorg-xinit
-xterm
+# xterm
 binutils
 dosfstools
 linux-headers
@@ -13,95 +14,104 @@ noto-fonts-emoji
 usbutils
 xdg-user-dirs
 --END OF MINIMAL INSTALL--
-alsa-plugins
-alsa-utils
-autoconf
-automake
-awesome-terminal-fonts
-bash-completion
-bind
-bison
-bluez
-bluez-libs
-bluez-utils
-bridge-utils
+# alsa-plugins
+# alsa-utils
+## autoconf
+## automake
+# awesome-terminal-fonts
+# bash-completion
+# bind
+## bison
+# bluez
+# bluez-libs
+# bluez-utils
+# bridge-utils
 btrfs-progs
-celluloid
-cmatrix
+# celluloid
+# cmatrix
 code
 cronie
 cups
 dialog
-dmidecode
-dnsmasq
-dtc
+# dmidecode
+# dnsmasq
+# dtc
 efibootmgr
-egl-wayland
+# egl-wayland
 exfat-utils
-flex
+## flex
 fuse2
 fuse3
-fuseiso
-gamemode
-gcc
-gimp
+# fuseiso
+# gamemode
+## gcc
+# gimp
 gparted
 gptfdisk
-grub-customizer
-gst-libav
-gst-plugins-good
-gst-plugins-ugly
-haveged
+# grub-customizer
+# gst-libav
+# gst-plugins-good
+# gst-plugins-ugly
+# haveged
 htop
-jdk-openjdk
-kitty
-libdvdcss
-libtool
-lsof
-lutris
-lzop
-m4
-make
-neofetch
+# jdk-openjdk
+# kitty
+# libdvdcss
+## libtool
+# lsof
+# lutris
+# lzop
+## m4
+## make
+# neofetch
 ntfs-3g
 ntp
-openbsd-netcat
+# openbsd-netcat
 openssh
 os-prober
-p7zip
-papirus-icon-theme
-patch
-picom
+# p7zip
+# papirus-icon-theme
+## patch
+# picom
 pkgconf
-powerline-fonts
-pulseaudio
-pulseaudio-alsa
-pulseaudio-bluetooth
-python-notify2
-python-psutil
-python-pyqt5
-python-pip
-qemu
-snap-pac
-snapper
-steam
-swtpm
-synergy
+# powerline-fonts
+# pulseaudio
+# pulseaudio-alsa
+# pulseaudio-bluetooth
+# python-notify2
+# python-psutil
+# python-pyqt5
+# python-pip
+# qemu
+# snap-pac
+# snapper
+# steam
+# swtpm
+# synergy
 terminus-font
-traceroute
-ttf-droid
-ttf-hack
-ttf-roboto
-ufw
-unrar
-unzip
+# traceroute
+# ttf-droid
+# ttf-hack
+# ttf-roboto
+# ufw
+# unrar
+# unzip
 virt-manager
 virt-viewer
-which
-wine-gecko
-wine-mono
-winetricks
+## which
+# wine-gecko
+# wine-mono
+# winetricks
 zip
-zsh
-zsh-syntax-highlighting
-zsh-autosuggestions
+# zsh
+# zsh-syntax-highlighting
+# zsh-autosuggestions
+#
+##########################################
+###   MY PACKAGES
+##########################################
+gst-plugin-pipewire
+pipewire
+pipewire-alsa
+pipewire-jack
+pipewire-pulse

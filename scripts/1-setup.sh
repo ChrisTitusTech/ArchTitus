@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 #github-action genshdoc
-#
-# @file Setup
-# @brief Configures installed system, installs base packages, and creates user. 
 echo -ne "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
@@ -22,7 +19,7 @@ echo -ne "
                     Network Setup 
 -------------------------------------------------------------------------
 "
-pacman -S --noconfirm --needed networkmanager dhclient
+pacman -S --noconfirm --needed networkmanager dhclient #X dhcclient unnecessary?
 systemctl enable --now NetworkManager
 echo -ne "
 -------------------------------------------------------------------------
@@ -48,21 +45,33 @@ sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g" /etc/makepkg
 fi
 echo -ne "
 -------------------------------------------------------------------------
-                    Setup Language to US and set locale  
+                    Setup Language to DE and set locale  
 -------------------------------------------------------------------------
 "
-sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+# my locale on my ACER:
+#    System Locale: LANG=en_US.UTF-8
+#                   LC_TIME=de_CH.UTF-8
+#        VC Keymap: de-latin1-nodeadkeys
+#       X11 Layout: de
+#        X11 Model: acer_laptop
+#      X11 Variant: nodeadkeys
+# 
+# sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+sed -i 's/^#de_CH.UTF-8 UTF-8/de_CH.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 timedatectl --no-ask-password set-timezone ${TIMEZONE}
 timedatectl --no-ask-password set-ntp 1
-localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_TIME="en_US.UTF-8"
+# localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_TIME="en_US.UTF-8"
+localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_TIME="de_CH.UTF-8"
 ln -s /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 # Set keymaps
 localectl --no-ask-password set-keymap ${KEYMAP}
+localectl set-x11-keymap de acer_laptop nodeadkeys
 
-# Add sudo no password rights
-sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
-sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
+#X Sudo shall require password
+# # Add sudo no password rights
+# sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
+# sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
 
 #Add parallel downloading
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
@@ -76,7 +85,7 @@ echo -ne "
                     Installing Base System  
 -------------------------------------------------------------------------
 "
-# sed $INSTALL_TYPE is using install type to check for MINIMAL installation, if it's true, stop
+# sed $INSTALL_TYPE is using install type to check for MINIMAL installation, if it's true, stop #X 'trims' the file
 # stop the script and move on, not installing any more packages below that line
 if [[ ! $DESKTOP_ENV == server ]]; then
   sed -n '/'$INSTALL_TYPE'/q;p' $HOME/ArchTitus/pkg-files/pacman-pkgs.txt | while read line
@@ -85,8 +94,10 @@ if [[ ! $DESKTOP_ENV == server ]]; then
       # If selected installation type is FULL, skip the --END OF THE MINIMAL INSTALLATION-- line
       continue
     fi
+    if [[ ! $line = \#* ]] ; then
     echo "INSTALLING: ${line}"
     sudo pacman -S --noconfirm --needed ${line}
+    fi
   done
 fi
 echo -ne "
