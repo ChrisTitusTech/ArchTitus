@@ -123,6 +123,12 @@ elif grep -E "Integrated Graphics Controller" <<< ${gpu_type}; then
 elif grep -E "Intel Corporation UHD" <<< ${gpu_type}; then
     pacman -S --needed --noconfirm libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa
 fi
+
+echo -ne "
+-------------------------------------------------------------------------
+                    Set username, password, hostname
+-------------------------------------------------------------------------
+"
 #SETUP IS WRONG THIS IS RUN
 if ! source $HOME/ArchTitus/configs/setup.conf; then
 	# Loop through user input until the user gives a valid username
@@ -137,12 +143,12 @@ if ! source $HOME/ArchTitus/configs/setup.conf; then
 		fi 
 		echo "Incorrect username."
 	done 
-# convert name to lowercase before saving to setup.conf
-echo "username=${username,,}" >> ${HOME}/ArchTitus/configs/setup.conf
+    # convert name to lowercase before saving to setup.conf
+    echo "username=${username,,}" >> ${HOME}/ArchTitus/configs/setup.conf
 
     #Set Password
     read -p "Please enter password:" password
-echo "password=${password,,}" >> ${HOME}/ArchTitus/configs/setup.conf
+    echo "password=${password,,}" >> ${HOME}/ArchTitus/configs/setup.conf
 
     # Loop through user input until the user gives a valid hostname, but allow the user to force save 
 	while true
