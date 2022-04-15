@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 #github-action genshdoc
+#
+# @file Post-Setup
+# @brief Finalizing installation configurations and cleaning up after script.
 echo -ne "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
