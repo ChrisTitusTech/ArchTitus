@@ -8,7 +8,9 @@
 #  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 #-------------------------------------------------------------------------
 #github-action genshdoc
-
+#
+# @file Preinstall
+# @brief Contains the steps necessary to configure and pacstrap the install to selected drive. 
 echo -ne "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
@@ -50,6 +52,7 @@ echo -ne "
                     Formating Disk
 -------------------------------------------------------------------------
 "
+# @description Creates the btrfs subvolumes. 
 createsubvolumes () {
     btrfs subvolume create /mnt/@
     btrfs subvolume create /mnt/@home
@@ -58,6 +61,7 @@ createsubvolumes () {
     btrfs subvolume create /mnt/@.snapshots
 }
 
+# @description Mount all btrfs subvolumes after root has been mounted.
 mountallsubvol () {
     mount -o ${MOUNT_OPTIONS},subvol=@home ${rootpartition} /mnt/home
     mount -o ${MOUNT_OPTIONS},subvol=@tmp ${rootpartition} /mnt/tmp
@@ -65,6 +69,7 @@ mountallsubvol () {
     mount -o ${MOUNT_OPTIONS},subvol=@.snapshots ${rootpartition} /mnt/.snapshots
 }
 
+# @description BTRFS subvolulme creation and mounting. 
 subvolumesetup () {
 # create nonroot subvolumes
     createsubvolumes     
