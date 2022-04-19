@@ -19,4 +19,16 @@
 # snapper-gui-git
 # ttf-meslo
 # vde2
+###################
+##  my packages
+###################
+epson-inkjet-printer-escpr
+mathpix-snipping-tool
+rambox-bin
+spotify
+superproductivity-bin
+# teamviewer
+# timeshift
+# visual-studio-code-bin
+zotero
 zoom

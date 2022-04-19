@@ -35,8 +35,10 @@ do
     # If selected installation type is FULL, skip the --END OF THE MINIMAL INSTALLATION-- line
     continue
   fi
-  echo "INSTALLING: ${line}"
-  sudo pacman -S --noconfirm --needed ${line}
+  if [[ ! $line = \#* ]] ; then
+    echo "INSTALLING: ${line}"
+    sudo pacman -S --noconfirm --needed ${line}
+  fi
 done
 
 echo -ne "

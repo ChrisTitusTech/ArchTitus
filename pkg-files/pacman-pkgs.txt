@@ -14,6 +14,7 @@ noto-fonts-emoji
 usbutils
 xdg-user-dirs
 --END OF MINIMAL INSTALL--
+avahi
 # alsa-plugins
 # alsa-utils
 ## autoconf
@@ -115,3 +116,30 @@ pipewire
 pipewire-alsa
 pipewire-jack
 pipewire-pulse
+########################
+adobe-source-code-pro-fonts
+firefox
+flatpak
+grep
+gscan2pdf
+guake
+htop
+openconnect
+openvpn
+networkmanager
+networkmanager-openconnect
+networkmanager-openvpn
+obs-studio
+# okular
+opencore-amr
+openjpeg2
+openresolv
+openssh
+openssl
+openvpn
+python
+qgis
+r
+rclone
+sane
+texlive-most

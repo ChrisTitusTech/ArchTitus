@@ -58,18 +58,20 @@ echo -ne "
 # 
 # sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 sed -i 's/^#de_CH.UTF-8 UTF-8/de_CH.UTF-8 UTF-8/' /etc/locale.gen
-cat "LANG=en_US.UTF-8" >> /etc/locale.conf
-cat "LC_TIME=de_CH.UTF-8" >> /etc/locale.conf
-
+locale-gen
+touch /etc/locale.conf
+cat "LANG=en_US.UTF-8" | tee -a /etc/locale.conf
+cat "LC_TIME=de_CH.UTF-8" | tee -a /etc/locale.conf
 timedatectl --no-ask-password set-timezone ${TIMEZONE}
 timedatectl --no-ask-password set-ntp 1
 # localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_TIME="en_US.UTF-8"
 localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_TIME="de_CH.UTF-8"
 ln -s /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 # Set keymaps
+touch /etc/vconsole
+echo "KEYMAP=$KEYMAP" | tee /etc/vconsole
 localectl --no-ask-password set-keymap ${KEYMAP}
 localectl set-x11-keymap de acer_laptop nodeadkeys
-locale-gen
 
 # Add sudo no password rights
 sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
@@ -132,9 +134,9 @@ if grep -E "NVIDIA|GeForce" <<< ${gpu_type}; then
 elif lspci | grep 'VGA' | grep -E "Radeon|AMD"; then
     pacman -S --noconfirm --needed xf86-video-amdgpu
 elif grep -E "Integrated Graphics Controller" <<< ${gpu_type}; then
-    pacman -S --noconfirm --needed libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa
+    pacman -S --noconfirm --needed libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-utils lib32-mesa
 elif grep -E "Intel Corporation UHD" <<< ${gpu_type}; then
-    pacman -S --needed --noconfirm libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa
+    pacman -S --needed --noconfirm libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-utils lib32-mesa
 fi
 
 echo -ne "

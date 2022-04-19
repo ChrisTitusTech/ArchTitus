@@ -6,10 +6,10 @@ this script is from [GitHub](https://github.com/ChrisTitusTech/ArchTitus) and is
 ## boot
 - dual boot for windows (dont delete partition)
 - skip boot menu (show if 'shift' pressed down)
-- do not use grub-theming
+<!-- - do not use grub-theming -->
 ## package-install
 - pacman-pkgs.txt
-    - replace pulseaudio with pipewire
+    <!-- - replace pulseaudio with pipewire -->
 - GPU packages
     - check if all nessecary:
     libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa
@@ -45,6 +45,13 @@ and in `1-setup.sh` set:
 ### delete zsh
 in `2-user.sh`
 ### turn of terminal bell/beep
+## Gnome-shell-extensions
+### Install 
+from file
+### configure
+link and compile extensions from extension with gsettings according to askubuntu.com (configure gnome-shell extensions from command line)
+## setup rclone with gdrived
+
 
 
 ## CleanUp
