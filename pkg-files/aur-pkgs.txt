@@ -16,7 +16,9 @@ nordic-theme
 ocs-url
 plymouth-git
 sddm-nordic-theme-git
+sddm-sugar-candy-git
 snapper-gui-git
+teamviewer
 ttf-meslo
-vde2
+whatsapp-nativefier
 zoom
