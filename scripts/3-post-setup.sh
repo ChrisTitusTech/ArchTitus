@@ -5,19 +5,20 @@
 # @brief Finalizing installation configurations and cleaning up after script.
 echo -ne "
 -------------------------------------------------------------------------
+
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
   ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
   ███████║██████╔╝██║     ███████║   ██║   ██║   ██║   ██║   ██║███████╗
   ██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
   ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
--------------------------------------------------------------------------
-                    Automated Arch Linux Installer
-                        SCRIPTHOME: ArchTitus
--------------------------------------------------------------------------
 
-Final Setup and Configurations
-GRUB EFI Bootloader Install & Check
+-------------------------------------------------------------------------
+                     Automated Arch Linux Installer
+                         SCRIPTHOME:  ArchTitus
+-------------------------------------------------------------------------
+                     Final Setup and Configurations
+                  GRUB EFI Bootloader: Install & Check
 "
 source ${HOME}/ArchTitus/configs/setup.conf
 
@@ -27,7 +28,7 @@ fi
 
 echo -ne "
 -------------------------------------------------------------------------
-               Creating (and Theming) Grub Boot Menu
+                  Creating (and Theming) Grub Boot Menu
 -------------------------------------------------------------------------
 "
 # set kernel parameter for decrypting the drive
@@ -56,7 +57,7 @@ echo -e "All set!"
 
 echo -ne "
 -------------------------------------------------------------------------
-               Enabling (and Theming) Login Display Manager
+              Enabling (and Theming) Login Display Manager
 -------------------------------------------------------------------------
 "
 if [[ ${DESKTOP_ENV} == "kde" ]]; then
@@ -90,7 +91,7 @@ fi
 
 echo -ne "
 -------------------------------------------------------------------------
-                    Enabling Essential Services
+                       Enabling Essential Services
 -------------------------------------------------------------------------
 "
 systemctl enable cups.service
@@ -112,7 +113,7 @@ echo "  Avahi enabled"
 if [[ "${FS}" == "luks" || "${FS}" == "btrfs" ]]; then
 echo -ne "
 -------------------------------------------------------------------------
-                    Creating Snapper Config
+                         Creating Snapper Config
 -------------------------------------------------------------------------
 "
 
@@ -147,7 +148,7 @@ echo 'Plymouth theme installed'
 
 echo -ne "
 -------------------------------------------------------------------------
-                    Cleaning
+                                Cleaning
 -------------------------------------------------------------------------
 "
 # Remove no password sudo rights
