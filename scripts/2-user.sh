@@ -76,7 +76,7 @@ echo -ne "
               Theming DE if user chose FULL installation
 -------------------------------------------------------------------------
 "
-if [[ $INSTALL_TYPE == "FULL" ]]; then
+# if [[ $INSTALL_TYPE == "FULL" ]]; then
   if [[ $DESKTOP_ENV == "kde" ]]; then
     cp -r ~/ArchTitus/configs/.config/* ~/.config/
     pip install konsave
@@ -91,7 +91,7 @@ if [[ $INSTALL_TYPE == "FULL" ]]; then
     echo "Setting up my gnome things:  "
     bash ~/ArchTitus/scripts/my_gnome_setup.sh
   fi
-fi
+# fi
 
 echo -ne "
 -------------------------------------------------------------------------
