@@ -87,6 +87,9 @@ if [[ $INSTALL_TYPE == "FULL" ]]; then
     cd ~
     git clone https://github.com/stojshic/dotfiles-openbox
     ./dotfiles-openbox/install-titus.sh
+  elif [[ $DESKTOP_ENV == "gnome" ]]
+    echo "Setting up my gnome things:  "
+    bash ~/ArchTitus/scripts/my_gnome_setup.sh
   fi
 fi
 
