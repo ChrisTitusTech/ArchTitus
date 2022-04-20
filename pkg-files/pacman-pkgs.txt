@@ -16,6 +16,7 @@ alsa-utils
 autoconf
 automake
 awesome-terminal-fonts
+barrier
 bash-completion
 bind
 bison
@@ -32,10 +33,14 @@ cups
 dialog
 dmidecode
 dnsmasq
+docker
 dtc
 efibootmgr
 egl-wayland
 exfat-utils
+firefox
+firefox-decentraleyes
+firefox-ublock-origin
 flex
 fuse2
 fuse3
@@ -84,7 +89,7 @@ snap-pac
 snapper
 steam
 swtpm
-synergy
+telegram-desktop
 terminus-font
 traceroute
 ttf-droid

@@ -6,21 +6,21 @@
 echo -ne "
 -------------------------------------------------------------------------
 
-   █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
-  ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
-  ███████║██████╔╝██║     ███████║   ██║   ██║   ██║   ██║   ██║███████╗
-  ██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
-  ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
-  ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
-
+         ██████╗ █████╗ ██████╗ ██╗              ██████╗ ███████╗
+        ██╔════╝██╔══██╗██╔══██╗██║             ██╔═══██╗██╔════╝
+        ██║     ███████║██████╔╝██║             ██║   ██║███████╗
+        ██║     ██╔══██║██╔══██╗██║             ██║   ██║╚════██║
+        ╚██████╗██║  ██║██║  ██║███████╗███████╗╚██████╔╝███████║
+         ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝ ╚═════╝ ╚══════╝
+         
 -------------------------------------------------------------------------
                      Automated Arch Linux Installer
-                         SCRIPTHOME:  ArchTitus
+                          SCRIPTHOME:  Carl_OS
 -------------------------------------------------------------------------
                      Final Setup and Configurations
                   GRUB EFI Bootloader: Install & Check
 "
-source ${HOME}/ArchTitus/configs/setup.conf
+source ${HOME}/Carl_OS/configs/setup.conf
 
 if [[ -d "/sys/firmware/efi" ]]; then
     grub-install --efi-directory=/boot ${DISK}
@@ -44,7 +44,7 @@ THEME_NAME=CyberRe
 echo -e "Creating the theme directory..."
 mkdir -p "${THEME_DIR}/${THEME_NAME}"
 echo -e "Copying the theme..."
-cd ${HOME}/ArchTitus
+cd ${HOME}/Carl_OS
 cp -a configs${THEME_DIR}/${THEME_NAME}/* ${THEME_DIR}/${THEME_NAME}
 echo -e "Backing up Grub config..."
 cp -an /etc/default/grub /etc/default/grub.bak
@@ -68,12 +68,12 @@ if [[ ${DESKTOP_ENV} == "kde" ]]; then
   fi
 
 elif [[ "${DESKTOP_ENV}" == "gnome" ]]; then
-  systemctl enable gdm.service
+  systemctl enable gdm.service 
 
 elif [[ "${DESKTOP_ENV}" == "lxde" ]]; then
   systemctl enable lxdm.service
 
-elif [[ "${DESKTOP_ENV}" == "openbox"] || ["${DESKTOP_ENV}" == "awesome"] ]]; then
+elif [[ ["${DESKTOP_ENV}" == "openbox"] || ["${DESKTOP_ENV}" == "awesome"] ]]; then
   systemctl enable lightdm.service
   if [[ "${INSTALL_TYPE}" == "FULL" ]]; then
     # Set default lightdm-webkit2-greeter theme to Litarvan
@@ -110,6 +110,18 @@ echo "  Bluetooth enabled"
 systemctl enable avahi-daemon.service
 echo "  Avahi enabled"
 
+echo -ne "
+-------------------------------------------------------------------------
+                   Setting up my Docker environment
+-------------------------------------------------------------------------
+"
+systemctl enable docker
+echo "  Docker enabled"
+systemctl start docker
+echo "  Docker started"
+
+docker pull gitea/gitea
+
 if [[ "${FS}" == "luks" || "${FS}" == "btrfs" ]]; then
 echo -ne "
 -------------------------------------------------------------------------
@@ -117,11 +129,11 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 
-SNAPPER_CONF="$HOME/ArchTitus/configs/etc/snapper/configs/root"
+SNAPPER_CONF="$HOME/Carl_OS/configs/etc/snapper/configs/root"
 mkdir -p /etc/snapper/configs/
 cp -rfv ${SNAPPER_CONF} /etc/snapper/configs/
 
-SNAPPER_CONF_D="$HOME/ArchTitus/configs/etc/conf.d/snapper"
+SNAPPER_CONF_D="$HOME/Carl_OS/configs/etc/conf.d/snapper"
 mkdir -p /etc/conf.d/
 cp -rfv ${SNAPPER_CONF_D} /etc/conf.d/
 
@@ -132,12 +144,12 @@ echo -ne "
                Enabling (and Theming) Plymouth Boot Splash
 -------------------------------------------------------------------------
 "
-PLYMOUTH_THEMES_DIR="$HOME/ArchTitus/configs/usr/share/plymouth/themes"
+PLYMOUTH_THEMES_DIR="$HOME/Carl_OS/configs/usr/share/plymouth/themes"
 PLYMOUTH_THEME="arch-glow" # can grab from config later if we allow selection
 mkdir -p /usr/share/plymouth/themes
 echo 'Installing Plymouth theme...'
 cp -rf ${PLYMOUTH_THEMES_DIR}/${PLYMOUTH_THEME} /usr/share/plymouth/themes
-if  [[ {$FS} == "luks" ]]; then
+if  [[ "${FS}" == "luks" ]]; then
   sed -i 's/HOOKS=(base udev*/& plymouth/' /etc/mkinitcpio.conf # add plymouth after base udev
   sed -i 's/HOOKS=(base udev \(.*block\) /&plymouth-/' /etc/mkinitcpio.conf # create plymouth-encrypt after block hook
 else
@@ -158,8 +170,8 @@ sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# %wheel ALL=(ALL:ALL) NOPASSWD: A
 sed -i 's/^# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 sed -i 's/^# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
-rm -r $HOME/ArchTitus
-rm -r /home/$USERNAME/ArchTitus
+rm -r $HOME/Carl_OS
+rm -r /home/$USERNAME/Carl_OS
 
 # Replace in the same state
 cd $pwd

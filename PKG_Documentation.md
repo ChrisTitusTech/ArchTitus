@@ -18,7 +18,7 @@
 
 * [MATE Desktop Environment](#mate-desktop-environment)
 
-* [Openbox and Awesome](#openbox-and-awesome)
+* [Openbox](#openbox)
 
 * [XFCE Desktop Environment](#xfce-desktop-environment)
 
@@ -26,7 +26,7 @@
 
 #### Essentials
 
-The following packages are included in all ArchTitus versions and flavours since they are essential pieces of the operating system:
+The following packages are included in all Carl_OS versions and flavours since they are essential pieces of the operating system:
 
 * **[binutils](https://archlinux.org/packages/core/x86_64/binutils/)**: A set of programs to assemble and manipulate binary and object files.
 
@@ -66,6 +66,8 @@ FULL installations also include the following packages:
 
 * **[awesome-terminal-fonts](https://archlinux.org/packages/community/any/awesome-terminal-fonts/)**: This package adds several symbols and icons to improve the look of monospace terminals.
 
+* **[barrier](https://archlinux.org/packages/community/x86_64/barrier/)**: Open-source KVM software based on Synergy (GUI).
+
 * **[bash-completion](https://archlinux.org/packages/extra/x86_64/bash-completion/)**: Programmable completion for the bash shell.
 
 * **[bind](https://archlinux.org/packages/extra/x86_64/bind/)**: A complete, highly portable implementation of the DNS protocol.
@@ -97,6 +99,8 @@ FULL installations also include the following packages:
 * **[dmidecode](https://archlinux.org/packages/extra/x86_64/dmidecode/)**: Open-source tool which reports information about your system's hardware as described in your system BIOS according to the SMBIOS/DMI standard.
 
 * **[dnsmasq](https://archlinux.org/packages/extra/x86_64/dnsmasq/)**: Lightweight, easy to configure DNS forwarder and DHCP server.
+
+* **[docker](https://archlinux.org/packages/community/x86_64/docker/)**: Pack, ship and run any application as a lightweight container.
 
 * **[dtc](https://archlinux.org/packages/community/x86_64/dtc/)**: Device Tree Compiler, useful to reformat device-trees files (e.g. dts -> dtb) for booting kernels on embedded systems.
 
@@ -208,7 +212,7 @@ FULL installations also include the following packages:
 
 * **[swtpm](https://archlinux.org/packages/community/x86_64/swtpm/)**: Libtpms-based TPM emulator with socket, character device, and Linux CUSE interface.
 
-* **[synergy](https://archlinux.org/packages/community/x86_64/synergy/)**: A paid and close-source alternative to [barrier](https://archlinux.org/packages/community/x86_64/barrier/). Adds KVM functionalities so that you can use your mouse and keyboard across multiple devices.
+* **[telegram-desktop](https://archlinux.org/packages/community/x86_64/telegram-desktop/)**: The official Telegram desktop client (messaging platform).
 
 * **[terminus-font](https://archlinux.org/packages/community/any/terminus-font/)**: Monospace bitmap font (for X11 and console).
 
@@ -288,7 +292,11 @@ Only for FULL installations (MINIMAL installs do not install AUR packages).
 
 * **[snapper-gui-git](https://aur.archlinux.org/packages/snapper-gui-git)**: GUI for [snapper](https://archlinux.org/packages/community/x86_64/snapper/), a tool of managing snapshots of [Btrfs](https://en.wikipedia.org/wiki/Btrfs) subvolumes and LVM volumes.
 
+* **[teamviewer](https://aur.archlinux.org/packages/teamviewer)**: All-in-one software for remote support/control and online meetings.
+
 * **[ttf-meslo](https://aur.archlinux.org/packages/ttf-meslo)**: Meslo LG is a customized version of Apple's Menlo font with various line gap and dotted zero.
+
+* **[whatsapp-nativefier](https://aur.archlinux.org/packages/whatsapp-nativefier)**: WhatsApp desktop built with nativefier (electron).
 
 * **[zoom](https://aur.archlinux.org/packages/zoom)**: A video/web conferencing service.
 
