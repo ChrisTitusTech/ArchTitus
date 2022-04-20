@@ -13,7 +13,7 @@ linux-headers
 noto-fonts-emoji
 usbutils
 xdg-user-dirs
---END OF MINIMAL INSTALL--
+### old end of minimal
 avahi
 # alsa-plugins
 # alsa-utils
@@ -111,6 +111,7 @@ zip
 ##########################################
 ###   MY PACKAGES
 ##########################################
+--END OF MINIMAL INSTALL--
 gst-plugin-pipewire
 pipewire
 pipewire-alsa
@@ -123,7 +124,6 @@ flatpak
 grep
 gscan2pdf
 guake
-htop
 openconnect
 openvpn
 networkmanager

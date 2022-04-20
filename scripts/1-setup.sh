@@ -60,8 +60,8 @@ echo -ne "
 sed -i 's/^#de_CH.UTF-8 UTF-8/de_CH.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 touch /etc/locale.conf
-cat "LANG=en_US.UTF-8" | tee -a /etc/locale.conf
-cat "LC_TIME=de_CH.UTF-8" | tee -a /etc/locale.conf
+echo "LANG=en_US.UTF-8" | tee -a /etc/locale.conf
+echo "LC_TIME=de_CH.UTF-8" | tee -a /etc/locale.conf
 timedatectl --no-ask-password set-timezone ${TIMEZONE}
 timedatectl --no-ask-password set-ntp 1
 # localectl --no-ask-password set-locale LANG="en_US.UTF-8" LC_TIME="en_US.UTF-8"
