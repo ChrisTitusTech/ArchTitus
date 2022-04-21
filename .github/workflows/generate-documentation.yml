@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3.0.0
+      uses: actions/checkout@v3.0.2
     - name: Github Action genshdoc
       id: action-genshdoc
       uses: vargiuscuola/genshdoc@master
