@@ -380,7 +380,7 @@ FULL installations also include the following software:
 
 * **[kvantum-qt5](https://archlinux.org/packages/community/x86_64/kvantum/)**: SVG-based theme engine for Qt5/6 (including config tool and extra themes).
 
-* **[kwalletmanager](https://archlinux.org/packages/kde-unstable/x86_64/kwalletmanager/)**: KDE's tool to manage the passwords on your system.
+* **[kwalletmanager](https://archlinux.org/packages/extra/x86_64/kwalletmanager/)**: KDE's tool to manage the passwords on your system.
 
 * **[layer-shell-qt](https://archlinux.org/packages/extra/x86_64/layer-shell-qt/)**: Qt component to allow applications to make use of the Wayland wl-layer-shell protocol.
 
