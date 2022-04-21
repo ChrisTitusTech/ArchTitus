@@ -256,8 +256,6 @@ Only for FULL installations (MINIMAL installs do not install AUR packages).
 
 * **[brave-bin](https://aur.archlinux.org/packages/brave-bin)**: A privacy-focused Chromium web browser. I recommend a Gecko-based browser instead (e.g. [Firefox]((https://archlinux.org/packages/extra/x86_64/firefox/))) as Google's monolopoly benefits nobody, but certain plugins are only available for Chromium-based web browsers.
 
-* **[bridge-utils](https://aur.archlinux.org/packages/bridge-utils)**: Utilities for configuring the Linux ethernet bridge.
-
 * **[dxvk-bin](https://aur.archlinux.org/packages/dxvk-bin)**: Vulkan-based compatibility layer for Direct3D 9/10/11 which allows running 3D applications on Linux using Wine (Windows DLL binary files).
 
 * **[github-desktop-bin](https://aur.archlinux.org/packages/github-desktop-bin)**: GUI for managing Git and GitHub.
