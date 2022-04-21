@@ -73,7 +73,7 @@ elif [[ "${DESKTOP_ENV}" == "gnome" ]]; then
 elif [[ "${DESKTOP_ENV}" == "lxde" ]]; then
   systemctl enable lxdm.service
 
-elif [[ ["${DESKTOP_ENV}" == "openbox"] || ["${DESKTOP_ENV}" == "awesome"] ]]; then
+elif [[ "${DESKTOP_ENV}" == "openbox" || "${DESKTOP_ENV}" == "awesome" ]]; then
   systemctl enable lightdm.service
   if [[ "${INSTALL_TYPE}" == "FULL" ]]; then
     # Set default lightdm-webkit2-greeter theme to Litarvan
@@ -137,7 +137,7 @@ PLYMOUTH_THEME="arch-glow" # can grab from config later if we allow selection
 mkdir -p /usr/share/plymouth/themes
 echo 'Installing Plymouth theme...'
 cp -rf ${PLYMOUTH_THEMES_DIR}/${PLYMOUTH_THEME} /usr/share/plymouth/themes
-if  [[ {$FS} == "luks" ]]; then
+if  [[ ${FS} == "luks" ]]; then
   sed -i 's/HOOKS=(base udev*/& plymouth/' /etc/mkinitcpio.conf # add plymouth after base udev
   sed -i 's/HOOKS=(base udev \(.*block\) /&plymouth-/' /etc/mkinitcpio.conf # create plymouth-encrypt after block hook
 else
