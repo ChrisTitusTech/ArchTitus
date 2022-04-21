@@ -26,6 +26,10 @@ cd ArchTitus
 ### System Description
 This is completely automated arch install. It includes prompts to select your desired desktop environment, window manager, AUR helper, and whether to do a full or minimal install. The KDE desktop environment on arch includes all the packages I use on a daily basis, as well as some customizations.
 
+## Documentation
+
+The package selection and their purpose is detailed in the **[PKG_Documentation.md](PKG_Documentation.md)** file.
+
 ## Troubleshooting
 
 __[Arch Linux RickEllis Installation Guide](https://github.com/rickellis/Arch-Linux-Install-Guide)__

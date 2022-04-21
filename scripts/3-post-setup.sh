@@ -5,19 +5,20 @@
 # @brief Finalizing installation configurations and cleaning up after script.
 echo -ne "
 -------------------------------------------------------------------------
+
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
   ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
   ███████║██████╔╝██║     ███████║   ██║   ██║   ██║   ██║   ██║███████╗
   ██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
   ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
--------------------------------------------------------------------------
-                    Automated Arch Linux Installer
-                        SCRIPTHOME: ArchTitus
--------------------------------------------------------------------------
 
-Final Setup and Configurations
-GRUB EFI Bootloader Install & Check
+-------------------------------------------------------------------------
+                     Automated Arch Linux Installer
+                         SCRIPTHOME:  ArchTitus
+-------------------------------------------------------------------------
+                     Final Setup and Configurations
+                  GRUB EFI Bootloader: Install & Check
 "
 source ${HOME}/ArchTitus/configs/setup.conf
 
@@ -27,7 +28,7 @@ fi
 
 echo -ne "
 -------------------------------------------------------------------------
-               Creating (and Theming) Grub Boot Menu
+                  Creating (and Theming) Grub Boot Menu
 -------------------------------------------------------------------------
 "
 # set kernel parameter for decrypting the drive
@@ -56,7 +57,7 @@ echo -e "All set!"
 
 echo -ne "
 -------------------------------------------------------------------------
-               Enabling (and Theming) Login Display Manager
+              Enabling (and Theming) Login Display Manager
 -------------------------------------------------------------------------
 "
 if [[ ${DESKTOP_ENV} == "kde" ]]; then
@@ -72,7 +73,7 @@ elif [[ "${DESKTOP_ENV}" == "gnome" ]]; then
 elif [[ "${DESKTOP_ENV}" == "lxde" ]]; then
   systemctl enable lxdm.service
 
-elif [[ "${DESKTOP_ENV}" == "openbox" ]]; then
+elif [[ "${DESKTOP_ENV}" == "openbox" || "${DESKTOP_ENV}" == "awesome" ]]; then
   systemctl enable lightdm.service
   if [[ "${INSTALL_TYPE}" == "FULL" ]]; then
     # Set default lightdm-webkit2-greeter theme to Litarvan
@@ -90,7 +91,7 @@ fi
 
 echo -ne "
 -------------------------------------------------------------------------
-                    Enabling Essential Services
+                       Enabling Essential Services
 -------------------------------------------------------------------------
 "
 systemctl enable cups.service
@@ -112,7 +113,7 @@ echo "  Avahi enabled"
 if [[ "${FS}" == "luks" || "${FS}" == "btrfs" ]]; then
 echo -ne "
 -------------------------------------------------------------------------
-                    Creating Snapper Config
+                         Creating Snapper Config
 -------------------------------------------------------------------------
 "
 
@@ -136,7 +137,7 @@ PLYMOUTH_THEME="arch-glow" # can grab from config later if we allow selection
 mkdir -p /usr/share/plymouth/themes
 echo 'Installing Plymouth theme...'
 cp -rf ${PLYMOUTH_THEMES_DIR}/${PLYMOUTH_THEME} /usr/share/plymouth/themes
-if  [[ $FS == "luks"]]; then
+if  [[ ${FS} == "luks" ]]; then
   sed -i 's/HOOKS=(base udev*/& plymouth/' /etc/mkinitcpio.conf # add plymouth after base udev
   sed -i 's/HOOKS=(base udev \(.*block\) /&plymouth-/' /etc/mkinitcpio.conf # create plymouth-encrypt after block hook
 else
@@ -147,7 +148,7 @@ echo 'Plymouth theme installed'
 
 echo -ne "
 -------------------------------------------------------------------------
-                    Cleaning
+                                Cleaning
 -------------------------------------------------------------------------
 "
 # Remove no password sudo rights

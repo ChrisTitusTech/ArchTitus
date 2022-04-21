@@ -1,6 +1,6 @@
+dolphin
 plasma-desktop
 sddm
-dolphin
 --END OF MINIMAL INSTALL--
 ark
 audiocd-kio
