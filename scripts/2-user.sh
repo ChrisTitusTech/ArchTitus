@@ -71,6 +71,8 @@ if [[ $INSTALL_TYPE == "FULL" ]]; then
     cd ~
     git clone https://github.com/stojshic/dotfiles-openbox
     ./dotfiles-openbox/install-titus.sh
+  elif [[ $DESKTOP_ENV == "gnome" && ! $AUR_HELPER == none ]]; then
+    $AUR_HELPER -S --noconfirm --needed gnome-shell-extension-pop-shell
   fi
 fi
 
