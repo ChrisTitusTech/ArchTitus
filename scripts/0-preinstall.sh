@@ -83,6 +83,7 @@ subvolumesetup () {
     mountallsubvol
 }
 
+# @description Format and start mounting partitions.
 formatandmount () {
     if [[ "${FS}" == "btrfs" ]]; then
         mkfs.btrfs -L ROOT ${rootpartition} -f

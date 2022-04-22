@@ -236,6 +236,7 @@ case ${options[$?]} in
 esac
 }
 
+# @description Select a Disk to open in cfdisk to create or modify partitions manually.
 manualpart () {
   clear
   echo -ne "
@@ -256,7 +257,7 @@ manualpart () {
   cfdisk ${options[$?]%|*}
 }
 
-# @description Disk selection for drive to be used with installation.
+# @description Disk drive or partition selection to which Arch will be installed.
 diskpart () {
 clear
 echo -ne "

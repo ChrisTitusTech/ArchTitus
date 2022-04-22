@@ -16,7 +16,6 @@ This script will ask users about their prefrences like disk, file system, timezo
 * [timezone()](#timezone)
 * [keymap()](#keymap)
 * [drivessd()](#drivessd)
-* [manualpart()](#manualpart)
 * [diskpart()](#diskpart)
 * [userinfo()](#userinfo)
 * [aurhelper()](#aurhelper)
@@ -76,13 +75,9 @@ Set user's keyboard mapping.
 
 Choose whether drive is SSD or not.
 
-## manualpart()
-
-Select a Disk to open in cfdisk to create or modify partitions manually.
-
 ## diskpart()
 
-Disk drive or partition selection to which Arch will be installed.
+Disk selection for drive to be used with installation.
 
 ## userinfo()
 
