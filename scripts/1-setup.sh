@@ -5,28 +5,30 @@
 # @brief Configures installed system, installs base packages, and creates user. 
 echo -ne "
 -------------------------------------------------------------------------
+
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
   ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
   ███████║██████╔╝██║     ███████║   ██║   ██║   ██║   ██║   ██║███████╗
   ██╔══██║██╔══██╗██║     ██╔══██║   ██║   ██║   ██║   ██║   ██║╚════██║
   ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
+
 -------------------------------------------------------------------------
-                    Automated Arch Linux Installer
-                        SCRIPTHOME: ArchTitus
+                     Automated Arch Linux Installer
+                         SCRIPTHOME:  ArchTitus
 -------------------------------------------------------------------------
 "
 source $HOME/ArchTitus/configs/setup.conf
 echo -ne "
 -------------------------------------------------------------------------
-                    Network Setup 
+                             Network Setup 
 -------------------------------------------------------------------------
 "
 pacman -S --noconfirm --needed networkmanager dhclient
 systemctl enable --now NetworkManager
 echo -ne "
 -------------------------------------------------------------------------
-                    Setting up mirrors for optimal download 
+                 Setting up mirrors for optimal download 
 -------------------------------------------------------------------------
 "
 pacman -S --noconfirm --needed pacman-contrib curl
@@ -36,9 +38,9 @@ cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 nc=$(grep -c ^processor /proc/cpuinfo)
 echo -ne "
 -------------------------------------------------------------------------
-                    You have " $nc" cores. And
-			changing the makeflags for "$nc" cores. Aswell as
-				changing the compression settings.
+                           CPU has "$nc" cores
+			       Changing makeflags for "$nc" cores
+			  Changing the compression settings accordingly
 -------------------------------------------------------------------------
 "
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
@@ -48,7 +50,7 @@ sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g" /etc/makepkg
 fi
 echo -ne "
 -------------------------------------------------------------------------
-                    Setup Language to US and set locale  
+                   Setup Language to US and set locale  
 -------------------------------------------------------------------------
 "
 sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
@@ -73,7 +75,7 @@ pacman -Sy --noconfirm --needed
 
 echo -ne "
 -------------------------------------------------------------------------
-                    Installing Base System  
+                         Installing Base System  
 -------------------------------------------------------------------------
 "
 # sed $INSTALL_TYPE is using install type to check for MINIMAL installation, if it's true, stop
@@ -91,7 +93,7 @@ if [[ ! $DESKTOP_ENV == server ]]; then
 fi
 echo -ne "
 -------------------------------------------------------------------------
-                    Installing Microcode
+                          Installing Microcode
 -------------------------------------------------------------------------
 "
 # determine processor type and install microcode
@@ -108,7 +110,7 @@ fi
 
 echo -ne "
 -------------------------------------------------------------------------
-                    Installing Graphics Drivers
+                       Installing Graphics Drivers
 -------------------------------------------------------------------------
 "
 # Graphics Drivers find and install
@@ -165,7 +167,7 @@ echo "password=${password,,}" >> ${HOME}/ArchTitus/configs/setup.conf
 fi
 echo -ne "
 -------------------------------------------------------------------------
-                    Adding User
+                               Adding User
 -------------------------------------------------------------------------
 "
 if [ $(whoami) = "root"  ]; then
@@ -195,6 +197,6 @@ if [[ ${FS} == "luks" ]]; then
 fi
 echo -ne "
 -------------------------------------------------------------------------
-                    SYSTEM READY FOR 2-user.sh
+                       SYSTEM READY FOR 2-user.sh
 -------------------------------------------------------------------------
 "
