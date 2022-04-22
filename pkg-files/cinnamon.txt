@@ -1,4 +1,4 @@
 cinnamon
-metacity 
-gnome-shell 
+gnome-shell
+metacity
 --END OF MINIMAL INSTALL--
