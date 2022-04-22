@@ -72,7 +72,7 @@ elif [[ "${DESKTOP_ENV}" == "gnome" ]]; then
 elif [[ "${DESKTOP_ENV}" == "lxde" ]]; then
   systemctl enable lxdm.service
 
-elif [[ "${DESKTOP_ENV}" == "openbox" ]]; then
+elif [[ "${DESKTOP_ENV}" == "openbox" || "${DESKTOP_ENV}" == "awesome" ]]; then
   systemctl enable lightdm.service
   if [[ "${INSTALL_TYPE}" == "FULL" ]]; then
     # Set default lightdm-webkit2-greeter theme to Litarvan
