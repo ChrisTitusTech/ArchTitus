@@ -1,17 +1,15 @@
-mesa
-xorg
-xorg-server
-xorg-apps
-xorg-drivers
-xorg-xkill
-xorg-xinit
-xterm
 binutils
 dosfstools
 linux-headers
+mesa
 noto-fonts-emoji
 usbutils
 xdg-user-dirs
+xorg
+xorg-apps
+xorg-drivers
+xorg-xinit
+xterm
 --END OF MINIMAL INSTALL--
 alsa-plugins
 alsa-utils
@@ -78,9 +76,9 @@ pulseaudio
 pulseaudio-alsa
 pulseaudio-bluetooth
 python-notify2
+python-pip
 python-psutil
 python-pyqt5
-python-pip
 qemu
 snap-pac
 snapper
@@ -95,6 +93,7 @@ ttf-roboto
 ufw
 unrar
 unzip
+vde2
 virt-manager
 virt-viewer
 which
@@ -103,5 +102,5 @@ wine-mono
 winetricks
 zip
 zsh
-zsh-syntax-highlighting
 zsh-autosuggestions
+zsh-syntax-highlighting
