@@ -12,6 +12,7 @@ fi
 if grep -sq 'docker\|lxc' /proc/1/cgroup
    then
    echo "running in docker container, no supported (at the moment)"
+   exit
 fi
 # Find the name of the folder the scripts are in
 set -a
