@@ -5,7 +5,7 @@
 # @brief This script will ask users about their prefrences like disk, file system, timezone, keyboard layout, user name, password, etc.
 # @stdout Output routed to startup.log
 # @stderror Output routed to startup.log
-#testing if run as root for full os run
+# @testing if script was run as root for full os run
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"
   exit
