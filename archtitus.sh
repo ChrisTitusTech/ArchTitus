@@ -3,7 +3,10 @@
 #
 # @file ArchTitus
 # @brief Entrance script that launches children scripts for each phase of installation.
-
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
 # Find the name of the folder the scripts are in
 set -a
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
@@ -11,10 +14,7 @@ SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd 
 CONFIGS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"/configs
 set +a
 # @testing if script was run as root for full os run
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root"
-  exit
-fi
+
 echo -ne "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
