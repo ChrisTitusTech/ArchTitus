@@ -5,11 +5,7 @@
 # @brief This script will ask users about their prefrences like disk, file system, timezone, keyboard layout, user name, password, etc.
 # @stdout Output routed to startup.log
 # @stderror Output routed to startup.log
-# @testing if script was run as root for full os run
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root"
-  exit
-fi
+
 # @setting-header General Settings
 # @setting CONFIG_FILE string[$CONFIGS_DIR/setup.conf] Location of setup.conf to be used by set_option and all subsequent scripts. 
 CONFIG_FILE=$CONFIGS_DIR/setup.conf
