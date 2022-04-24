@@ -111,7 +111,6 @@ zip
 ##########################################
 ###   MY PACKAGES
 ##########################################
-guake
 --END OF MINIMAL INSTALL--
 gst-plugin-pipewire
 pipewire

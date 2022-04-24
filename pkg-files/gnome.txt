@@ -1,3 +1,10 @@
 gnome
+gnome-tweaks
+guake
 --END OF MINIMAL INSTALL--
-# gnome-extras
+gnome-chess
+gnome-todo
+gnome-sound-recorder
+# email:
+gnome-evolution
+geary
