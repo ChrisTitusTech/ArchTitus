@@ -72,21 +72,20 @@ echo -ne "
                     Creating Filesystems
 -------------------------------------------------------------------------
 "
+subvols=(home var tmp .snapshots)
+
 # @description Creates the btrfs subvolumes. 
 createsubvolumes () {
-    btrfs subvolume create /mnt/@
-    btrfs subvolume create /mnt/@home
-    btrfs subvolume create /mnt/@var
-    btrfs subvolume create /mnt/@tmp
-    btrfs subvolume create /mnt/@.snapshots
+	for subvol in '' ${subvols[@]}; do # the '' adds the root subvolume to the loop
+    btrfs subvolume create /mnt/@$subvol
+	done
 }
 
 # @description Mount all btrfs subvolumes after root has been mounted.
 mountallsubvol () {
-    mount -o ${MOUNT_OPTIONS},subvol=@home ${partition3} /mnt/home
-    mount -o ${MOUNT_OPTIONS},subvol=@tmp ${partition3} /mnt/tmp
-    mount -o ${MOUNT_OPTIONS},subvol=@var ${partition3} /mnt/var
-    mount -o ${MOUNT_OPTIONS},subvol=@.snapshots ${partition3} /mnt/.snapshots
+	for subvol in ${subvols[@]}; do
+		mount -o ${MOUNT_OPTIONS},subvol=@$subvol ${partition3} /mnt/$subvol
+	done
 }
 
 # @description BTRFS subvolulme creation and mounting. 
@@ -98,7 +97,9 @@ subvolumesetup () {
 # mount @ subvolume
     mount -o ${MOUNT_OPTIONS},subvol=@ ${partition3} /mnt
 # make directories home, .snapshots, var, tmp
-    mkdir -p /mnt/{home,var,tmp,.snapshots}
+    for subvol in ${subvols[@]}; do
+		mkdir -p /mnt/$subvol
+	done
 # mount subvolumes
     mountallsubvol
 }
