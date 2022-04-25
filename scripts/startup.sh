@@ -151,7 +151,7 @@ echo "
 # btrfs and ext4. Others will be added in future.
 filesystem () {
 echo "
-Please select your file system for both boot and root"
+Please select your file system for both boot and root:"
 options=("btrfs" "ext4" "luks" "exit")
 select_option $? 1 "${options[@]}"
 
@@ -202,7 +202,7 @@ esac
 # @description Set user's keyboard mapping. 
 keymap () {
 echo -n "
-Please select a keyboard layout from this list"
+Please select a keyboard layout from this list:"
 # These are default key maps as presented in official arch repo archinstall
 options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru sg ua uk)
 
