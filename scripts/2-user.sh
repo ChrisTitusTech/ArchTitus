@@ -16,7 +16,7 @@ echo "
                         SCRIPTHOME: ArchTitus
 -------------------------------------------------------------------------
 
-Installing AUR Softwares"
+Installing AUR Programs"
 source $HOME/ArchTitus/configs/setup.conf
 
   cd ~
