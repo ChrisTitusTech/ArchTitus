@@ -151,7 +151,7 @@ echo "
 # btrfs and ext4. Others will be added in future.
 filesystem () {
 echo "
-Please Select your file system for both boot and root"
+Please select your file system for both boot and root"
 options=("btrfs" "ext4" "luks" "exit")
 select_option $? 1 "${options[@]}"
 
