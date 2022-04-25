@@ -135,7 +135,7 @@ select_option() {
 # @noargs
 logo () {
 # This will be shown on every set as user is progressing
-echo -ne "
+echo "
 -------------------------------------------------------------------------
  █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
 ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
@@ -145,15 +145,13 @@ echo -ne "
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 ------------------------------------------------------------------------
             Please select presetup settings for your system              
-------------------------------------------------------------------------
-"
+------------------------------------------------------------------------"
 }
 # @description This function will handle file systems. At this movement we are handling only
 # btrfs and ext4. Others will be added in future.
 filesystem () {
-echo -ne "
-Please Select your file system for both boot and root
-"
+echo "
+Please Select your file system for both boot and root"
 options=("btrfs" "ext4" "luks" "exit")
 select_option $? 1 "${options[@]}"
 
@@ -162,11 +160,10 @@ case $? in
 1) set_option FS ext4;;
 2) 
 while true; do
-  echo -ne "Please enter your luks password: \n"
-  read -s luks_password # read password without echo
-
-  echo -ne "Please repeat your luks password: \n"
-  read -s luks_password2 # read password without echo
+  read -r -s -p "Please enter your luks password: " luks_password # read password without echo
+  echo
+  read -r -s -p "Please repeat your luks password: " luks_password2 # read password without echo
+  echo
 
   if [ "$luks_password" = "$luks_password2" ]; then
     set_option LUKS_PASSWORD $luks_password
@@ -185,10 +182,9 @@ esac
 timezone () {
 # Added this from arch wiki https://wiki.archlinux.org/title/System_time
 time_zone="$(curl --fail https://ipapi.co/timezone)"
-echo -ne "
-System detected your timezone to be '$time_zone' \n"
-echo -ne "Is this correct?
-" 
+echo "
+System detected your timezone to be '$time_zone' "
+echo "Is this correct?" 
 options=("Yes" "No")
 select_option $? 1 "${options[@]}"
 
@@ -197,8 +193,7 @@ case ${options[$?]} in
     echo "${time_zone} set as timezone"
     set_option TIMEZONE $time_zone;;
     n|N|no|NO|No)
-    echo "Please enter your desired timezone e.g. Europe/London :" 
-    read new_timezone
+    read -p "Please enter your desired timezone e.g. Europe/London: " new_timezone
     echo "${new_timezone} set as timezone"
     set_option TIMEZONE $new_timezone;;
     *) echo "Wrong option. Try again";timezone;;
@@ -206,7 +201,7 @@ esac
 }
 # @description Set user's keyboard mapping. 
 keymap () {
-echo -ne "
+echo -n "
 Please select a keyboard layout from this list"
 # These are default key maps as presented in official arch repo archinstall
 options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru sg ua uk)
@@ -214,15 +209,14 @@ options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru
 select_option $? 4 "${options[@]}"
 keymap=${options[$?]}
 
-echo -ne "Chosen keyboard layout: ${keymap} \n"
+echo "Chosen keyboard layout: ${keymap} "
 set_option KEYMAP $keymap
 }
 
 # @description Choose whether drive is SSD or not.
 drivessd () {
-echo -ne "
-Is this an ssd? yes/no:
-"
+echo "
+Is this an ssd? yes/no:"
 
 options=("Yes" "No")
 select_option $? 1 "${options[@]}"
@@ -238,14 +232,13 @@ esac
 
 # @description Disk selection for drive to be used with installation.
 diskpart () {
-echo -ne "
+echo -e "
 ------------------------------------------------------------------------
-    THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK
+    \e[1;31mTHIS WILL FORMAT AND DELETE ALL DATA ON THE DISK!\e[0m
     Please make sure you know what you are doing because
     after formating your disk there is no way to get data back
 ------------------------------------------------------------------------
-
-"
+" # \e[1;31m makes text bold and red, \e[0m reverts it to normal
 
 PS3='
 Select the disk to install on: '
@@ -265,11 +258,10 @@ userinfo () {
 read -p "Please enter your username: " username
 set_option USERNAME ${username,,} # convert to lower case as in issue #109 
 while true; do
-  echo -ne "Please enter your password: \n"
-  read -s password # read password without echo
-
-  echo -ne "Please repeat your password: \n"
-  read -s password2 # read password without echo
+  read -r -s -p "Please enter your password: " password # read password without echo
+  echo
+  read -r -s -p "Please repeat your password: " password2 # read password without echo
+  echo
 
   if [ "$password" = "$password2" ]; then
     set_option PASSWORD $password
@@ -285,7 +277,7 @@ set_option NAME_OF_MACHINE $nameofmachine
 # @description Choose AUR helper. 
 aurhelper () {
   # Let the user choose AUR helper from predefined list
-  echo -ne "Please enter your desired AUR helper:\n"
+  echo "Please enter your desired AUR helper:"
   options=(paru yay picaur aura trizen pacaur none)
   select_option $? 4 "${options[@]}"
   aur_helper=${options[$?]}
@@ -295,7 +287,7 @@ aurhelper () {
 # @description Choose Desktop Environment
 desktopenv () {
   # Let the user choose Desktop Enviroment from predefined list
-  echo -ne "Please select your desired Desktop Enviroment:\n"
+  echo "Please select your desired Desktop Enviroment:"
   options=(gnome kde cinnamon xfce mate budgie lxde deepin openbox server)
   select_option $? 4 "${options[@]}"
   desktop_env=${options[$?]}
@@ -304,9 +296,9 @@ desktopenv () {
 
 # @description Choose whether to do full or minimal installation. 
 installtype () {
-  echo -ne "Please select type of installation:\n\n
+  echo -e "Please select type of installation:\n\n
   Full install: Installs full featured desktop enviroment, with added apps and themes needed for everyday use\n
-  Minimal Install: Installs only apps few selected apps to get you started\n"
+  Minimal Install: Installs only apps few selected apps to get you started"
   options=(FULL MINIMAL)
   select_option $? 4 "${options[@]}"
   install_type=${options[$?]}
