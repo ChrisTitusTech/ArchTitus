@@ -111,8 +111,8 @@ zip
 ##########################################
 ###   MY PACKAGES
 ##########################################
-gst-plugin-pipewire
 pipewire
+gst-plugin-pipewire
 pipewire-alsa
 pipewire-jack
 pipewire-pulse
