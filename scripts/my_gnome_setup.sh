@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
+dbus-launch
+
 # setup GIT
 git config --global user.email "lukasgraz@gmail.com"
 git config --global user.name "LukasGraz"
 
 # download this repo
+mkdir Desktop
 cd Desktop
 git clone https://github.com/Greeenstone/ArchTitus
 cd ..
