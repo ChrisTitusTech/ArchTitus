@@ -6,12 +6,6 @@ dbus-launch
 git config --global user.email "lukasgraz@gmail.com"
 git config --global user.name "LukasGraz"
 
-# download this repo
-mkdir Desktop
-cd Desktop
-git clone https://github.com/Greeenstone/ArchTitus
-cd ..
-
 # disable Wayland
 sudo sed -i 's/^#WaylandEnable=false/WaylandEnable=false/' /etc/gdm/custom.conf
 
