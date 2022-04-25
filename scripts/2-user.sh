@@ -89,7 +89,7 @@ echo -ne "
     ./dotfiles-openbox/install-titus.sh
   elif [[ $DESKTOP_ENV == "gnome" ]]; then
     echo "Setting up my gnome things:  "
-    bash ~/ArchTitus/scripts/my_gnome_setup.sh
+    # bash ~/ArchTitus/scripts/my_gnome_setup.sh
   fi
 # fi
 

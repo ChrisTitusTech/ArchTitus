@@ -6,5 +6,5 @@ gnome-chess
 gnome-todo
 gnome-sound-recorder
 # email:
-gnome-evolution
-geary
+#gnome-evolution
+#geary

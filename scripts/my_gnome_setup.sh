@@ -12,10 +12,8 @@ gsettings reset org.gnome.desktop.input-sources sources
 gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'de+nodeadkeys')]"
 
 # SHORTCUTS
-# TEMP="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
-# gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['$TEMP/custom0/', '$TEMP/custom1/', '$TEMP/custom2/', '$TEMP/custom3/']"
-# gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$TEMP/custom0 ......................................
-# ..........................  to complete ...^
+python3 ~/ArchTitus/scripts/add_gnome_shortcuts.py 'open guake' 'guake' '<Super>e'
+
 
 #######################################
 ###  EXTENSIONS
@@ -37,3 +35,15 @@ printf "$GNOME_VERSION\nq" | gnome-shell-extension-installer 3088 # Extension li
 printf "$GNOME_VERSION\nq" | gnome-shell-extension-installer 906 # Sound output chooser
 
 killall -HUP gnome-shell # kill (hopfully restart) gnome-shell
+enable-extension () {
+    gnome-extensions enable $1 || echo "could not enable $1"
+}
+enable-extension clipboard-indicator@tudmotu.com
+enable-extension impatience@gfxmonk.net
+enable-extension material-shell@papyelgringo
+enable-extension Vitals@CoreCoding.com
+enable-extension unite@hardpixel.eu
+enable-extension extension-list@tu.berry
+enable-extension sound-output-device-chooser@kgshank.net
+enable-extension gnome-shell-screenshot@ttll.de
+
