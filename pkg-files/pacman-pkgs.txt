@@ -111,12 +111,11 @@ zip
 ##########################################
 ###   MY PACKAGES
 ##########################################
-pipewire
-gst-plugin-pipewire
-pipewire-alsa
-pipewire-jack
-pipewire-pulse
-########################
+# pipewire
+# gst-plugin-pipewire
+# pipewire-alsa
+# pipewire-jack
+# pipewire-pulse
 flatpak
 grep
 opencore-amr
