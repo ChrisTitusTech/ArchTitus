@@ -3,7 +3,7 @@
 #
 # @file Setup
 # @brief Configures installed system, installs base packages, and creates user. 
-echo -ne "
+echo "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
   ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
@@ -14,44 +14,39 @@ echo -ne "
 -------------------------------------------------------------------------
                     Automated Arch Linux Installer
                         SCRIPTHOME: ArchTitus
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 source $HOME/ArchTitus/configs/setup.conf
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Network Setup 
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 pacman -S --noconfirm --needed networkmanager dhclient
 systemctl enable --now NetworkManager
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Setting up mirrors for optimal download 
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 pacman -S --noconfirm --needed pacman-contrib curl
 pacman -S --noconfirm --needed reflector rsync grub arch-install-scripts git
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak
 
 nc=$(grep -c ^processor /proc/cpuinfo)
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     You have " $nc" cores. And
 			changing the makeflags for "$nc" cores. Aswell as
 				changing the compression settings.
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 if [[  $TOTAL_MEM -gt 8000000 ]]; then
 sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$nc\"/g" /etc/makepkg.conf
 sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g" /etc/makepkg.conf
 fi
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Setup Language to US and set locale  
--------------------------------------------------------------------------
-"
-sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+-------------------------------------------------------------------------"
+sed -i 's/en_US.UTF-8 UTF-8/s/^#//' /etc/locale.gen
 locale-gen
 timedatectl --no-ask-password set-timezone ${TIMEZONE}
 timedatectl --no-ask-password set-ntp 1
@@ -61,21 +56,20 @@ ln -s /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 localectl --no-ask-password set-keymap ${KEYMAP}
 
 # Add sudo no password rights
-sed -i 's/^# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/' /etc/sudoers
-sed -i 's/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
+sed -i 's/%wheel ALL=(ALL) NOPASSWD: ALL/s/^# //' /etc/sudoers
+sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/s/^# //' /etc/sudoers
 
 #Add parallel downloading
-sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+sed -i 's/ParallelDownloads/s/^#//' /etc/pacman.conf
 
 #Enable multilib
 sed -i "/\[multilib\]/,/Include/"'s/^#//' /etc/pacman.conf
 pacman -Sy --noconfirm --needed
 
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Installing Base System  
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 # sed $INSTALL_TYPE is using install type to check for MINIMAL installation, if it's true, stop
 # stop the script and move on, not installing any more packages below that line
 if [[ ! $DESKTOP_ENV == server ]]; then
@@ -89,11 +83,10 @@ if [[ ! $DESKTOP_ENV == server ]]; then
     sudo pacman -S --noconfirm --needed ${line}
   done
 fi
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Installing Microcode
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 # determine processor type and install microcode
 proc_type=$(lscpu)
 if grep -E "GenuineIntel" <<< ${proc_type}; then
@@ -106,11 +99,10 @@ elif grep -E "AuthenticAMD" <<< ${proc_type}; then
     proc_ucode=amd-ucode.img
 fi
 
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Installing Graphics Drivers
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 # Graphics Drivers find and install
 gpu_type=$(lspci)
 if grep -E "NVIDIA|GeForce" <<< ${gpu_type}; then
@@ -161,11 +153,10 @@ echo "password=${password,,}" >> ${HOME}/ArchTitus/configs/setup.conf
 
     echo "NAME_OF_MACHINE=${name_of_machine,,}" >> ${HOME}/ArchTitus/configs/setup.conf
 fi
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Adding User
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 if [ $(whoami) = "root"  ]; then
     groupadd libvirt
     useradd -m -G wheel,libvirt -s /bin/bash $USERNAME 
@@ -187,12 +178,11 @@ fi
 if [[ ${FS} == "luks" ]]; then
 # Making sure to edit mkinitcpio conf if luks is selected
 # add encrypt in mkinitcpio.conf before filesystems in hooks
-    sed -i 's/filesystems/encrypt filesystems/g' /etc/mkinitcpio.conf
+    sed -i 's/filesystems/encrypt &/g' /etc/mkinitcpio.conf
 # making mkinitcpio with linux kernel
     mkinitcpio -p linux
 fi
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     SYSTEM READY FOR 2-user.sh
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"

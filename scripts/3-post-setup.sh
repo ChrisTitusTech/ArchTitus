@@ -3,7 +3,7 @@
 #
 # @file Post-Setup
 # @brief Finalizing installation configurations and cleaning up after script.
-echo -ne "
+echo "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
   ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
@@ -17,22 +17,20 @@ echo -ne "
 -------------------------------------------------------------------------
 
 Final Setup and Configurations
-GRUB EFI Bootloader Install & Check
-"
+GRUB EFI Bootloader Install & Check"
 source ${HOME}/ArchTitus/configs/setup.conf
 
 if [[ -d "/sys/firmware/efi" ]]; then
     grub-install --efi-directory=/boot ${DISK}
 fi
 
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                Creating (and Theming) Grub Boot Menu
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 # set kernel parameter for decrypting the drive
 if [[ "${FS}" == "luks" ]]; then
-sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%GRUB_CMDLINE_LINUX_DEFAULT=\"cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:ROOT root=/dev/mapper/ROOT %g" /etc/default/grub
+sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%&cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:ROOT root=/dev/mapper/ROOT %g" /etc/default/grub
 fi
 # set kernel parameter for adding splash screen
 sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& splash /' /etc/default/grub
@@ -54,11 +52,10 @@ echo -e "Updating grub..."
 grub-mkconfig -o /boot/grub/grub.cfg
 echo -e "All set!"
 
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                Enabling (and Theming) Login Display Manager
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 if [[ ${DESKTOP_ENV} == "kde" ]]; then
   systemctl enable sddm.service
   if [[ ${INSTALL_TYPE} == "FULL" ]]; then
@@ -88,11 +85,10 @@ else
   fi
 fi
 
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Enabling Essential Services
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 systemctl enable cups.service
 echo "  Cups enabled"
 ntpd -qg
@@ -110,11 +106,10 @@ systemctl enable avahi-daemon.service
 echo "  Avahi enabled"
 
 if [[ "${FS}" == "luks" || "${FS}" == "btrfs" ]]; then
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Creating Snapper Config
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 
 SNAPPER_CONF="$HOME/ArchTitus/configs/etc/snapper/configs/root"
 mkdir -p /etc/snapper/configs/
@@ -126,11 +121,10 @@ cp -rfv ${SNAPPER_CONF_D} /etc/conf.d/
 
 fi
 
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                Enabling (and Theming) Plymouth Boot Splash
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 PLYMOUTH_THEMES_DIR="$HOME/ArchTitus/configs/usr/share/plymouth/themes"
 PLYMOUTH_THEME="arch-glow" # can grab from config later if we allow selection
 mkdir -p /usr/share/plymouth/themes
@@ -145,17 +139,16 @@ fi
 plymouth-set-default-theme -R arch-glow # sets the theme and runs mkinitcpio
 echo 'Plymouth theme installed'
 
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Cleaning
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 # Remove no password sudo rights
-sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# &/' /etc/sudoers
-sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# &/' /etc/sudoers
+sed -i 's/%wheel ALL=(ALL) NOPASSWD: ALL/# &/' /etc/sudoers
+sed -i 's/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# &/' /etc/sudoers
 # Add sudo rights
-sed -i '/^# %wheel ALL=(ALL) ALL/s/^# //' /etc/sudoers
-sed -i '/^# %wheel ALL=(ALL:ALL) ALL/s/^# //' /etc/sudoers
+sed -i '/%wheel ALL=(ALL) ALL/s/^# //' /etc/sudoers
+sed -i '/%wheel ALL=(ALL:ALL) ALL/s/^# //' /etc/sudoers
 
 rm -r $HOME/ArchTitus
 rm -r /home/$USERNAME/ArchTitus

@@ -10,7 +10,7 @@ SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SCRIPTS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"/scripts
 CONFIGS_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"/configs
 set +a
-echo -ne "
+echo "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
   ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
@@ -21,8 +21,7 @@ echo -ne "
 -------------------------------------------------------------------------
                     Automated Arch Linux Installer
 -------------------------------------------------------------------------
-                Scripts are in directory named ArchTitus
-"
+                Scripts are in directory named ArchTitus"
     ( bash $SCRIPT_DIR/scripts/startup.sh )|& tee startup.log
       source $CONFIGS_DIR/setup.conf
     ( bash $SCRIPT_DIR/scripts/0-preinstall.sh )|& tee 0-preinstall.log
@@ -33,7 +32,7 @@ echo -ne "
     ( arch-chroot /mnt $HOME/ArchTitus/scripts/3-post-setup.sh )|& tee 3-post-setup.log
     cp -v *.log /mnt/home/$USERNAME
 
-echo -ne "
+echo "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
   ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
@@ -44,5 +43,4 @@ echo -ne "
 -------------------------------------------------------------------------
                     Automated Arch Linux Installer
 -------------------------------------------------------------------------
-                Done - Please Eject Install Media and Reboot
-"
+                Done - Please Eject Install Media and Reboot"

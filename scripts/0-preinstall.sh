@@ -11,7 +11,7 @@
 #
 # @file Preinstall
 # @brief Contains the steps necessary to configure and pacstrap the install to selected drive. 
-echo -ne "
+echo "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
   ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
@@ -23,8 +23,7 @@ echo -ne "
                     Automated Arch Linux Installer
 -------------------------------------------------------------------------
 
-Setting up mirrors for optimal download
-"
+Setting up mirrors for optimal download"
 source $CONFIGS_DIR/setup.conf
 iso=$(curl -4 ifconfig.co/country-iso)
 timedatectl set-ntp true
@@ -34,24 +33,21 @@ setfont ter-v22b
 sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 pacman -S --noconfirm --needed reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Setting up $iso mirrors for faster downloads
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
 mkdir /mnt &>/dev/null # Hiding error message if any
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Installing Prerequisites
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 pacman -S --noconfirm --needed gptfdisk btrfs-progs glibc
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Formating Disk
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 umount -A --recursive /mnt # make sure everything is unmounted before we start
 # disk prep
 sgdisk -Z ${DISK} # zap all on disk
@@ -67,11 +63,10 @@ fi
 partprobe ${DISK} # reread partition table to ensure it is correct
 
 # make filesystems
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Creating Filesystems
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 subvols=(home var tmp .snapshots)
 
 # @description Creates the btrfs subvolumes. 
@@ -147,11 +142,10 @@ if ! grep -qs '/mnt' /proc/mounts; then
     echo "Rebooting in 1 Second ..." && sleep 1
     reboot now
 fi
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Arch Install on Main Drive
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 pacstrap /mnt base base-devel linux linux-firmware vim nano sudo archlinux-keyring wget libnewt --noconfirm --needed
 echo "keyserver hkp://keyserver.ubuntu.com" >> /mnt/etc/pacman.d/gnupg/gpg.conf
 cp -R ${SCRIPT_DIR} /mnt/root/ArchTitus
@@ -162,21 +156,19 @@ echo "
   Generated /etc/fstab:
 "
 cat /mnt/etc/fstab
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     GRUB BIOS Bootloader Install & Check
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 if [[ ! -d "/sys/firmware/efi" ]]; then
     grub-install --boot-directory=/mnt/boot ${DISK}
 else
     pacstrap /mnt efibootmgr --noconfirm --needed
 fi
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     Checking for low memory systems <8G
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 if [[  $TOTAL_MEM -lt 8000000 ]]; then
     # Put swap into the actual system, not into RAM disk, otherwise there is no point in it, it'll cache RAM into RAM. So, /mnt/ everything.
@@ -190,8 +182,7 @@ if [[  $TOTAL_MEM -lt 8000000 ]]; then
     # The line below is written to /mnt/ but doesn't contain /mnt/, since it's just / for the system itself.
     echo "/opt/swap/swapfile	none	swap	sw	0	0" >> /mnt/etc/fstab # Add swap to fstab, so it KEEPS working after installation.
 fi
-echo -ne "
+echo "
 -------------------------------------------------------------------------
                     SYSTEM READY FOR 1-setup.sh
--------------------------------------------------------------------------
-"
+-------------------------------------------------------------------------"
