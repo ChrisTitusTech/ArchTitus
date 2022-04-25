@@ -111,34 +111,33 @@ zip
 ##########################################
 ###   MY PACKAGES
 ##########################################
---END OF MINIMAL INSTALL--
 gst-plugin-pipewire
 pipewire
 pipewire-alsa
 pipewire-jack
 pipewire-pulse
 ########################
-adobe-source-code-pro-fonts
-firefox
 flatpak
 grep
-gscan2pdf
-openconnect
-openvpn
-networkmanager
-networkmanager-openconnect
-networkmanager-openvpn
-obs-studio
-# okular
 opencore-amr
 openjpeg2
 openresolv
 openssh
 openssl
+openconnect
 openvpn
+networkmanager
+networkmanager-openconnect
+networkmanager-openvpn
 python
+--END OF MINIMAL INSTALL--
+firefox
+adobe-source-code-pro-fonts
+obs-studio
+# okular
 qgis
 r
 rclone
 sane
+gscan2pdf
 texlive-most
