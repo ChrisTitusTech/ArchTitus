@@ -209,7 +209,7 @@ options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru
 select_option $? 4 "${options[@]}"
 keymap=${options[$?]}
 
-echo "Chosen keyboard layout: ${keymap} "
+echo "Chosen keyboard layout: ${keymap}"
 set_option KEYMAP $keymap
 }
 
