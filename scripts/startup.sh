@@ -298,7 +298,7 @@ desktopenv () {
 installtype () {
   echo -e "Please select type of installation:\n\n
   Full install: Installs full featured desktop enviroment, with added apps and themes needed for everyday use\n
-  Minimal Install: Installs only apps few selected apps to get you started"
+  Minimal Install: Installs only a few selected apps to get you started"
   options=(FULL MINIMAL)
   select_option $? 4 "${options[@]}"
   install_type=${options[$?]}
