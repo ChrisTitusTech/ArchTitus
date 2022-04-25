@@ -1,11 +1,24 @@
 #!/usr/bin/env bash
 
+# setup GIT
+git config --global user.email "lukasgraz@gmail.com"
+git config --global user.name "LukasGraz"
+
+# download this repo
+git clone https://github.com/Greeenstone/ArchTitus
+
+# disable Wayland
+sed -i 's/^#WaylandEnable=false/WaylandEnable=false/' /etc/gdm/custom.conf
+
 # fix KEYMAP
 gsettings reset org.gnome.desktop.input-sources sources
 gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'de+nodeadkeys')]"
 
-# disable Wayland
-sed -i 's/^#WaylandEnable=false/WaylandEnable=false/' /etc/gdm/custom.conf
+# SHORTCUTS
+# TEMP="/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
+# gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['$TEMP/custom0/', '$TEMP/custom1/', '$TEMP/custom2/', '$TEMP/custom3/']"
+# gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:$TEMP/custom0 ......................................
+# ..........................  to complete ...^
 
 #######################################
 ###  EXTENSIONS
