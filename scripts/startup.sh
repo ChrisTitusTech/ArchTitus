@@ -6,6 +6,12 @@
 # @stdout Output routed to startup.log
 # @stderror Output routed to startup.log
 
+# Colors/formatting for echo: {
+RED='\e[31m'
+BOLD=$(tput bold)
+RESET='\e[0m' # Reset text to default appearance
+# }
+
 # @setting-header General Settings
 # @setting CONFIG_FILE string[$CONFIGS_DIR/setup.conf] Location of setup.conf to be used by set_option and all subsequent scripts.
 CONFIG_FILE=$CONFIGS_DIR/setup.conf
@@ -234,11 +240,11 @@ esac
 diskpart () {
 echo -e "
 ------------------------------------------------------------------------
-    \e[1;31mTHIS WILL FORMAT AND DELETE ALL DATA ON THE DISK!\e[0m
+    ${RED}${BOLD}THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK!${RESET}
     Please make sure you know what you are doing because
     after formating your disk there is no way to get data back
 ------------------------------------------------------------------------
-" # \e[1;31m makes text bold and red, \e[0m reverts it to normal
+"
 
 PS3='
 Select the disk to install on: '
