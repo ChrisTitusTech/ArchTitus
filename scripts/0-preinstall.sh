@@ -30,7 +30,7 @@ timedatectl set-ntp true
 pacman -S --noconfirm archlinux-keyring #update keyrings to latest to prevent packages failing to install
 pacman -S --noconfirm --needed pacman-contrib terminus-font
 setfont ter-v22b
-sed -i '/^#ParallelDownloads/s/^.//' /etc/pacman.conf
+sed -i '/^#ParallelDownloads/s/^#//' /etc/pacman.conf
 pacman -S --noconfirm --needed reflector rsync grub
 cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
 echo "
