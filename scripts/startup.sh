@@ -6,11 +6,11 @@
 # @stdout Output routed to startup.log
 # @stderror Output routed to startup.log
 
-# Colors/formatting for echo: {
-RED='\e[31m'
-BOLD=$(tput bold)
-RESET='\e[0m' # Reset text to default appearance
-# }
+# Colors/formatting for echo
+  BOLD='\e[1m'
+  RESET='\e[0m' # Reset text to default appearance
+#   High intensity colors:
+    BRED='\e[91m'
 
 # @setting-header General Settings
 # @setting CONFIG_FILE string[$CONFIGS_DIR/setup.conf] Location of setup.conf to be used by set_option and all subsequent scripts.
@@ -240,7 +240,7 @@ esac
 diskpart () {
 echo -e "
 ------------------------------------------------------------------------
-    ${RED}${BOLD}THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK!${RESET}
+    ${BRED}${BOLD}THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK!${RESET}
     Please make sure you know what you are doing because
     after formating your disk there is no way to get data back
 ------------------------------------------------------------------------
