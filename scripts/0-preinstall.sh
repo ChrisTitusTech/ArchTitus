@@ -66,7 +66,7 @@ if [[ $PARTITION_STRATEGY == "Dual_Boot" || $PARTITION_STRATEGY == "Manual_Parti
     echo "DISK = $DISK"
     echo "press any key to start"
     read temp_variable
-    bash
+    bash -i
 
 elif [[ $PARTITION_STRATEGY == "Auto_Partition" ]]; then
     # disk prep
