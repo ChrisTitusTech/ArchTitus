@@ -129,8 +129,8 @@ networkmanager
 networkmanager-openconnect
 networkmanager-openvpn
 python
---END OF MINIMAL INSTALL--
 firefox
+--END OF MINIMAL INSTALL--
 adobe-source-code-pro-fonts
 obs-studio
 # okular
