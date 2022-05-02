@@ -301,7 +301,23 @@ installtype () {
 # More features in future
 # language (){}
 
+# my functions, --- start here ----
+partitionstrategy () {
+  echo -ne "Would you like to: Dual_boot / Manual_partition / Auto_partition \n\n
+  Dual_Boot: Manual_partition + Dualboot things \n
+  Manual_Partition: set up manually partition table \n
+  Auto_Partition: Whipe *ALL DATA* on the whole disk (all partitions) \n"
+  options=(Dual_Boot / Manual_Partition / Auto_Partition)
+  select_option $? 4 "${options[@]}"
+  partition_strategy=${options[$?]}
+  set_option PARTITION_STRATEGY $partition_strategy
+}
+# my functions, --- end here ----
+
 # Starting functions
+clear
+logo
+partitionstrategy
 clear
 logo
 userinfo
