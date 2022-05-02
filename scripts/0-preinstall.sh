@@ -65,8 +65,20 @@ if [[ $PARTITION_STRATEGY == "Dual_Boot" || $PARTITION_STRATEGY == "Manual_Parti
     echo "set up partition table on your own, good luck :)"
     echo "DISK = $DISK"
     echo "press any key to start"
-    read temp_variable
-    bash -i
+    read wait_variable
+    cgdisk
+    lsblk
+    echo "Which partition NUMBER is EFIBOOT (for sda4 the answer is '4')"
+    read efiboot_nr
+        echo "Which partition NUMBER is ROOT (for sda4 the answer is '4')"
+    read root_nr
+    partition2=${DISK}${efiboot_nr}
+    partition3=${DISK}${root_nr}
+    echo -ne "
+    partition2 = $partition2\n
+    partition3 = $partition3\n
+    press any key to continue"
+    read wait_variable
 
 elif [[ $PARTITION_STRATEGY == "Auto_Partition" ]]; then
     # disk prep

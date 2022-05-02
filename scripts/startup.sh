@@ -307,7 +307,7 @@ partitionstrategy () {
   Dual_Boot: Manual_partition + Dualboot things \n
   Manual_Partition: set up manually partition table \n
   Auto_Partition: Whipe *ALL DATA* on the whole disk (all partitions) \n"
-  options=(Dual_Boot / Manual_Partition / Auto_Partition)
+  options=(Dual_Boot Manual_Partition Auto_Partition)
   select_option $? 4 "${options[@]}"
   partition_strategy=${options[$?]}
   set_option PARTITION_STRATEGY $partition_strategy
