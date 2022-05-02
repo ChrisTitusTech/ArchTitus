@@ -3,7 +3,7 @@ gnome-tweaks
 guake
 --END OF MINIMAL INSTALL--
 gnome-chess
-gnome-todo
+#gnome-todo
 gnome-sound-recorder
 # email:
 #gnome-evolution

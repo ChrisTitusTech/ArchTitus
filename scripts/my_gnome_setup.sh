@@ -12,7 +12,7 @@ gsettings reset org.gnome.desktop.input-sources sources
 gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'de+nodeadkeys')]"
 
 # SHORTCUTS
-python3 ~/ArchTitus/scripts/add_gnome_shortcuts.py 'open guake' 'guake' '<Super>e'
+python3 ~/ArchTitus/scripts/add_gnome_shortcut.py 'open guake' 'guake' '<Super>e'
 
 
 #######################################
@@ -42,7 +42,7 @@ init-extension () {
     for file in $files; do
         if [[ $file == *.xml ]]; then
             echo "$file"
-            sudo cp ~/.local/share/gnome-shell/extensions/extname/schemas/$file /usr/share/glib-2.0/schemas/
+            sudo cp ~/.local/share/gnome-shell/extensions/$1/schemas/$file /usr/share/glib-2.0/schemas/
         fi
     done;
 }
