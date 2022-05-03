@@ -1,7 +1,21 @@
 #!/usr/bin/env bash
 
+# remove bell-beeb
+echo 'blacklist pcspkr' | sudo tee -a /etc/modprobe.d/nobeeb.conf
+
+# for ACER:
+    # fix sound
+    sudo rm /etc/modprobe.d/sound.conf
+    echo "options snd-intel-dspcfg dsp_driver=1" | sudo tee -a /etc/modprobe.d/sound.conf > /dev/null
+    echo "options snd-hda-intel model=dell-headset-multi" | sudo tee -a /etc/modprobe.d/sound.conf > /dev/null
+    echo "options snd-hda-intel dmic_detect=0 " | sudo tee -a /etc/modprobe.d/sound.conf > /dev/null
+    echo "options snd-hda-intel model=laptop-amic enable=yes" | sudo tee -a /etc/modprobe.d/sound.conf > /dev/null
+    echo "options snd-hda-intel power_save=0" | sudo tee -a /etc/modprobe.d/sound.conf > /dev/null
+
+
+
 # get internet connection
-printf 'station wlan0 connect "Krosse Krabbe 5GHz"\nsehrkomplex\nquit\n' | iwctl
+    printf 'station wlan0 connect "Krosse Krabbe 5GHz"\nsehrkomplex\nquit\n' | iwctl
 
 # init extensions
 init-extension () {
