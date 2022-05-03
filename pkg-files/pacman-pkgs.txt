@@ -1,3 +1,10 @@
+# first install pipewire to avoid pulseaudio
+pipewire 
+pipewire-jack 
+pipewire-alsa 
+pipewire-pulse
+gst-plugin-pipewire 
+#now procced as usual
 base-devel
 mesa
 xorg
@@ -122,14 +129,27 @@ networkmanager-openconnect
 networkmanager-openvpn
 python
 firefox
-iwctl
+iwd
+rclone
+rambox
 --END OF MINIMAL INSTALL--
 adobe-source-code-pro-fonts
 obs-studio
 # okular
 qgis
 r
-rclone
 sane
 gscan2pdf
-texlive-most
+# TEXLIVE-MOST:
+#texlive-bibtexextra
+texlive-core
+#texlive-fontsextra
+#texlive-formatsextra
+#texlive-games
+#texlive-humanities
+texlive-latexextra
+#texlive-music
+#texlive-pictures
+#texlive-pstricks
+#texlive-publishers
+texlive-science

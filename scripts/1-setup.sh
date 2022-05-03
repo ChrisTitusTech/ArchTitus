@@ -89,8 +89,6 @@ echo -ne "
                     Installing Base System  
 -------------------------------------------------------------------------
 "
-# first install pipewire to avoid pulseaudio
-sudo pacman -S -noconfirm -needed pipewire gst-plugin-pipewire pipewire-alsa pipewire-jack pipewire-pulse
 
 # sed $INSTALL_TYPE is using install type to check for MINIMAL installation, if it's true, stop #X 'trims' the file
 # stop the script and move on, not installing any more packages below that line
