@@ -122,6 +122,7 @@ networkmanager-openconnect
 networkmanager-openvpn
 python
 firefox
+iwctl
 --END OF MINIMAL INSTALL--
 adobe-source-code-pro-fonts
 obs-studio
