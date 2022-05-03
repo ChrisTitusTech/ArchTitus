@@ -76,9 +76,6 @@ os-prober
 # picom
 pkgconf
 # powerline-fonts
-# pulseaudio
-# pulseaudio-alsa
-# pulseaudio-bluetooth
 # python-notify2
 # python-psutil
 # python-pyqt5
@@ -111,11 +108,6 @@ zip
 ##########################################
 ###   MY PACKAGES
 ##########################################
-# pipewire
-# gst-plugin-pipewire
-# pipewire-alsa
-# pipewire-jack
-# pipewire-pulse
 flatpak
 grep
 opencore-amr

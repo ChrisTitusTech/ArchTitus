@@ -9,6 +9,7 @@
 #-------------------------------------------------------------------------
 #github-action genshdoc
 
+source $CONFIGS_DIR/setup.conf
 echo -ne "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
@@ -20,32 +21,22 @@ echo -ne "
 -------------------------------------------------------------------------
                     Automated Arch Linux Installer
 -------------------------------------------------------------------------
-                    Installing Prerequisites
--------------------------------------------------------------------------
 "
-pacman -S --noconfirm --needed gptfdisk btrfs-progs glibc
-echo -ne "
--------------------------------------------------------------------------
-                    Formating Disk
--------------------------------------------------------------------------
-"
-umount -A --recursive /mnt # make sure everything is unmounted before we start
-
+# Manual Partitioning
+pacman -S --noconfirm --needed gptfdisk
 if [[ $PARTITION_STRATEGY == "Dual_Boot" || $PARTITION_STRATEGY == "Manual_Partition" ]]; then
-    # echo -ne "
-    # First free up some space for new partitions:\n"
-    
-    # echo -ne "
-    # Create the following partitions manually: \n
-    # 1. BIOSBOOT 1M (gdisk code is ef02) \n
-    # 2. EFIBOOT 300M \n
-    # 3. ROOT 10G+ \n\n
-    # "
+    echo -ne "
+    Create the following partitions manually: \n
+    1. BIOSBOOT 1M (gdisk code is ef02) \n
+    2. EFIBOOT 300M \n
+    3. ROOT 10G+ \n\n
+    "
     echo "set up partition table on your own, good luck :)"
     echo "DISK = $DISK"
     echo "press any key to start"
     read wait_variable
-    cgdisk $DISK
+    lsblk
+    cdisk $DISK
     lsblk
     echo "Which partition NUMBER is EFIBOOT (for sda5 the answer is '5')"
     read efiboot_nr
@@ -53,8 +44,42 @@ if [[ $PARTITION_STRATEGY == "Dual_Boot" || $PARTITION_STRATEGY == "Manual_Parti
     read root_nr
     partition2=${DISK}${efiboot_nr}
     partition3=${DISK}${root_nr}
+fi
+echo -ne "
+-------------------------------------------------------------------------
+                    Automated Arch Linux Installer
+-------------------------------------------------------------------------
 
-elif [[ $PARTITION_STRATEGY == "Auto_Partition" ]]; then
+Setting up mirrors for optimal download"
+iso=$(curl -4 ifconfig.co/country-iso) #X output: "CH
+timedatectl set-ntp true
+pacman -S --noconfirm archlinux-keyring #update keyrings to latest to prevent packages failing to install
+pacman -S --noconfirm --needed pacman-contrib terminus-font
+setfont ter-v22b #X change font
+sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
+pacman -S --noconfirm --needed reflector rsync grub
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+echo -ne "
+-------------------------------------------------------------------------
+                    Setting up $iso mirrors for faster downloads
+-------------------------------------------------------------------------
+"
+reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
+mkdir /mnt &>/dev/null # Hiding error message if any
+echo -ne "
+-------------------------------------------------------------------------
+                    Installing Prerequisites
+-------------------------------------------------------------------------
+"
+pacman -S --noconfirm --needed btrfs-progs glibc
+echo -ne "
+-------------------------------------------------------------------------
+                    Formating Disk
+-------------------------------------------------------------------------
+"
+umount -A --recursive /mnt # make sure everything is unmounted before we start
+
+if [[ $PARTITION_STRATEGY == "Auto_Partition" ]]; then
     # disk prep
     sgdisk -Z ${DISK} # zap all on disk #X destroys/wipes the whole drive 
     sgdisk -a 2048 -o ${DISK} # new gpt disk 2048 alignment
@@ -148,27 +173,6 @@ if ! grep -qs '/mnt' /proc/mounts; then
     echo "Rebooting in 1 Second ..." && sleep 1
     reboot now
 fi
-echo -ne "
--------------------------------------------------------------------------
-                    Setting up mirrors for optimal download
--------------------------------------------------------------------------
-"
-source $CONFIGS_DIR/setup.conf
-iso=$(curl -4 ifconfig.co/country-iso) #X output: "CH
-timedatectl set-ntp true
-pacman -S --noconfirm archlinux-keyring #update keyrings to latest to prevent packages failing to install
-pacman -S --noconfirm --needed pacman-contrib terminus-font
-setfont ter-v22b #X change font
-sed -i 's/^#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-pacman -S --noconfirm --needed reflector rsync grub
-cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-echo -ne "
--------------------------------------------------------------------------
-                    Setting up $iso mirrors for faster downloads
--------------------------------------------------------------------------
-"
-reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
-mkdir /mnt &>/dev/null # Hiding error message if any
 echo -ne "
 -------------------------------------------------------------------------
                     Arch Install on Main Drive
