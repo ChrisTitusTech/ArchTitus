@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# remove bell-beeb
+# remove bell-beeb 
 echo 'blacklist pcspkr' | sudo tee -a /etc/modprobe.d/nobeeb.conf
 
 # for ACER:
