@@ -39,14 +39,14 @@ echo "
 -------------------------------------------------------------------------"
 TOTAL_MEM=$(cat /proc/meminfo | grep -i 'memtotal' | grep -o '[[:digit:]]*')
 if [[  $TOTAL_MEM -gt 8000000 ]]; then
-sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j$nc\"/g" /etc/makepkg.conf
-sed -i "s/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -T $nc -z -)/g" /etc/makepkg.conf
+sed -i "s/^#\(MAKEFLAGS=\"-j\)2\"/\1$nc\"/;
+/^COMPRESSXZ=(xz -c -z -)/s/-c /&-T $nc /" /etc/makepkg.conf
 fi
 echo "
 -------------------------------------------------------------------------
                     Setup Language to US and set locale
 -------------------------------------------------------------------------"
-sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+sed -i '/^#en_US.UTF-8 /s/^#//' /etc/locale.gen
 locale-gen
 timedatectl --no-ask-password set-timezone ${TIMEZONE}
 timedatectl --no-ask-password set-ntp 1
@@ -56,8 +56,7 @@ ln -s /usr/share/zoneinfo/${TIMEZONE} /etc/localtime
 localectl --no-ask-password set-keymap ${KEYMAP}
 
 # Add sudo no password rights
-sed -i '/^# %wheel ALL=(ALL) NOPASSWD: ALL/s/^# //' /etc/sudoers
-sed -i '/^# %wheel ALL=(ALL:ALL) NOPASSWD: ALL/s/^# //' /etc/sudoers
+sed -Ei 's/^# (%wheel ALL=\(ALL(:ALL)?\) NOPASSWD: ALL)/\1/' /etc/sudoers
 
 #Add parallel downloading
 sed -i '/^#ParallelDownloads/s/^#//' /etc/pacman.conf

@@ -143,12 +143,9 @@ echo "
 -------------------------------------------------------------------------
                     Cleaning
 -------------------------------------------------------------------------"
-# Remove no password sudo rights
-sed -i 's/^%wheel ALL=(ALL) NOPASSWD: ALL/# &/' /etc/sudoers
-sed -i 's/^%wheel ALL=(ALL:ALL) NOPASSWD: ALL/# &/' /etc/sudoers
-# Add sudo rights
-sed -i '/^# %wheel ALL=(ALL) ALL/s/^# //' /etc/sudoers
-sed -i '/^# %wheel ALL=(ALL:ALL) ALL/s/^# //' /etc/sudoers
+# Remove no password sudo rights, add sudo rights
+sed -Ei 's/^%wheel ALL=\(ALL(:ALL)?\) NOPASSWD: ALL/# &/;
+s/^# (%wheel ALL=\(ALL(:ALL)?\) ALL)/\1/' /etc/sudoers
 
 rm -r $HOME/ArchTitus /home/$USERNAME/ArchTitus
 
