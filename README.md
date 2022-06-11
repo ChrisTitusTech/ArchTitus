@@ -14,7 +14,7 @@ From initial Prompt type the following commands:
 
 ```
 pacman -Sy git
-git clone https://github.com/narpin/ArchTitus/edit/narpin-patch-1/
+git clone https://github.com/narpin/ArchTitus/tree/narpin-patch-1
 cd narpin-patch-1
 ./narpin-patch-1
 ```
