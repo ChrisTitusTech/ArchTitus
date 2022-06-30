@@ -73,10 +73,7 @@ echo "
 # stop the script and move on, not installing any more packages below that line
 if [[ ! $DESKTOP_ENV == server ]]; then
   sed -n '/'$INSTALL_TYPE'/q;p' $HOME/ArchTitus/pkg-files/pacman-pkgs.txt | while read line; do
-    if [[ ${line} == '--END OF MINIMAL INSTALL--' ]]; then
-      # If selected installation type is FULL, skip the --END OF THE MINIMAL INSTALLATION-- line
-      continue
-    fi
+    [[ ${line} == '--END OF MINIMAL INSTALL--' ]] && continue # If selected installation type is FULL, skip the --END OF THE MINIMAL INSTALLATION-- line
     echo "INSTALLING: ${line}"
     sudo pacman -S --noconfirm --needed ${line}
   done
@@ -118,9 +115,7 @@ if ! source $HOME/ArchTitus/configs/setup.conf; then
 		read -p "Please enter username:" username
 		# username regex per response here https://unix.stackexchange.com/questions/157426/what-is-the-regex-to-validate-linux-users
 		# lowercase the username to test regex
-		if [[ "${username,,}" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]]; then
-			break
-		fi
+		[[ "${username,,}" =~ ^[a-z_]([a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)$ ]] && break
 		echo "Incorrect username."
 	done
 # convert name to lowercase before saving to setup.conf
@@ -134,14 +129,10 @@ echo "password=${password,,}" >> ${HOME}/ArchTitus/configs/setup.conf
 	while true; do
 		read -p "Please name your machine:" name_of_machine
 		# hostname regex (!!couldn't find spec for computer name!!)
-		if [[ "${name_of_machine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]]; then
-			break
-		fi
+		[[ "${name_of_machine,,}" =~ ^[a-z][a-z0-9_.-]{0,62}[a-z0-9]$ ]] && break
 		# if validation fails allow the user to force saving of the hostname
 		read -p "Hostname doesn't seem correct. Do you still want to save it? (y/n)" force
-		if [[ "${force,,}" = "y" ]]; then
-			break
-		fi
+		[[ "${force,,}" = "y" ]] && break
 	done
 
     echo "NAME_OF_MACHINE=${name_of_machine,,}" >> ${HOME}/ArchTitus/configs/setup.conf

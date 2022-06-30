@@ -160,11 +160,7 @@ echo "
 -------------------------------------------------------------------------
                     GRUB BIOS Bootloader Install & Check
 -------------------------------------------------------------------------"
-if [[ ! -d "/sys/firmware/efi" ]]; then
-    grub-install --boot-directory=/mnt/boot ${DISK}
-else
-    pacstrap /mnt efibootmgr --noconfirm --needed
-fi
+[[ -d "/sys/firmware/efi" ]] || grub-install --boot-directory=/mnt/boot ${DISK} && pacstrap /mnt efibootmgr --noconfirm --needed
 echo "
 -------------------------------------------------------------------------
                     Checking for low memory systems <8G

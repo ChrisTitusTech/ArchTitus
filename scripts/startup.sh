@@ -15,17 +15,13 @@
 # @setting-header General Settings
 # @setting CONFIG_FILE string[$CONFIGS_DIR/setup.conf] Location of setup.conf to be used by set_option and all subsequent scripts.
 CONFIG_FILE=$CONFIGS_DIR/setup.conf
-if [ ! -f $CONFIG_FILE ]; then # check if file exists
-    touch -f $CONFIG_FILE # create file if not exists
-fi
+[ -f $CONFIG_FILE ] || touch -f $CONFIG_FILE # create $CONFIG_FILE if it doesn't exist
 
 # @description set options in setup.conf
 # @arg $1 string Configuration variable.
 # @arg $2 string Configuration value.
 set_option() {
-    if grep -Eq "^${1}.*" $CONFIG_FILE; then # check if option exists
-        sed -i "/^${1}.*/d" $CONFIG_FILE # delete option if exists
-    fi
+    grep -Eq "^${1}.*" $CONFIG_FILE && sed -i "/^${1}.*/d" $CONFIG_FILE # delete option if exists
     echo "${1}=${2}" >>$CONFIG_FILE # add option
 }
 # @description Renders a text based list of options that can be selected by the
@@ -48,20 +44,20 @@ select_option() {
     key_input()         {
                         local key
                         IFS= read -rsn1 key 2>/dev/null >&2
-                        if [[ $key = ""      ]]; then echo enter; fi;
-                        if [[ $key = $'\x20' ]]; then echo space; fi;
-                        if [[ $key = "k" ]]; then echo up; fi;
-                        if [[ $key = "j" ]]; then echo down; fi;
-                        if [[ $key = "h" ]]; then echo left; fi;
-                        if [[ $key = "l" ]]; then echo right; fi;
-                        if [[ $key = "a" ]]; then echo all; fi;
-                        if [[ $key = "n" ]]; then echo none; fi;
+                        [[ $key = ""      ]] && echo enter
+                        [[ $key = $'\x20' ]] && echo space
+                        [[ $key = "k" ]] && echo up
+                        [[ $key = "j" ]] && echo down
+                        [[ $key = "h" ]] && echo left
+                        [[ $key = "l" ]] && echo right
+                        [[ $key = "a" ]] && echo all
+                        [[ $key = "n" ]] && echo none
                         if [[ $key = $'\x1b' ]]; then
                             read -rsn2 key
-                            if [[ $key = [A || $key = k ]]; then echo up;    fi;
-                            if [[ $key = [B || $key = j ]]; then echo down;  fi;
-                            if [[ $key = [C || $key = l ]]; then echo right;  fi;
-                            if [[ $key = [D || $key = h ]]; then echo left;  fi;
+                            [[ $key = [A || $key = k ]] && echo up
+                            [[ $key = [B || $key = j ]] && echo down
+                            [[ $key = [C || $key = l ]] && echo right
+                            [[ $key = [D || $key = h ]] && echo left
                         fi
     }
     print_options_multicol() {
@@ -82,11 +78,7 @@ select_option() {
             col=$(( $idx - $row * $colmax ))
 
             cursor_to $(( $startrow + $row + 1)) $(( $offset * $col + 1))
-            if [ $idx -eq $curr_idx ]; then
-                print_selected "$option"
-            else
-                print_option "$option"
-            fi
+            [ $idx -eq $curr_idx ] && print_selected "$option" || print_option "$option"
             ((idx++))
         done
     }
@@ -120,13 +112,13 @@ select_option() {
         case `key_input` in
             enter)  break;;
             up)     ((active_row--));
-                    if [ $active_row -lt 0 ]; then active_row=0; fi;;
+                    [ $active_row -lt 0 ] && active_row=0;;
             down)   ((active_row++));
-                    if [ $active_row -ge $(( ${#options[@]} / $colmax ))  ]; then active_row=$(( ${#options[@]} / $colmax )); fi;;
+                    [ $active_row -ge $(( ${#options[@]} / $colmax ))  ] && active_row=$(( ${#options[@]} / $colmax ));;
             left)     ((active_col=$active_col - 1));
-                    if [ $active_col -lt 0 ]; then active_col=0; fi;;
+                    [ $active_col -lt 0 ] && active_col=0;;
             right)     ((active_col=$active_col + 1));
-                    if [ $active_col -ge $colmax ]; then active_col=$(( $colmax - 1 )) ; fi;;
+                    [ $active_col -ge $colmax ] && active_col=$(( $colmax - 1 ))
         esac
     done
 

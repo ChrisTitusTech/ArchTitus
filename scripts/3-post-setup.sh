@@ -20,18 +20,14 @@ Final Setup and Configurations
 GRUB EFI Bootloader Install & Check"
 source ${HOME}/ArchTitus/configs/setup.conf
 
-if [[ -d "/sys/firmware/efi" ]]; then
-    grub-install --efi-directory=/boot ${DISK}
-fi
+[[ -d "/sys/firmware/efi" ]] && grub-install --efi-directory=/boot ${DISK}
 
 echo "
 -------------------------------------------------------------------------
                Creating (and Theming) Grub Boot Menu
 -------------------------------------------------------------------------"
 # set kernel parameter for decrypting the drive
-if [[ "${FS}" == "luks" ]]; then
-sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%&cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:ROOT root=/dev/mapper/ROOT %g" /etc/default/grub
-fi
+[[ "${FS}" == "luks" ]] && sed -i "s%GRUB_CMDLINE_LINUX_DEFAULT=\"%&cryptdevice=UUID=${ENCRYPTED_PARTITION_UUID}:ROOT root=/dev/mapper/ROOT %g" /etc/default/grub
 # set kernel parameter for adding splash screen
 sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& splash /' /etc/default/grub
 
