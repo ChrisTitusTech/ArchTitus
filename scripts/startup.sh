@@ -6,20 +6,22 @@
 # @stdout Output routed to startup.log
 # @stderror Output routed to startup.log
 
+# Colors/formatting for echo
+  BOLD='\e[1m'
+  RESET='\e[0m' # Reset text to default appearance
+#   High intensity colors:
+    BRED='\e[91m'
+
 # @setting-header General Settings
-# @setting CONFIG_FILE string[$CONFIGS_DIR/setup.conf] Location of setup.conf to be used by set_option and all subsequent scripts. 
+# @setting CONFIG_FILE string[$CONFIGS_DIR/setup.conf] Location of setup.conf to be used by set_option and all subsequent scripts.
 CONFIG_FILE=$CONFIGS_DIR/setup.conf
-if [ ! -f $CONFIG_FILE ]; then # check if file exists
-    touch -f $CONFIG_FILE # create file if not exists
-fi
+[ -f $CONFIG_FILE ] || touch -f $CONFIG_FILE # create $CONFIG_FILE if it doesn't exist
 
 # @description set options in setup.conf
 # @arg $1 string Configuration variable.
 # @arg $2 string Configuration value.
 set_option() {
-    if grep -Eq "^${1}.*" $CONFIG_FILE; then # check if option exists
-        sed -i -e "/^${1}.*/d" $CONFIG_FILE # delete option if exists
-    fi
+    grep -Eq "^${1}.*" $CONFIG_FILE && sed -i "/^${1}.*/d" $CONFIG_FILE # delete option if exists
     echo "${1}=${2}" >>$CONFIG_FILE # add option
 }
 # @description Renders a text based list of options that can be selected by the
@@ -42,21 +44,21 @@ select_option() {
     key_input()         {
                         local key
                         IFS= read -rsn1 key 2>/dev/null >&2
-                        if [[ $key = ""      ]]; then echo enter; fi;
-                        if [[ $key = $'\x20' ]]; then echo space; fi;
-                        if [[ $key = "k" ]]; then echo up; fi;
-                        if [[ $key = "j" ]]; then echo down; fi;
-                        if [[ $key = "h" ]]; then echo left; fi;
-                        if [[ $key = "l" ]]; then echo right; fi;
-                        if [[ $key = "a" ]]; then echo all; fi;
-                        if [[ $key = "n" ]]; then echo none; fi;
+                        [[ $key = ""      ]] && echo enter
+                        [[ $key = $'\x20' ]] && echo space
+                        [[ $key = "k" ]] && echo up
+                        [[ $key = "j" ]] && echo down
+                        [[ $key = "h" ]] && echo left
+                        [[ $key = "l" ]] && echo right
+                        [[ $key = "a" ]] && echo all
+                        [[ $key = "n" ]] && echo none
                         if [[ $key = $'\x1b' ]]; then
                             read -rsn2 key
-                            if [[ $key = [A || $key = k ]]; then echo up;    fi;
-                            if [[ $key = [B || $key = j ]]; then echo down;  fi;
-                            if [[ $key = [C || $key = l ]]; then echo right;  fi;
-                            if [[ $key = [D || $key = h ]]; then echo left;  fi;
-                        fi 
+                            [[ $key = [A || $key = k ]] && echo up
+                            [[ $key = [B || $key = j ]] && echo down
+                            [[ $key = [C || $key = l ]] && echo right
+                            [[ $key = [D || $key = h ]] && echo left
+                        fi
     }
     print_options_multicol() {
         # print options by overwriting the last lines
@@ -67,20 +69,16 @@ select_option() {
         local idx=0
         local row=0
         local col=0
-        
+
         curr_idx=$(( $curr_col + $curr_row * $colmax ))
-        
+
         for option in "${options[@]}"; do
 
             row=$(( $idx/$colmax ))
             col=$(( $idx - $row * $colmax ))
 
             cursor_to $(( $startrow + $row + 1)) $(( $offset * $col + 1))
-            if [ $idx -eq $curr_idx ]; then
-                print_selected "$option"
-            else
-                print_option "$option"
-            fi
+            [ $idx -eq $curr_idx ] && print_selected "$option" || print_option "$option"
             ((idx++))
         done
     }
@@ -95,7 +93,7 @@ select_option() {
     local startrow=$(($lastrow - $#))
     local startcol=1
     local lines=$( tput lines )
-    local cols=$( tput cols ) 
+    local cols=$( tput cols )
     local colmax=$2
     local offset=$(( $cols / $colmax ))
 
@@ -109,18 +107,18 @@ select_option() {
     local active_row=0
     local active_col=0
     while true; do
-        print_options_multicol $active_col $active_row 
+        print_options_multicol $active_col $active_row
         # user key control
         case `key_input` in
             enter)  break;;
             up)     ((active_row--));
-                    if [ $active_row -lt 0 ]; then active_row=0; fi;;
+                    [ $active_row -lt 0 ] && active_row=0;;
             down)   ((active_row++));
-                    if [ $active_row -ge $(( ${#options[@]} / $colmax ))  ]; then active_row=$(( ${#options[@]} / $colmax )); fi;;
+                    [ $active_row -ge $(( ${#options[@]} / $colmax ))  ] && active_row=$(( ${#options[@]} / $colmax ));;
             left)     ((active_col=$active_col - 1));
-                    if [ $active_col -lt 0 ]; then active_col=0; fi;;
+                    [ $active_col -lt 0 ] && active_col=0;;
             right)     ((active_col=$active_col + 1));
-                    if [ $active_col -ge $colmax ]; then active_col=$(( $colmax - 1 )) ; fi;;
+                    [ $active_col -ge $colmax ] && active_col=$(( $colmax - 1 ))
         esac
     done
 
@@ -135,7 +133,7 @@ select_option() {
 # @noargs
 logo () {
 # This will be shown on every set as user is progressing
-echo -ne "
+echo "
 -------------------------------------------------------------------------
  █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
 ██╔══██╗██╔══██╗██╔════╝██║  ██║╚══██╔══╝██║╚══██╔══╝██║   ██║██╔════╝
@@ -144,29 +142,26 @@ echo -ne "
 ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 ------------------------------------------------------------------------
-            Please select presetup settings for your system              
-------------------------------------------------------------------------
-"
+            Please select presetup settings for your system
+------------------------------------------------------------------------"
 }
 # @description This function will handle file systems. At this movement we are handling only
 # btrfs and ext4. Others will be added in future.
 filesystem () {
-echo -ne "
-Please Select your file system for both boot and root
-"
+echo "
+Please select your file system for both boot and root:"
 options=("btrfs" "ext4" "luks" "exit")
 select_option $? 1 "${options[@]}"
 
 case $? in
 0) set_option FS btrfs;;
 1) set_option FS ext4;;
-2) 
+2)
 while true; do
-  echo -ne "Please enter your luks password: \n"
-  read -s luks_password # read password without echo
-
-  echo -ne "Please repeat your luks password: \n"
-  read -s luks_password2 # read password without echo
+  read -r -s -p "Please enter your luks password: " luks_password # read password without echo
+  echo
+  read -r -s -p "Please repeat your luks password: " luks_password2 # read password without echo
+  echo
 
   if [ "$luks_password" = "$luks_password2" ]; then
     set_option LUKS_PASSWORD $luks_password
@@ -181,14 +176,13 @@ done
 *) echo "Wrong option please select again"; filesystem;;
 esac
 }
-# @description Detects and sets timezone. 
+# @description Detects and sets timezone.
 timezone () {
 # Added this from arch wiki https://wiki.archlinux.org/title/System_time
 time_zone="$(curl --fail https://ipapi.co/timezone)"
-echo -ne "
-System detected your timezone to be '$time_zone' \n"
-echo -ne "Is this correct?
-" 
+echo "
+System detected your timezone to be '$time_zone' "
+echo "Is this correct?"
 options=("Yes" "No")
 select_option $? 1 "${options[@]}"
 
@@ -197,32 +191,30 @@ case ${options[$?]} in
     echo "${time_zone} set as timezone"
     set_option TIMEZONE $time_zone;;
     n|N|no|NO|No)
-    echo "Please enter your desired timezone e.g. Europe/London :" 
-    read new_timezone
+    read -p "Please enter your desired timezone e.g. Europe/London: " new_timezone
     echo "${new_timezone} set as timezone"
     set_option TIMEZONE $new_timezone;;
     *) echo "Wrong option. Try again";timezone;;
 esac
 }
-# @description Set user's keyboard mapping. 
+# @description Set user's keyboard mapping.
 keymap () {
-echo -ne "
-Please select key board layout from this list"
+echo -n "
+Please select a keyboard layout from this list:"
 # These are default key maps as presented in official arch repo archinstall
 options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru sg ua uk)
 
 select_option $? 4 "${options[@]}"
 keymap=${options[$?]}
 
-echo -ne "Your key boards layout: ${keymap} \n"
+echo "Chosen keyboard layout: ${keymap}"
 set_option KEYMAP $keymap
 }
 
 # @description Choose whether drive is SSD or not.
 drivessd () {
-echo -ne "
-Is this an ssd? yes/no:
-"
+echo "
+Is this an ssd? yes/no:"
 
 options=("Yes" "No")
 select_option $? 1 "${options[@]}"
@@ -238,13 +230,12 @@ esac
 
 # @description Disk selection for drive to be used with installation.
 diskpart () {
-echo -ne "
+echo -e "
 ------------------------------------------------------------------------
-    THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK
+    ${BRED}${BOLD}THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK!${RESET}
     Please make sure you know what you are doing because
     after formating your disk there is no way to get data back
 ------------------------------------------------------------------------
-
 "
 
 PS3='
@@ -260,16 +251,15 @@ echo -e "\n${disk%|*} selected \n"
 drivessd
 }
 
-# @description Gather username and password to be used for installation. 
+# @description Gather username and password to be used for installation.
 userinfo () {
 read -p "Please enter your username: " username
-set_option USERNAME ${username,,} # convert to lower case as in issue #109 
+set_option USERNAME ${username,,} # convert to lower case as in issue #109
 while true; do
-  echo -ne "Please enter your password: \n"
-  read -s password # read password without echo
-
-  echo -ne "Please repeat your password: \n"
-  read -s password2 # read password without echo
+  read -r -s -p "Please enter your password: " password # read password without echo
+  echo
+  read -r -s -p "Please repeat your password: " password2 # read password without echo
+  echo
 
   if [ "$password" = "$password2" ]; then
     set_option PASSWORD $password
@@ -282,10 +272,10 @@ read -rep "Please enter your hostname: " nameofmachine
 set_option NAME_OF_MACHINE $nameofmachine
 }
 
-# @description Choose AUR helper. 
+# @description Choose AUR helper.
 aurhelper () {
   # Let the user choose AUR helper from predefined list
-  echo -ne "Please enter your desired AUR helper:\n"
+  echo "Please enter your desired AUR helper:"
   options=(paru yay picaur aura trizen pacaur none)
   select_option $? 4 "${options[@]}"
   aur_helper=${options[$?]}
@@ -295,18 +285,18 @@ aurhelper () {
 # @description Choose Desktop Environment
 desktopenv () {
   # Let the user choose Desktop Enviroment from predefined list
-  echo -ne "Please select your desired Desktop Enviroment:\n"
+  echo "Please select your desired Desktop Enviroment:"
   options=(gnome kde cinnamon xfce mate budgie lxde deepin openbox server)
   select_option $? 4 "${options[@]}"
   desktop_env=${options[$?]}
   set_option DESKTOP_ENV $desktop_env
 }
 
-# @description Choose whether to do full or minimal installation. 
+# @description Choose whether to do full or minimal installation.
 installtype () {
-  echo -ne "Please select type of installation:\n\n
+  echo -e "Please select type of installation:\n\n
   Full install: Installs full featured desktop enviroment, with added apps and themes needed for everyday use\n
-  Minimal Install: Installs only apps few selected apps to get you started\n"
+  Minimal Install: Installs only a few selected apps to get you started"
   options=(FULL MINIMAL)
   select_option $? 4 "${options[@]}"
   install_type=${options[$?]}

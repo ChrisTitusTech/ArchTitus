@@ -104,8 +104,7 @@ bash_prompt_command() {
 	local pwdoffset=$(( ${#NEW_PWD} - pwdmaxlen ))
 
 	# Generate name
-	if [ ${pwdoffset} -gt "0" ]
-	then
+	if [ ${pwdoffset} -gt "0" ]; then
 		NEW_PWD=${NEW_PWD:$pwdoffset:$pwdmaxlen}
 		NEW_PWD=${trunc_symbol}/${NEW_PWD#*/}
 	fi
