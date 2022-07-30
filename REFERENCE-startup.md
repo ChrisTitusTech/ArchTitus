@@ -10,7 +10,6 @@ This script will ask users about their prefrences like disk, file system, timezo
 
 # Functions
 * [set_option()](#set_option)
-* [select_option()](#select_option)
 * [logo()](#logo)
 * [filesystem()](#filesystem)
 * [timezone()](#timezone)
@@ -42,15 +41,6 @@ set options in setup.conf
 ### Arguments
 
 * **$2** (string): Configuration value.
-
-## select_option()
-
-Renders a text based list of options that can be selected by the
-user using up, down and enter keys and returns the chosen option.
-
-  Arguments   : list of options, maximum of 256
-                "opt1" "opt2" ...
-  Return value: selected index (0 for opt1, 1 for opt2 ...)
 
 ## logo()
 
