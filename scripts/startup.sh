@@ -276,28 +276,256 @@ case ${options[$?]} in
 esac
 }
 
-# @description Disk selection for drive to be used with installation.
-diskpart () {
-echo -ne "
+# @description Select a Disk to open in cfdisk to create or modify partitions manually.
+manualpart () {
+  clear
+  echo -ne "
 ------------------------------------------------------------------------
-    THIS WILL FORMAT AND DELETE ALL DATA ON THE DISK
-    Please make sure you know what you are doing because
-    after formating your disk there is no way to get data back
+    WARNING: CFDISK IS A COMMAND LINE DISK PARTITION MANAGEMENT TOOL.
+    IT MAY BE HAZARDOUS TO USE IT IF YOU ARE NOT FAMILIER WITH IT.
+    This might cost you all your data stored in this device.
 ------------------------------------------------------------------------
 
 "
 
-PS3='
-Select the disk to install on: '
-options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
+  lsblk
 
+  echo -e "\nSelect the disk which you want to partition: "
+  options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
+
+  select_option $? 1 "${options[@]}"
+  cfdisk ${options[$?]%|*}
+}
+
+# @description Disk drive or partition selection to which Arch will be installed.
+diskpart () {
+clear
+echo -ne "
+------------------------------------------------------------------------
+    WARNING: THIS MAY FORMAT AND DELETE ALL DATA ON THE DISK.
+    Please make sure you know what you are doing because
+    after formating your disk there is no way to get data back.
+------------------------------------------------------------------------
+
+"
+
+fdisk -l
+
+options=("Install in a specific Disk Partition" "Install in a whole Disk Drive" "Modify partitions using cfdisk")
 select_option $? 1 "${options[@]}"
-disk=${options[$?]%|*}
 
-echo -e "\n${disk%|*} selected \n"
-    set_option DISK ${disk%|*}
+case $? in
 
-drivessd
+0)
+  clear
+  echo -ne "
+------------------------------------------------------------------------
+    WARNING: ARCH LINUX WILL BE INSTALLED IN THE SELECTED PARTITION.
+    This will delete all the data present in it, so make sure that
+    you select the right partition that donot contain any useful files.
+------------------------------------------------------------------------
+
+"
+
+  fdisk -l
+
+  echo -e "\nWhich disk do you want to select the partition from?"
+  options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
+
+  select_option $? 1 "${options[@]}"
+  disk=${options[$?]%|*}
+  set_option DISK ${disk%|*}
+
+  echo -e "\n"
+  echo "Select the Partition to Install on (This will be the root partition mounted on \"\\\"): "
+  options=($(lsblk -n --output TYPE,KNAME,SIZE,MOUNTPOINT ${disk%|*} | awk '$1=="part"{print "/dev/"$2"|"$3"__________"$4}'))
+  
+  select_option $? 1 "${options[@]}"
+  part=${options[$?]%|*}
+  set_option INSTALL_IN "PART"
+  set_option PART ${part%|*}
+
+  echo -e "\n${part%|*} selected as root partition. Is that OK?"
+  options=("Yes" "No")
+  select_option $? 1 "${options[@]}"
+
+  case ${options[$?]} in
+  y|Y|yes|Yes|YES)
+    drivessd ;;
+  n|N|no|NO|No)
+    diskpart
+    return
+  ;;
+  *)
+    diskpart
+    return
+  ;;
+  esac
+
+  if [[ -d "/sys/firmware/efi" ]]; then # Checking for UEFI System
+    clear
+    echo -en "
+    ------------------------------------------------------------------------
+        NOTE: If you had installed Windows or any other OS in the current
+        disk drive, an EFI System partition may already exist in it.
+        Identify it from the table below and select it. But, if it doesnot
+        exist, then create a partition of size 100 MB and set its type to
+        EFI System and choose \"yes\" when asked if you want to format it.
+    ------------------------------------------------------------------------
+
+    "
+
+    fdisk -l
+
+    echo -e "\n"
+    echo "Select the EFI Partition (This partition should be in FAT32 format and about 100-500 MB in size. It will be mounted on \"\\Boot\\EFI\"): "
+    options=("Create" $(lsblk -n --output TYPE,KNAME,SIZE,MOUNTPOINT | awk '$1=="part"{print "/dev/"$2"|"$3"__________"$4}'))
+  
+    select_option $? 1 "${options[@]}"
+    case $? in
+    0)
+      manualpart
+      diskpart
+      return
+    ;;
+    *)
+      BOOTpart=${options[$?]%|*}
+      set_option BOOTPART ${BOOTpart%|*}
+    ;;
+    esac
+
+    echo -e "\n${BOOTpart%|*} selected as EFI partition. Is that OK?"
+    options=("Yes" "No")
+    select_option $? 1 "${options[@]}"
+    case ${options[$?]} in
+    y|Y|yes|Yes|YES)
+      return ;;
+    n|N|no|NO|No)
+      diskpart
+      return
+    ;;
+    *)
+      diskpart
+      return
+    ;;
+    esac
+
+    echo -e "\nDo you want to format the selected EFI partition?"
+    options=("Yes" "No")
+    select_option $? 1 "${options[@]}"
+    case ${options[$?]} in
+    y|Y|yes|Yes|YES) set_option FORMATEFI "yes" ;;
+    n|N|no|NO|No) set_option FORMATEFI "no" ;;
+    *) set_option FORMATEFI "no" ;;
+    esac
+
+  elif [[ $(fdisk -l ${disk%|*} | grep -i 'Disklabel type') = "Disklabel type: gpt" ]]; then # Checking for GPT Disk Label on a Legacy BIOS (non UEFI) System
+    clear
+    echo -en "
+    ------------------------------------------------------------------------
+        GUID Partition Table (GPT) detected on a Legacy BIOS System.
+        If you had installed Windows or any other OS in the current
+        disk drive, a BIOS BOOT partition may already exist in it.
+        Identify it from the table below and select it. But, if it
+        doesnot exist, then create a partition of size 100 MB and set
+        its type to BIOS BOOT.
+    ------------------------------------------------------------------------
+
+    "
+
+    fdisk -l
+
+    echo -e "\n"
+    echo "Select the BIOS BOOT Partition (This partition should be about 100-500 MB in size and should have BIOS boot label.): "
+    options=("Create a BIOS BOOT partition using cfdisk" $(lsblk -n --output TYPE,KNAME,SIZE,MOUNTPOINT | awk '$1=="part"{print "/dev/"$2"|"$3"__________"$4}'))
+    select_option $? 1 "${options[@]}"
+    case $? in
+    0)
+      manualpart
+      diskpart
+      return
+    ;;
+    *)
+      BOOTpart=${options[$?]%|*}
+      set_option BOOTPART ${BOOTpart%|*}
+      set_option FORMATEFI "no"
+    ;;
+    esac
+
+    echo -e "\n${BOOTpart%|*} selected as BIOS BOOT partition. Is that OK?"
+    options=("Yes" "No")
+    select_option $? 1 "${options[@]}"
+
+    case ${options[$?]} in
+    y|Y|yes|Yes|YES)
+      return ;;
+    n|N|no|NO|No)
+      diskpart
+      return
+    ;;
+    *)
+      diskpart
+      return
+    ;;
+    esac
+  fi
+;;
+
+1)
+  clear
+  echo -ne "
+------------------------------------------------------------------------
+    WARNING: ARCH LINUX WILL BE INSTALLED IN THE SELECTED DISK DRIVE.
+    This will delete all the data present in it, so make sure that
+    you select the right disk drive that donot contain any useful files.
+------------------------------------------------------------------------
+
+"
+
+  lsblk
+
+  echo -e "\nSelect the disk to install on: "
+  options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
+
+  select_option $? 1 "${options[@]}"
+  disk=${options[$?]%|*}
+  set_option INSTALL_IN "DISK"
+  set_option DISK ${disk%|*}
+  set_option PART ""
+  set_option BOOTPART ""
+  set_option FORMATEFI "no"
+
+  echo -e "\n${disk%|*} selected. Is that OK?"
+  options=("Yes" "No")
+  select_option $? 1 "${options[@]}"
+
+  case ${options[$?]} in
+  y|Y|yes|Yes|YES)
+    drivessd ;;
+  n|N|no|NO|No)
+    diskpart
+    return
+  ;;
+  *)
+    diskpart
+    return
+  ;;
+  esac
+;;
+
+2)
+  manualpart
+  diskpart
+  return
+;;
+
+*)
+  echo -e "\nWrong option. Try again.";
+  diskpart
+  return
+;;
+
+esac
 }
 
 # @description Gather username and password to be used for installation. 
