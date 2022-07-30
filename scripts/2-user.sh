@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+#github-action genshdoc
+#
+# @file User
+# @brief User customizations and AUR package installation.
 echo -ne "
 -------------------------------------------------------------------------
    █████╗ ██████╗  ██████╗██╗  ██╗████████╗██╗████████╗██╗   ██╗███████╗
