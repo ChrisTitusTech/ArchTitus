@@ -1,0 +1,2 @@
+cutefish
+--END OF MINIMAL INSTALL--
