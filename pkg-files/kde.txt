@@ -16,6 +16,7 @@ kde-gtk-config
 kcodecs
 kcoreaddons
 kdeplasma-addons
+kdeconnect
 kgamma5
 kgpg
 kinfocenter
