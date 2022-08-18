@@ -1,8 +1,11 @@
 --END OF MINIMAL INSTALL--
 autojump
+anydesk
 brave-bin
 bridge-utils
 dxvk-bin
+flashplugin
+freedownloadmanager
 github-desktop-bin
 lightly-git
 lightlyshaders-git
@@ -17,6 +20,13 @@ ocs-url
 plymouth-git
 sddm-nordic-theme-git
 snapper-gui-git
+stacer-bin
 ttf-meslo
+ttf-wps-fonts
+ttf-gentium-basic
+ttf-mac-fonts
 vde2
+ventoy-bin
+wps-office
+whatsdesk-bin
 zoom
