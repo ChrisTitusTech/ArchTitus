@@ -42,6 +42,7 @@ flex
 fuse2
 fuse3
 fuseiso
+firefox
 gamemode
 gcc
 gimp
@@ -51,8 +52,13 @@ grub-customizer
 gst-libav
 gst-plugins-good
 gst-plugins-ugly
+gufw
+gnome-disk-utility
+galculator
 haveged
 htop
+hunspell
+hunspell-en_us
 jdk-openjdk
 kitty
 libdvdcss
@@ -65,9 +71,11 @@ make
 neofetch
 ntfs-3g
 ntp
+nemo
 openbsd-netcat
 openssh
 os-prober
+onboard
 p7zip
 papirus-icon-theme
 patch
@@ -92,11 +100,13 @@ traceroute
 ttf-droid
 ttf-hack
 ttf-roboto
+telegram-desktop
 ufw
 unrar
 unzip
 virt-manager
 virt-viewer
+vlc
 which
 wine-gecko
 wine-mono
