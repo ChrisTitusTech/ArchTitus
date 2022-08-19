@@ -22,7 +22,60 @@ set_option() {
     fi
     echo "${1}=${2}" >>$CONFIG_FILE # add option
 }
-# @description Renders a text based list of options that can be selected by the
+
+set_password() {
+    read -rs -p "Please enter password: " PASSWORD1
+    echo -ne "\n"
+    read -rs -p "Please re-enter password: " PASSWORD2
+    echo -ne "\n"
+    if [[ "$PASSWORD1" == "$PASSWORD2" ]]; then
+        set_option "$1" "$PASSWORD1"
+    else
+        echo -ne "ERROR! Passwords do not match. \n"
+        set_password
+    fi
+}
+
+root_check() {
+    if [[ "$(id -u)" != "0" ]]; then
+        echo -ne "ERROR! This script must be run under the 'root' user!\n"
+        exit 0
+    fi
+}
+
+docker_check() {
+    if awk -F/ '$2 == "docker"' /proc/self/cgroup | read -r; then
+        echo -ne "ERROR! Docker container is not supported (at the moment)\n"
+        exit 0
+    elif [[ -f /.dockerenv ]]; then
+        echo -ne "ERROR! Docker container is not supported (at the moment)\n"
+        exit 0
+    fi
+}
+
+arch_check() {
+    if [[ ! -e /etc/arch-release ]]; then
+        echo -ne "ERROR! This script must be run in Arch Linux!\n"
+        exit 0
+    fi
+}
+
+pacman_check() {
+    if [[ -f /var/lib/pacman/db.lck ]]; then
+        echo "ERROR! Pacman is blocked."
+        echo -ne "If not running remove /var/lib/pacman/db.lck.\n"
+        exit 0
+    fi
+}
+
+background_checks() {
+    root_check
+    arch_check
+    pacman_check
+    docker_check
+}
+
+# Renders a text based list of options that can be selected by the
 # user using up, down and enter keys and returns the chosen option.
 #
 #   Arguments   : list of options, maximum of 256
@@ -161,22 +214,9 @@ case $? in
 0) set_option FS btrfs;;
 1) set_option FS ext4;;
 2) 
-while true; do
-  echo -ne "Please enter your luks password: \n"
-  read -s luks_password # read password without echo
-
-  echo -ne "Please repeat your luks password: \n"
-  read -s luks_password2 # read password without echo
-
-  if [ "$luks_password" = "$luks_password2" ]; then
-    set_option LUKS_PASSWORD $luks_password
+    set_password "LUKS_PASSWORD"
     set_option FS luks
-    break
-  else
-    echo -e "\nPasswords do not match. Please try again. \n"
-  fi
-done
-;;
+    ;;
 3) exit ;;
 *) echo "Wrong option please select again"; filesystem;;
 esac
@@ -264,20 +304,7 @@ drivessd
 userinfo () {
 read -p "Please enter your username: " username
 set_option USERNAME ${username,,} # convert to lower case as in issue #109 
-while true; do
-  echo -ne "Please enter your password: \n"
-  read -s password # read password without echo
-
-  echo -ne "Please repeat your password: \n"
-  read -s password2 # read password without echo
-
-  if [ "$password" = "$password2" ]; then
-    set_option PASSWORD $password
-    break
-  else
-    echo -e "\nPasswords do not match. Please try again. \n"
-  fi
-done
+set_password "PASSWORD"
 read -rep "Please enter your hostname: " nameofmachine
 set_option NAME_OF_MACHINE $nameofmachine
 }
@@ -296,7 +323,7 @@ aurhelper () {
 desktopenv () {
   # Let the user choose Desktop Enviroment from predefined list
   echo -ne "Please select your desired Desktop Enviroment:\n"
-  options=(gnome kde cinnamon xfce mate budgie lxde deepin openbox server)
+  options=( `for f in pkg-files/*.txt; do echo "$f" | sed -r "s/.+\/(.+)\..+/\1/;/pkgs/d"; done` )
   select_option $? 4 "${options[@]}"
   desktop_env=${options[$?]}
   set_option DESKTOP_ENV $desktop_env
@@ -317,6 +344,7 @@ installtype () {
 # language (){}
 
 # Starting functions
+background_checks
 clear
 logo
 userinfo
