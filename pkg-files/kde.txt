@@ -28,6 +28,7 @@ layer-shell-qt
 milou
 okular
 oxygen
+packagekit-qt5
 plasma-nm
 plasma-pa
 plasma-wayland-session
