@@ -27,7 +27,6 @@ bluez-utils
 bridge-utils
 btrfs-progs
 celluloid
-cmatrix
 code
 cronie
 cups
@@ -54,7 +53,6 @@ gst-plugins-ugly
 haveged
 htop
 jdk-openjdk
-kitty
 libdvdcss
 libtool
 lsof
