@@ -1,0 +1,63 @@
+# GRUB2 gfxmenu Linux theme
+# Designed for any resolution
+
+# Global Property
+title-text: ""
+desktop-image: "background.png"
+desktop-color: "#000000"
+terminal-font: "Terminus Regular 14"
+terminal-box: "terminal_box_*.png"
+terminal-left: "0"
+terminal-top: "0"
+terminal-width: "100%"
+terminal-height: "100%"
+terminal-border: "0"
+
+# Show the boot menu
++ boot_menu {
+  left = 30%
+  top = 28%
+  width = 45%
+  height = 50%
+  item_font = "Blender Pro Regular 16"
+  item_color = "#ffff00"
+  selected_item_color = "#000000"
+  icon_width = 32
+  icon_height = 32
+  item_icon_space = 20
+  item_height = 36
+  item_padding = 5
+  item_spacing = 10
+  selected_item_pixmap_style = "select_*.png"
+  scrollbar = true
+  scrollbar_width = 24
+  scrollbar_thumb = "sb_thumb_*.png"
+  scrollbar_frame = "sb_frame_*.png"
+}
+
++ progress_bar {
+  id = "__timeout__"
+  left = 23%
+  width = 60%
+  top = 80%
+  height = 31
+  show_text = false
+  text = ""
+  fg_color = "#ffff00"
+  bg_color = "#31363b"
+  border_color = "#31363b"
+  bar_style = "progress_bar_*.png"
+  highlight_style = "progress_highlight_*.png"
+}
+
++ label {
+	top = 100%-25
+	left = 0
+	width = 100%
+	height = 20
+	text = "@KEYMAP_MIDDLE@"
+	align = "center"
+	font = "Blender Pro Regular 12"
+	color = "#FFFF00"
+}
+

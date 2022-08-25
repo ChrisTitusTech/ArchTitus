@@ -1,0 +1,60 @@
+desktop-image: "bgnd_1024x768.png"
+#desktop-color: "#000000"
+title-text: ""
+#title-color: "#67AC68"
+#title-font: ""
+terminal-box: "terminal_*.png"
+terminal-font: "Unifont Regular 16"
+#message-font: "Unifont Regular 16"
+#message-color: "#67AC68"
+#message-bg-color: "#000000"
++ boot_menu {
+    visible = true
+    left = 10
+    top = 50%-102
+    width = 400
+    height = 204
+    menu_pixmap_style = "menu_*.png"
+    scrollbar = true
+    scrollbar_width = 2
+    #scrollbar_frame = "scr_frame_*.png"
+    scrollbar_thumb = "slider_*.png"
+    item_font = "Unifont Regular 16"
+    item_color = "#67AC68"
+    selected_item_font = "Unifont Regular 16"
+    selected_item_color= "#00FF00"
+    #selected_item_pixmap_style = "select_*.png"
+    item_height = 20
+    item_padding = 10
+    item_spacing = 0
+    item_icon_space = 0
+    icon_width = 0
+    icon_height = 0
+}
++ progress_bar {
+    visible = true
+	id = "__timeout__"
+	left = 10
+	top = 50%+104
+	height = 30
+	width = 400
+	font = "Unifont Regular 16"
+	text_color = "#00FF00"
+	fg_color = "#000000"
+	bg_color = "#67AC68"
+	border_color = "#67AC68"
+	text = "@TIMEOUT_NOTIFICATION_SHORT@"
+    bar_style = "progress_border_*.png"
+    highlight_style = "progress_bar_*.png"
+    
+}
++ label {
+	top = 75%
+	left = 50%
+	width = 100%
+	height = 25
+	text = ""
+	align = "center"
+	font = "Unifont Regular 16"
+	color = "#FFFFFF"
+}

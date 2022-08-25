@@ -1,0 +1,88 @@
+# Global properties
+title-text: ""
+desktop-image: "background.png"
+desktop-color: "#000000"
+terminal-font: "Fixedsys Regular 32"
+terminal-box: "terminal_box_*.png"
+terminal-left: "0"
+terminal-top: "0"
+terminal-width: "100%"
+terminal-height: "100%"
+terminal-border: "0"
+
+# Boot menu
++ boot_menu {
+  left = 15%
+  top = 20%
+  width = 70%
+  height = 60%
+  item_font = "Fixedsys Regular 32"
+  item_color = "#67d97a"
+  selected_item_color = "#ffffff"
+  item_height = 48
+  item_spacing = 8
+  item_icon_space = 12
+  item_pixmap_style = "item_*.png"
+  selected_item_pixmap_style = "selected_item_*.png"
+}
+
+# Countdown message
++ label {
+  left = 0
+  top = 98%-70
+  width = 100%
+  align = "center"
+  id = "__timeout__"
+  # DE
+  # text = "Start in %d Sekunden."
+  # EN
+  text = "Booting in %d seconds"
+  # ES
+  # text = "Arranque en %d segundos"
+  # FR
+  # text = "Démarrage automatique dans %d secondes"
+  # IT
+  # text = "Avvio in %d secondi"
+  # NO
+  # text = "Starter om %d sekunder"
+  # PT
+  # text = "Arranque automático dentro de %d segundos"
+  # RU
+  # text = "Загрузка выбранного пункта через %d сек."
+  # UA
+  # text = "Автоматичне завантаження розпочнеться через %d сек."
+  # zh_CN
+  # text = "在 %d 内启动"
+  color = "#67d97a"
+  font = "Fixedsys Regular 32"
+}
+
+# Navigation keys hint 
++ label {
+  left = 0
+  top = 98%-30
+  width = 100%
+  align = "center"
+  # DE
+  # text = "System mit ↑ und ↓ auswählen und mit Enter bestätigen."
+  # EN
+  text = "Use ↑ and ↓ keys to change selection, Enter to confirm"
+  # ES
+  # text = "Use las teclas ↑ y ↓ para cambiar la selección, Enter para confirmar"
+  # FR
+  # text = "Choisissez le système avec les flèches du clavier (↑ et ↓), puis validez avec la touche Enter (↲)"
+  # IT
+  # text = "Usa i tasti ↑ e ↓ per cambiare la selezione, premi Invio ↲ per confermare"
+  # NO
+  # text = "Bruk ↑ og ↓ for å endre menyvalg, velg med Enter"
+  # PT
+  # text = "Use as teclas ↑ e ↓ para mudar a seleção, e ENTER para confirmar"
+  # RU
+  # text = "Используйте клавиши ↑ и ↓ для изменения выбора, Enter для подтверждения"
+  # UA
+  # text = "Використовуйте ↑ та ↓ для вибору, Enter для підтвердження"
+  # zh_CN
+  # text = "使用 ↑ 和 ↓ 键移动选择条，Enter 键确认"
+  color = "#67d97a"
+  font = "Fixedsys Regular 32"
+}
