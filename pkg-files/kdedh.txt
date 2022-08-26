@@ -22,6 +22,7 @@ konsole
 kscreen
 kvantum-qt5
 kwayland-integration
+kwalletmanager
 layer-shell-qt
 milou
 okular

@@ -39,7 +39,7 @@ echo -ne "
                     Setting up $iso mirrors for faster downloads
 -------------------------------------------------------------------------
 "
-reflector -a 48 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
+reflector -a 48 --connection-timeout 1 --download-timeout 2 -l 50 -p rsync --sort rate --save /etc/pacman.d/mirrorlist
 mkdir /mnt &>/dev/null # Hiding error message if any
 echo -ne "
 -------------------------------------------------------------------------
