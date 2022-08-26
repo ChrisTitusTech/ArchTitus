@@ -142,7 +142,7 @@ if  [[ $FS == "luks" ]]; then
 else
   sed -i 's/HOOKS=(base udev*/& plymouth/' /etc/mkinitcpio.conf # add plymouth after base udev
 fi
-plymouth-set-default-theme -R arch-glow # sets the theme and runs mkinitcpio
+plymouth-set-default-theme -R spinner # sets the theme and runs mkinitcpio
 echo 'Plymouth theme installed'
 
 echo -ne "
