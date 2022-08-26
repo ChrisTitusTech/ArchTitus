@@ -39,7 +39,7 @@ echo -ne "
                     Setting up $iso mirrors for faster downloads
 -------------------------------------------------------------------------
 "
-if [[ "${ISO}" == "FO" ]]; then
+if [[ "$iso" == "FO" ]]; then
     reflector --age 48 -c GB,IS --connection-timeout 1 --download-timeout 5 --score 20 --sort rate -n 20 --save /etc/pacman.d/mirrorlist
 else
     reflector -a 48 -c $iso -f 5 -l 20 --sort rate --save /etc/pacman.d/mirrorlist
