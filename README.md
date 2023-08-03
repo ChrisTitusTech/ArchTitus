@@ -1,8 +1,11 @@
-# Archived and No longer maintained. 
+# Resurrecting Project 
 
-Due to the constant updates and time it takes to maintain this script I will no longer be updating it. Free free to fork it and take what you want from here. There has been some fantastic contributions over the past year and I learned a lot while making this project. 
+I'm changing the scope of the project to only do minimal installs and no longer offer the options for the install script. As the official arch install script has become better this one is no longer needed. However, I still want a script that installs my two flavors of arch. 
 
-Thank you!
+- DWM + Xorg
+- Hyprland + Wayland
+
+This is currently a work in progress and check the branchs for the old versions.
 
 # ArchTitus Installer Script
 [![GitHub Super-Linter](https://github.com/ChrisTitusTech/ArchTitus/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
