@@ -7,6 +7,8 @@ I'm changing the scope of the project to only do minimal installs and no longer 
 
 This is currently a work in progress and check the branchs for the old versions.
 
+Old Script with all the customizations is located in the (all-in-one-2022 branch) here: <https://github.com/ChrisTitusTech/ArchTitus/tree/all-in-one-2022-script>
+
 # ArchTitus Installer Script
 [![GitHub Super-Linter](https://github.com/ChrisTitusTech/ArchTitus/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
 
