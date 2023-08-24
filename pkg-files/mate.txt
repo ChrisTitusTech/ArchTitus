@@ -1,3 +1,0 @@
-mate
-mate-extra
---END OF MINIMAL INSTALL--

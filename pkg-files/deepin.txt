@@ -1,3 +1,0 @@
-deepin
-deepin-extra
---END OF MINIMAL INSTALL--

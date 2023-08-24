@@ -1,2 +1,0 @@
-lxde
---END OF MINIMAL INSTALL--

@@ -1,3 +1,1 @@
-xfce4
-xfce4-goodies
 --END OF MINIMAL INSTALL--
