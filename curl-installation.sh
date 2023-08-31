@@ -18,3 +18,4 @@ echo "Executing ArchTitus Script"
 
 exec ArchTitus/archtitus.sh
 
+exit
