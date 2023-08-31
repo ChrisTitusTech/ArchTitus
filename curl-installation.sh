@@ -16,5 +16,5 @@ git clone https://github.com/christitustech/ArchTitus
 
 echo "Executing ArchTitus Script"
 
-bash ArchTitus/archtitus.sh
+source ArchTitus/archtitus.sh
 
