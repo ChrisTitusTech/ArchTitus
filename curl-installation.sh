@@ -18,6 +18,6 @@ echo "Executing ArchTitus Script"
 
 cd $HOME/ArchTitus
 
-source archtitus.sh
+exec archtitus.sh
 
 exit
