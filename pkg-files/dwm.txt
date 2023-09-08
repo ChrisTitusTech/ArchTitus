@@ -1,0 +1,9 @@
+base-devel
+libx11
+libxft
+libxinerama
+freetype2
+kitty
+thunar
+xorg
+--END OF MINIMAL INSTALL--

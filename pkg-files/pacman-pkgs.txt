@@ -6,6 +6,11 @@ xorg-drivers
 xorg-xkill
 xorg-xinit
 xterm
+base-devel
+libx11
+libxft
+libxinerama
+freetype2
 binutils
 dosfstools
 linux-headers
