@@ -10,7 +10,7 @@ This is currently a work in progress and check the branchs for the old versions.
 New single command quicklaunch
 
 ```
-bash <(curl christitus.com/archtitus)
+bash <(curl -L christitus.com/archtitus)
 ```
 
 Old Script with all the customizations is located in the (all-in-one-2022 branch) here: <https://github.com/ChrisTitusTech/ArchTitus/tree/all-in-one-2022-script>
