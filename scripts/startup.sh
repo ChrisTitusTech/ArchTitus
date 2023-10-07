@@ -7,7 +7,7 @@
 # @stderror Output routed to startup.log
 
 # @setting-header General Settings
-# @setting CONFIG_FILE string[$CONFIGS_DIR/setup.conf] Location of setup.conf to be used by set_option and all subsequent scripts. 
+# @setting CONFIG_FILE string[$CONFIGS_DIR/setup.conf] Location of setup.conf to be used by set_option and all subsequent scripts.
 CONFIG_FILE=$CONFIGS_DIR/setup.conf
 if [ ! -f $CONFIG_FILE ]; then # check if file exists
     touch -f $CONFIG_FILE # create file if not exists
@@ -109,7 +109,7 @@ select_option() {
                             if [[ $key = [B || $key = j ]]; then echo down;  fi;
                             if [[ $key = [C || $key = l ]]; then echo right;  fi;
                             if [[ $key = [D || $key = h ]]; then echo left;  fi;
-                        fi 
+                        fi
     }
     print_options_multicol() {
         # print options by overwriting the last lines
@@ -120,15 +120,15 @@ select_option() {
         local idx=0
         local row=0
         local col=0
-        
-        curr_idx=$(( $curr_col + $curr_row * $colmax ))
-        
+
+        curr_idx=$(( curr_col + curr_row * colmax ))
+
         for option in "${options[@]}"; do
 
-            row=$(( $idx/$colmax ))
-            col=$(( $idx - $row * $colmax ))
+            row=$(( idx / colmax ))
+            col=$(( idx - row * colmax ))
 
-            cursor_to $(( $startrow + $row + 1)) $(( $offset * $col + 1))
+            cursor_to $(( startrow + row + 1)) $(( offset * col + 1))
             if [ $idx -eq $curr_idx ]; then
                 print_selected "$option"
             else
@@ -139,21 +139,37 @@ select_option() {
     }
 
     # initially print empty new lines (scroll down if at bottom of screen)
-    for opt; do printf "\n"; done
+    for _; do printf "\n"; done
 
     # determine current screen position for overwriting the options
-    local return_value=$1
-    local lastrow=`get_cursor_row`
-    local lastcol=`get_cursor_col`
-    local startrow=$(($lastrow - $#))
-    local startcol=1
-    local lines=$( tput lines )
-    local cols=$( tput cols ) 
-    local colmax=$2
-    local offset=$(( $cols / $colmax ))
+    # local return_value=$1
+    local lastrow=$(get_cursor_row)
+    # local lastcol=$(get_cursor_col)
+    local startrow=$(( lastrow - $# ))
+    # local startcol=1
+    # local lines=$( tput lines )
+    # local lastrow=$(get_cursor_row)
+    # local startrow=$(( lastrow - $# ))
+    local cols=$(tput cols)
+    local colmax=$1
+    local offset=$(( cols / colmax ))
 
-    local size=$4
-    shift 4
+    # get index values for column and row grid
+    option_count=${#options[@]}
+
+    [ $colmax -gt $option_count ] && colmax=$option_count
+
+    colmax_idx=$(( colmax - 1 ))
+
+    if [ $option_count -eq 1 ]; then
+        rowmax_idx=0
+    elif [ $((option_count % 2)) -eq 0 ]; then
+        rowmax_idx=$(( (option_count / colmax) - 1 ))
+    else
+        rowmax_idx=$(( option_count / colmax ))
+    fi
+
+    col_last_idx=$(( option_count - (rowmax_idx * colmax + 1) ))
 
     # ensure cursor and input echoing back on upon a ctrl+c during read -s
     trap "cursor_blink_on; stty echo; printf '\n'; exit" 2
@@ -162,18 +178,49 @@ select_option() {
     local active_row=0
     local active_col=0
     while true; do
-        print_options_multicol $active_col $active_row 
+        print_options_multicol $active_col $active_row
         # user key control
-        case `key_input` in
-            enter)  break;;
-            up)     ((active_row--));
-                    if [ $active_row -lt 0 ]; then active_row=0; fi;;
-            down)   ((active_row++));
-                    if [ $active_row -ge $(( ${#options[@]} / $colmax ))  ]; then active_row=$(( ${#options[@]} / $colmax )); fi;;
-            left)     ((active_col=$active_col - 1));
-                    if [ $active_col -lt 0 ]; then active_col=0; fi;;
-            right)     ((active_col=$active_col + 1));
-                    if [ $active_col -ge $colmax ]; then active_col=$(( $colmax - 1 )) ; fi;;
+        case "$(key_input)" in
+            enter)
+                break
+                ;;
+            up)
+                ((active_row--))
+                if [ $active_row -lt 0 ]; then active_row=0; fi
+                ;;
+            down)
+                ((active_row++))
+				if [ $active_row -eq $rowmax_idx ] && [ $active_col -gt $col_last_idx ]; then
+                    active_col=$col_last_idx
+                    active_row=$rowmax_idx
+				elif [ $active_row -gt $rowmax_idx ]; then
+                    active_row=$rowmax_idx
+				fi
+                ;;
+            left)
+                ((active_col = active_col - 1))
+                if [ $colmax -eq 1 ]; then
+                    active_col=$(( active_col + 1 ))
+                elif [ $active_col -lt 0 ]; then
+					if [ $active_row -gt 0 ]; then
+						active_col=$colmax_idx
+						active_row=$(( active_row - 1 ))
+					elif [ $active_row -eq 0 ] || [ $colmax -eq 1 ]; then
+						active_col=0
+					fi
+				fi
+                ;;
+            right)
+                ((active_col = active_col + 1))
+                if [ $colmax -eq 1 ]; then
+					active_col=$(( active_col - 1 ))
+				elif [ $active_col -gt $colmax_idx ] && [ $active_row -lt $rowmax_idx ]; then
+					active_col=0
+					active_row=$(( active_row + 1 ))
+				elif [ $active_row -eq $rowmax_idx ] && [ $active_col -gt $col_last_idx ]; then
+					active_col=$(( active_col - 1 ))
+				fi
+                ;;
         esac
     done
 
@@ -182,7 +229,7 @@ select_option() {
     printf "\n"
     cursor_blink_on
 
-    return $(( $active_col + $active_row * $colmax ))
+    return $(( active_col + active_row * colmax ))
 }
 # @description Displays ArchTitus logo
 # @noargs
@@ -197,7 +244,7 @@ echo -ne "
 ██║  ██║██║  ██║╚██████╗██║  ██║   ██║   ██║   ██║   ╚██████╔╝███████║
 ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 ------------------------------------------------------------------------
-            Please select presetup settings for your system              
+            Please select presetup settings for your system
 ------------------------------------------------------------------------
 "
 }
@@ -208,12 +255,12 @@ echo -ne "
 Please Select your file system for both boot and root
 "
 options=("btrfs" "ext4" "luks" "exit")
-select_option $? 1 "${options[@]}"
+select_option 1 "${options[@]}"
 
 case $? in
 0) set_option FS btrfs;;
 1) set_option FS ext4;;
-2) 
+2)
     set_password "LUKS_PASSWORD"
     set_option FS luks
     ;;
@@ -221,37 +268,37 @@ case $? in
 *) echo "Wrong option please select again"; filesystem;;
 esac
 }
-# @description Detects and sets timezone. 
+# @description Detects and sets timezone.
 timezone () {
 # Added this from arch wiki https://wiki.archlinux.org/title/System_time
 time_zone="$(curl --fail https://ipapi.co/timezone)"
 echo -ne "
 System detected your timezone to be '$time_zone' \n"
 echo -ne "Is this correct?
-" 
+"
 options=("Yes" "No")
-select_option $? 1 "${options[@]}"
+select_option 1 "${options[@]}"
 
 case ${options[$?]} in
     y|Y|yes|Yes|YES)
     echo "${time_zone} set as timezone"
     set_option TIMEZONE $time_zone;;
     n|N|no|NO|No)
-    echo "Please enter your desired timezone e.g. Europe/London :" 
+    echo "Please enter your desired timezone e.g. Europe/London :"
     read new_timezone
     echo "${new_timezone} set as timezone"
     set_option TIMEZONE $new_timezone;;
     *) echo "Wrong option. Try again";timezone;;
 esac
 }
-# @description Set user's keyboard mapping. 
+# @description Set user's keyboard mapping.
 keymap () {
 echo -ne "
 Please select key board layout from this list"
 # These are default key maps as presented in official arch repo archinstall
 options=(us by ca cf cz de dk es et fa fi fr gr hu il it lt lv mk nl no pl ro ru sg ua uk)
 
-select_option $? 4 "${options[@]}"
+select_option 4 "${options[@]}"
 keymap=${options[$?]}
 
 echo -ne "Your key boards layout: ${keymap} \n"
@@ -265,7 +312,7 @@ Is this an ssd? yes/no:
 "
 
 options=("Yes" "No")
-select_option $? 1 "${options[@]}"
+select_option 1 "${options[@]}"
 
 case ${options[$?]} in
     y|Y|yes|Yes|YES)
@@ -291,7 +338,7 @@ PS3='
 Select the disk to install on: '
 options=($(lsblk -n --output TYPE,KNAME,SIZE | awk '$1=="disk"{print "/dev/"$2"|"$3}'))
 
-select_option $? 1 "${options[@]}"
+select_option 1 "${options[@]}"
 disk=${options[$?]%|*}
 
 echo -e "\n${disk%|*} selected \n"
@@ -300,21 +347,21 @@ echo -e "\n${disk%|*} selected \n"
 drivessd
 }
 
-# @description Gather username and password to be used for installation. 
+# @description Gather username and password to be used for installation.
 userinfo () {
 read -p "Please enter your username: " username
-set_option USERNAME ${username,,} # convert to lower case as in issue #109 
+set_option USERNAME ${username,,} # convert to lower case as in issue #109
 set_password "PASSWORD"
 read -rep "Please enter your hostname: " nameofmachine
 set_option NAME_OF_MACHINE $nameofmachine
 }
 
-# @description Choose AUR helper. 
+# @description Choose AUR helper.
 aurhelper () {
   # Let the user choose AUR helper from predefined list
   echo -ne "Please enter your desired AUR helper:\n"
   options=(paru yay picaur aura trizen pacaur none)
-  select_option $? 4 "${options[@]}"
+  select_option 4 "${options[@]}"
   aur_helper=${options[$?]}
   set_option AUR_HELPER $aur_helper
 }
@@ -324,18 +371,18 @@ desktopenv () {
   # Let the user choose Desktop Enviroment from predefined list
   echo -ne "Please select your desired Desktop Enviroment:\n"
   options=( `for f in pkg-files/*.txt; do echo "$f" | sed -r "s/.+\/(.+)\..+/\1/;/pkgs/d"; done` )
-  select_option $? 4 "${options[@]}"
+  select_option 4 "${options[@]}"
   desktop_env=${options[$?]}
   set_option DESKTOP_ENV $desktop_env
 }
 
-# @description Choose whether to do full or minimal installation. 
+# @description Choose whether to do full or minimal installation.
 installtype () {
   echo -ne "Please select type of installation:\n\n
   Full install: Installs full featured desktop enviroment, with added apps and themes needed for everyday use\n
   Minimal Install: Installs only apps few selected apps to get you started\n"
   options=(FULL MINIMAL)
-  select_option $? 4 "${options[@]}"
+  select_option 4 "${options[@]}"
   install_type=${options[$?]}
   set_option INSTALL_TYPE $install_type
 }
