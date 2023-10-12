@@ -42,19 +42,14 @@ file-roller
 noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
-thunar thunar-archive-plugin
-code
-code-features
-code-marketplace
+thunar
+thunar-archive-plugin
 catppuccin-gtk-theme-macchiato
 catppuccin-gtk-theme-mocha
 papirus-icon-theme
 swaylock-effects-git
 kvantum
 kvantum-theme-catppuccin-git
-obs-studio-rc
-ffmpeg-obs
-cef-minimal-obs-rc-bin
 pipewire
 pipewire-alsa
 pipewire-audio
@@ -65,3 +60,9 @@ gst-plugin-pipewire
 pavucontrol
 starship
 --END OF MINIMAL INSTALL--
+code
+code-features
+code-marketplace
+obs-studio-rc
+ffmpeg-obs
+cef-minimal-obs-rc-bin
