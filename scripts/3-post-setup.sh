@@ -73,16 +73,14 @@ else
   if [[ ! "${DESKTOP_ENV}" == "server" ]]; then
     sudo pacman -S --noconfirm --needed lightdm lightdm-gtk-greeter
     systemctl enable lightdm.service
-    sed -i 's/#greeter-session=example.*/greeter-session=lightdm-gtk-greeter/g' /etc/lightdm/lightdm.conf
   fi
 
   if [[ "${DESKTOP_ENV}" == "hypr" ]]; then
     git clone https://github.com/linuxmobile/hyprland-dots
     cd hyprland-dots/
     rsync -avxHAXP --exclude '.git*' .* "/home/$USERNAME/"
-    sudo pacman -S --noconfirm --needed lightdm lightdm-gtk-greeter
-    systemctl enable lightdm.service
-    sed -i 's/#greeter-session=example.*/greeter-session=lightdm-gtk-greeter/g' /etc/lightdm/lightdm.conf
+    sudo pacman -Rs --noconfirm lightdm lightdm-gtk-greeter
+    systemctl disable lightdm.service
   fi
 fi
 
