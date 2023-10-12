@@ -59,24 +59,27 @@ echo -ne "
                Enabling (and Theming) Login Display Manager
 -------------------------------------------------------------------------
 "
-if [[ ${DESKTOP_ENV} == "kde" ]]; then
+if [[ "${DESKTOP_ENV}" == "kde" ]]; then
   systemctl enable sddm.service
-  if [[ ${INSTALL_TYPE} == "FULL" ]]; then
-    echo [Theme] >>  /etc/sddm.conf
-    echo Current=Nordic >> /etc/sddm.conf
+  if [[ "${INSTALL_TYPE}" == "FULL" ]]; then
+    echo "[Theme]" >> /etc/sddm.conf
+    echo "Current=Nordic" >> /etc/sddm.conf
   fi
 
 elif [[ "${DESKTOP_ENV}" == "gnome" ]]; then
   systemctl enable gdm.service
 
 else
-  if [[ ! "${DESKTOP_ENV}" == "server"  ]]; then
-  sudo pacman -S --noconfirm --needed lightdm lightdm-gtk-greeter
-  systemctl enable lightdm.service
-  fi
-  
-  if [[ "${INSTALL_TYPE}" == "FULL" ]]; then
+  if [[ ! "${DESKTOP_ENV}" == "server" ]]; then
+    sudo pacman -S --noconfirm --needed lightdm lightdm-gtk-greeter
+    systemctl enable lightdm.service
     sed -i 's/#greeter-session=example.*/greeter-session=lightdm-gtk-greeter/g' /etc/lightdm/lightdm.conf
+  fi
+
+  if [[ "${DESKTOP_ENV}" == "hypr" ]]; then
+    git clone https://github.com/linuxmobile/hyprland-dots
+    cd hyprland-dots/
+    rsync -avxHAXP --exclude '.git*' .* "/home/$USERNAME/"
   fi
 fi
 
