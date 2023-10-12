@@ -13,10 +13,10 @@ echo -ne "
   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝   ╚═╝   ╚═╝   ╚═╝    ╚═════╝ ╚══════╝
 -------------------------------------------------------------------------
                     Automated Arch Linux Installer
-                        SCRIPTHOME: ArchTitus
+                        SCRIPTHOME: Installer
 -------------------------------------------------------------------------
 "
-source $HOME/ArchTitus/configs/setup.conf
+source Installer/configs/setup.conf
 echo -ne "
 -------------------------------------------------------------------------
                     Network Setup 
@@ -78,15 +78,15 @@ echo -ne "
 "
 # sed $INSTALL_TYPE is using install type to check for MINIMAL installation, if it's true, stop
 # stop the script and move on, not installing any more packages below that line
-if [[ ! $DESKTOP_ENV == server ]]; then
-  sed -n '/'$INSTALL_TYPE'/q;p' $HOME/ArchTitus/pkg-files/pacman-pkgs.txt | while read line
+if [[ ! "${DESKTOP_ENV}" == server ]]; then
+  sed -n '/'$INSTALL_TYPE'/q;p' $HOME/Installer/pkg-files/pacman-pkgs.txt | while read line
   do
-    if [[ ${line} == '--END OF MINIMAL INSTALL--' ]]; then
+    if [[ "${line}" == '--END OF MINIMAL INSTALL--' ]]; then
       # If selected installation type is FULL, skip the --END OF THE MINIMAL INSTALLATION-- line
       continue
     fi
     echo "INSTALLING: ${line}"
-    sudo pacman -S --noconfirm --needed ${line}
+    sudo pacman -S --noconfirm --needed "${line}"
   done
 fi
 echo -ne "
@@ -124,7 +124,7 @@ elif grep -E "Intel Corporation UHD" <<< ${gpu_type}; then
     pacman -S --needed --noconfirm libva-intel-driver libvdpau-va-gl lib32-vulkan-intel vulkan-intel libva-intel-driver libva-utils lib32-mesa
 fi
 #SETUP IS WRONG THIS IS RUN
-if ! source $HOME/ArchTitus/configs/setup.conf; then
+if ! source $HOME/Installer/configs/setup.conf; then
 	# Loop through user input until the user gives a valid username
 	while true
 	do 
@@ -138,11 +138,11 @@ if ! source $HOME/ArchTitus/configs/setup.conf; then
 		echo "Incorrect username."
 	done 
 # convert name to lowercase before saving to setup.conf
-echo "username=${username,,}" >> ${HOME}/ArchTitus/configs/setup.conf
+echo "username=${username,,}" >> ${HOME}/Installer/configs/setup.conf
 
     #Set Password
     read -p "Please enter password:" password
-echo "password=${password,,}" >> ${HOME}/ArchTitus/configs/setup.conf
+echo "password=${password,,}" >> ${HOME}/Installer/configs/setup.conf
 
     # Loop through user input until the user gives a valid hostname, but allow the user to force save 
 	while true
@@ -161,7 +161,7 @@ echo "password=${password,,}" >> ${HOME}/ArchTitus/configs/setup.conf
 		fi 
 	done 
 
-    echo "NAME_OF_MACHINE=${name_of_machine,,}" >> ${HOME}/ArchTitus/configs/setup.conf
+    echo "NAME_OF_MACHINE=${name_of_machine,,}" >> ${HOME}/Installer/configs/setup.conf
 fi
 echo -ne "
 -------------------------------------------------------------------------
@@ -177,16 +177,16 @@ if [ $(whoami) = "root"  ]; then
     echo "$USERNAME:$PASSWORD" | chpasswd
     echo "$USERNAME password set"
 
-	cp -R $HOME/ArchTitus /home/$USERNAME/
-    chown -R $USERNAME: /home/$USERNAME/ArchTitus
-    echo "ArchTitus copied to home directory"
+	cp -R $HOME/Installer /home/$USERNAME/
+    chown -R $USERNAME: /home/$USERNAME/Installer
+    echo "Installer copied to home directory"
 
 # enter $NAME_OF_MACHINE to /etc/hostname
 	echo $NAME_OF_MACHINE > /etc/hostname
 else
 	echo "You are already a user proceed with aur installs"
 fi
-if [[ ${FS} == "luks" ]]; then
+if [[ "${FS}" == "luks" ]]; then
 # Making sure to edit mkinitcpio conf if luks is selected
 # add encrypt in mkinitcpio.conf before filesystems in hooks
     sed -i 's/filesystems/encrypt filesystems/g' /etc/mkinitcpio.conf
