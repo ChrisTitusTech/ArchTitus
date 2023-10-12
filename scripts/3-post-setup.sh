@@ -69,6 +69,13 @@ if [[ ${DESKTOP_ENV} == "kde" ]]; then
 elif [[ "${DESKTOP_ENV}" == "gnome" ]]; then
   systemctl enable gdm.service
 
+  if [[ "${INSTALL_TYPE}" == "FULL" ]]; then
+    # Set default lightdm-webkit2-greeter theme to Litarvan
+    sed -i 's/^webkit_theme\s*=\s*\(.*\)/webkit_theme = litarvan #\1/g' /etc/lightdm/lightdm-webkit2-greeter.conf
+    # Set default lightdm greeter to lightdm-webkit2-greeter
+    sed -i 's/#greeter-session=example.*/greeter-session=lightdm-webkit2-greeter/g' /etc/lightdm/lightdm.conf
+  fi
+
 else
   if [[ ! "${DESKTOP_ENV}" == "server"  ]]; then
   sudo pacman -S --noconfirm --needed lightdm lightdm-gtk-greeter
