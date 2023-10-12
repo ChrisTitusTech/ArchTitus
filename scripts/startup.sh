@@ -184,7 +184,7 @@ select_option() {
 
     return $(( $active_col + $active_row * $colmax ))
 }
-# @description Displays ArchTitus logo
+# @description Displays Installer logo
 # @noargs
 logo () {
 # This will be shown on every set as user is progressing
