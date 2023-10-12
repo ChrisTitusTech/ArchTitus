@@ -1,13 +1,11 @@
 --END OF MINIMAL INSTALL--
 autojump
-brave-bin
 bridge-utils
 dxvk-bin
-github-desktop-bin
 lightly-git
 lightlyshaders-git
-mangohud
-mangohud-common
+mangohud-git
+lib32-mangohud-git
 nerd-fonts-fira-code
 nordic-darker-standard-buttons-theme
 nordic-darker-theme
@@ -19,4 +17,4 @@ sddm-nordic-theme-git
 snapper-gui-git
 ttf-meslo
 vde2
-zoom
+ttf-ms-fonts
