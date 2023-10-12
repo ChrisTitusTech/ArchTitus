@@ -13,8 +13,6 @@ zsh
 dunst
 rofi
 feh
-lightdm-webkit2-greeter
-lightdm-webkit-theme-litarvan
 lxappearance
 qt5ct
 gsimplecal
