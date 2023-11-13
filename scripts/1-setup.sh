@@ -23,7 +23,7 @@ echo -ne "
 -------------------------------------------------------------------------
 "
 pacman -S --noconfirm --needed networkmanager dhclient
-systemctl enable --now NetworkManager
+#systemctl enable --now NetworkManager
 echo -ne "
 -------------------------------------------------------------------------
                     Setting up mirrors for optimal download 
