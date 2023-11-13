@@ -1,0 +1,12 @@
+grimblast-git
+waybar-hyprland
+wlogout
+swaylock-effects
+sddm-git
+nwg-look-bin
+nordic-theme
+otf-sora
+ttf-comfortaa
+ttf-icomoon-feather
+hyprpicker-git
+--END OF MINIMAL INSTALL--
