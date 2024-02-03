@@ -23,11 +23,9 @@ Old Script with all the customizations is located in the (all-in-one-2022 branch
 This README contains the steps I do to install and configure a fully-functional Arch Linux installation containing a desktop environment, all the support packages (network, bluetooth, audio, printers, etc.), along with all my preferred applications and utilities. The shell scripts in this repo allow the entire process to be automated.)
 
 ---
-## Create Arch ISO or Use Image
+## Create Arch ISO 
 
-Download ArchISO from <https://archlinux.org/download/> and put on a USB drive with [Etcher](https://www.balena.io/etcher/), [Ventoy](https://www.ventoy.net/en/index.html), or [Rufus](https://rufus.ie/en/)
-
-If you don't want to build using this script I did create an image @ <https://cttstore.com/arch-titus>
+Download ArchISO from <https://archlinux.org/download/> and put on a USB drive with [Etcher](https://www.balena.io/etcher/), [Ventoy](https://www.ventoy.net/en/index.html), or [Rufus](https://rufus.ie/en/).
 
 ## Boot Arch ISO
 
