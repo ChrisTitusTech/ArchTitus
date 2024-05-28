@@ -134,6 +134,18 @@ plymouth-set-default-theme -R arch-glow # sets the theme and runs mkinitcpio
 echo 'Plymouth theme installed'
 
 echo -ne "
+
+-------------------------------------------------------------------------
+                    UFW Setup                         
+-------------------------------------------------------------------------
+pacman -Syu
+pacman ufw -y
+ufw status
+ufw enable
+ufw allow 443
+ufw allow 80
+ufw limit 22
+
 -------------------------------------------------------------------------
                     Cleaning
 -------------------------------------------------------------------------
